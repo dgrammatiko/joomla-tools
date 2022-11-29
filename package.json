@@ -1,6 +1,9 @@
 {
-  "name": "j4-dev-tools",
+  "name": "@dgrammatiko/j4-dev-tools",
   "version": "0.0.1-alpha",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Tools for developing J4 extensions",
   "main": "build.js",
   "scripts": {
