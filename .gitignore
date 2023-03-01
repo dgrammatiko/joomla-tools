@@ -5,3 +5,4 @@ www
 .vscode
 .git
 .vscode
+!bin
