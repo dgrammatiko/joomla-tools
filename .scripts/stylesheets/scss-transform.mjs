@@ -1,12 +1,13 @@
-const Autoprefixer = require('autoprefixer');
-const CssNano = require('cssnano');
-const Fs = require('fs').promises;
-const FsExtra = require('fs-extra');
-const { dirname, sep } = require('path');
-const Postcss = require('postcss');
-const Sass = require('sass');
+import Fs from 'node:fs/promises';
+import { dirname, sep } from 'node:path';
+import Autoprefixer from 'autoprefixer';
+import CssNano from 'cssnano';
+import FsExtra from 'fs-extra';
+import Postcss from 'postcss';
+import Sass from 'sass';
+import { logger } from '../utils/logger.es6.js';
 
-module.exports.compile = async (file) => {
+export async function compile(file) {
   const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
     .replace('.scss', '.css').replace(`${sep}media_src${sep}`, `${sep}media${sep}`);
 
@@ -14,8 +15,7 @@ module.exports.compile = async (file) => {
   try {
     compiled = Sass.renderSync({ file });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error.formatted);
+    logger(error.formatted);
     process.exit(1);
   }
 
@@ -41,6 +41,5 @@ module.exports.compile = async (file) => {
     { encoding: 'utf8', mode: 0o644 },
   );
 
-  // eslint-disable-next-line no-console
-  console.log(`✅ SCSS File compiled: ${cssFile}`);
+  logger(`✅ SCSS File compiled: ${cssFile}`);
 };

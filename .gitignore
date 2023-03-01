@@ -1,6 +1,7 @@
-node_modules
 ignore
-www
-src
 media
-media_source
+media_src
+www
+.vscode
+.git
+.vscode

@@ -1,12 +1,15 @@
+import { dirname, sep } from 'node:path';
+import fsExtra from 'fs-extra';
+import Postcss from 'postcss';
+import Autoprefixer from 'autoprefixer';
+import CssNano from 'cssnano';
+import { logger } from '../utils/logger.mjs';
+
 const {
   copy, readFile, writeFile, ensureDir,
-} = require('fs-extra');
-const { dirname, sep } = require('path');
-const Postcss = require('postcss');
-const Autoprefixer = require('autoprefixer');
-const CssNano = require('cssnano');
+} = fsExtra;
 
-module.exports.handleCssFile = async (file) => {
+export async function handleCssFile(file) {
   const outputFile = file.replace(`${sep}media_src${sep}`, `${sep}media${sep}`);
   try {
     // CSS file, we will copy the file and then minify it in place
@@ -23,10 +26,8 @@ module.exports.handleCssFile = async (file) => {
     // Ensure the folder exists or create it
     await writeFile(outputFile.replace('.css', '.min.css'), cssMin.css.toString(), { encoding: 'utf8', mode: 0o644 });
 
-    // eslint-disable-next-line no-console
-    console.log(`✅ CSS file copied/minified: ${file}`);
+    logger(`✅ CSS file copied/minified: ${file}`);
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.log(err);
+    logger(err.message);
   }
 };

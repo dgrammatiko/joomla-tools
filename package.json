@@ -1,15 +1,19 @@
 {
-  "name": "@dgrammatiko/j4-dev-tools",
+  "name": "@dgrammatiko/jtools",
   "version": "0.0.1-alpha",
   "publishConfig": {
     "access": "public"
   },
   "description": "Tools for developing J4 extensions",
-  "main": "build.js",
+  "bin": {
+    "jtools": "./bin/jtools.mjs"
+  },
+  "type": "module",
+  "main": "jtools.mjs",
   "scripts": {
-    "i": "node ./build.js -i",
-    "l": "node ./build.js -l",
-    "b": "node ./build.js -b media_src",
+    "i": "node ./bin/jtools.mjs -i",
+    "l": "node ./bin/jtools.mjs -l",
+    "b": "node ./bin/jtools.mjs -b media_src",
     "init": "npm run i && npm run l && npm run b",
     "lint-css": "npx stylelint media_src/css/.",
     "lint-js": "npx eslint media_src/js/.",
@@ -18,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dgrammatiko/j4-tools.git"
+    "url": "git+https://github.com/dgrammatiko/jtools.git"
   },
   "keywords": [
     "Joomla",
@@ -28,6 +32,8 @@
     "plugins",
     "libraries",
     "templates",
+    "esm",
+    "es5",
     "transpilling",
     "scss",
     "postcss"
@@ -35,34 +41,40 @@
   "author": "Dimitris Grammatikogiannis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dgrammatiko/j4-tools/issues"
+    "url": "https://github.com/dgrammatiko/jtools/issues"
   },
-  "homepage": "https://github.com/dgrammatiko/j4-tools#readme",
+  "homepage": "https://github.com/dgrammatiko/jtools#readme",
   "dependencies": {
-    "@rollup/plugin-babel": "^5.0.4",
-    "@rollup/plugin-replace": "^2.3.3",
-    "@rollup/plugin-terser": "0.1.0",
-    "adm-zip": "^0.5.9",
-    "autoprefixer": "^9.8.0",
-    "axios": "^1.2.0",
-    "chalk": "^3.0.0",
-    "commander": "^5.0.0",
-    "cssnano": "^4.1.10",
-    "eslint": "^8.2.0",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "0.4.0",
+    "adm-zip": "^0.5.10",
+    "autoprefixer": "^10.4.13",
+    "axios": "^1.3.4",
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "cssnano": "^5.1.15",
+    "eslint": "^8.35.0",
     "fs-jetpack": "^5.1.0",
-    "postcss": "^8.3.11",
-    "postcss-cli": "8.3.1",
-    "postcss-custom-media": "7.0.8",
-    "postcss-custom-selectors": "5.1.2",
-    "postcss-discard-comments": "4.0.2",
-    "postcss-easy-import": "3.0.0",
-    "postcss-mixins": "7.0.2",
-    "postcss-nested": "5.0.3",
-    "postcss-preset-env": "6.7.0",
-    "recursive-readdir": "^2.2.2",
-    "rollup": "^2.1.0",
-    "stylelint": "^13.2.1",
-    "stylelint-config-recommended": "^3.0.0",
-    "symlink-dir": "^5.1.0"
+    "postcss": "^8.4.21",
+    "postcss-cli": "10.1.0",
+    "postcss-custom-media": "9.1.2",
+    "postcss-custom-selectors": "7.1.2",
+    "postcss-discard-comments": "5.1.2",
+    "postcss-easy-import": "^4.0.0",
+    "postcss-mixins": "9.0.4",
+    "postcss-nested": "6.0.1",
+    "postcss-preset-env": "8.0.1",
+    "recursive-readdir": "^2.2.3",
+    "rollup": "^3.17.3",
+    "rtlcss": "^4.0.0",
+    "sass": "^1.58.3",
+    "stylelint": "^15.2.0",
+    "stylelint-config-recommended": "^10.0.1",
+    "symlink-dir": "^5.1.1",
+    "terser": "^5.16.5"
   }
 }
