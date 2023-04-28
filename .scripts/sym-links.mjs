@@ -14,10 +14,10 @@ export async function symLink() {
       switch(extensionType) {
         case 'components':
           if (existsSync(`./src/${extensionType}/${extensionName}/administrator`)) {
-            symlinkDir(`./src/${extensionType}/${extensionName}/administrator`, `./www/administrator/${is.extensionType}/com_${is.extensionName}`);
+            symlinkDir(`./src/${extensionType}/${extensionName}/administrator`, `./www/administrator/${extensionType}/com_${extensionName}`);
           }
           if (existsSync(`./src/${extensionType}/${extensionName}/site`)) {
-            symlinkDir(`./src/${extensionType}/${extensionName}/site`, `./www/${is.extensionType}/com_${is.extensionName}`);
+            symlinkDir(`./src/${extensionType}/${extensionName}/site`, `./www/${extensionType}/com_${extensionName}`);
           }
           break;
         case 'modules':
