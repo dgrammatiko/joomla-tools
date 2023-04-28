@@ -47,6 +47,7 @@
   },
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "peerDependencies": {
+    "@babel/preset-env": "^7.21.4",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-json": "^6.0.0",
@@ -80,7 +81,6 @@
     "terser": "^5.16.5"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.21.4",
     "np": "^7.7.0"
   }
 }
