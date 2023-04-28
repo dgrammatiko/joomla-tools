@@ -7,7 +7,7 @@ import CssNano from 'cssnano';
 import { logger } from '../utils/logger.mjs';
 import { resolvePath } from '../utils/resolvePath.mjs';
 
-export async function handleCssFile(file) {
+async function handleCssFile(file) {
   const outputFile = resolvePath(file, 'extension');
   try {
     // CSS file, we will copy the file and then minify it in place
@@ -29,3 +29,5 @@ export async function handleCssFile(file) {
     logger(err.message);
   }
 };
+
+export {handleCssFile};

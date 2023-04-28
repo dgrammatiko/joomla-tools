@@ -10,7 +10,7 @@ import { logger } from '../utils/logger.mjs';
 
 const { ensureDir } = fsExtra;
 
-export async function handleScssFile(file) {
+async function handleScssFile(file) {
   const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
     .replace(`${sep}media_source${sep}`, `${sep}media${sep}`)
     .replace('.scss', '.css');
@@ -50,3 +50,5 @@ export async function handleScssFile(file) {
 
   logger(`✅ SCSS File compiled: ${cssFile}`);
 };
+
+export {handleScssFile};

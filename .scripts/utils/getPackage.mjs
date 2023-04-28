@@ -4,7 +4,7 @@ import { join } from 'node:path';
 /**
  * Read the package.json
  */
-export function getPackage() {
+function getPackage() {
   const path = join(process.cwd(), 'package.json');
   if (!existsSync(path)) {
     throw new Error(`No package.json found in ${process.cwd()}`);
@@ -15,3 +15,5 @@ export function getPackage() {
     return {};
   }
 };
+
+export {getPackage};

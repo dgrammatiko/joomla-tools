@@ -3,7 +3,7 @@ import FsExtra from 'fs-extra';
 import { minifyJs } from './minify.mjs';
 import { logger } from '../utils/logger.mjs';
 
-export async function handleES5File(file) {
+async function handleES5File(file) {
   if (file.endsWith('.es5.js')) {
     logger(`Processing Legacy js file: ${basename(file)}...`);
     // ES5 file, we will copy the file and then minify it in place
@@ -15,3 +15,5 @@ export async function handleES5File(file) {
     minifyJs(file.replace(`${sep}media_source${sep}`, `${sep}media${sep}`).replace('.es5.js', '.js'));
   }
 };
+
+export {handleES5File};

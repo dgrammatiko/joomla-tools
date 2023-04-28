@@ -8,7 +8,7 @@ import AdmZip from 'adm-zip';
 import { logger } from './utils/logger.mjs';
 
 // https://github.com/joomla/joomla-cms/releases/download/4.1.2/Joomla_4.1.2-Stable-Full_Package.zip
-export async function fetchJoomla(params) {
+async function fetchJoomla(params) {
   if (!existsSync(resolve(cwd(), 'www'))) {
     try {
       await mkdir('www', { recursive: true });
@@ -21,3 +21,5 @@ export async function fetchJoomla(params) {
     logger('A Joomla installation already exists, skipping clonning...');
   }
 };
+
+export {fetchJoomla};

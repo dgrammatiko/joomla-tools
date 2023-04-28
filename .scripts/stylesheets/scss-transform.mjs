@@ -7,7 +7,7 @@ import Postcss from 'postcss';
 import Sass from 'sass';
 import { logger } from '../utils/logger.es6.js';
 
-export async function compile(file) {
+async function compile(file) {
   const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
     .replace(/\.scss$/, '.css')
     .replace(`${sep}media_source${sep}`, `${sep}media${sep}`);
@@ -44,3 +44,5 @@ export async function compile(file) {
 
   logger(`✅ SCSS File compiled: ${cssFile}`);
 };
+
+export {compile};

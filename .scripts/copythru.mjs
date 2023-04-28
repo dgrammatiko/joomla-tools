@@ -18,7 +18,7 @@ import { logger } from './utils/logger.mjs';
  * @param {object} options  The options
  * @param {string} path     The folder that needs to be compiled, optional
  */
-export async function copyThru(options, path) {
+async function copyThru(options, path) {
   if (!existsSync(join(cwd(), 'media_source'))) {
     logger('The tools aren\'t initialized properly. Exiting');
     exit(1);
@@ -46,3 +46,5 @@ export async function copyThru(options, path) {
     .find(`${cwd()}/media_source`, { matching: 'images', files: false, directories: true })
     .forEach((file) => jetpack.copy(file, file.replace(`media_source${sep}`, `media${sep}`), { overwrite: true }));
 };
+
+export {copyThru};

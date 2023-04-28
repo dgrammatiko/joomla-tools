@@ -9,6 +9,15 @@
       "type": "php",
       "request": "launch",
       "port": 9090
+      // pecl install xdebug
+      // Add to php.ini:
+      // zend_extension=xdebug
+      // Add to conf.d/ext-xdebug.ini:
+      // [xdebug]
+      // xdebug.mode=debug
+      // xdebug.start_with_request=yes
+      // xdebug.client_port=9003
+      // xdebug.client_host=127.0.0.1
     },
     {
       "name": "Launch currently open script",

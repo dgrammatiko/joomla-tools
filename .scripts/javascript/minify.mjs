@@ -9,7 +9,7 @@ import { logger } from '../utils/logger.mjs';
  * @param file
  * @returns {Promise<void>}
  */
-export async function minifyJs(file) {
+async function minifyJs(file) {
   const fileContent = await readFile(file, { encoding: 'utf8' });
   const content = await minify(fileContent, { sourceMap: false, format: { comments: false } });
   await writeFile(file.replace('.js', '.min.js'), content.code, { encoding: 'utf8', mode: 0o644 });
@@ -22,4 +22,6 @@ export async function minifyJs(file) {
  * @param code
  * @returns {Promise<void>}
  */
-export const minifyJsCode = async (code) => minify(code, { sourceMap: false, format: { comments: false } });
+const minifyJsCode = async (code) => minify(code, { sourceMap: false, format: { comments: false } });
+
+export {minifyJs, minifyJsCode}

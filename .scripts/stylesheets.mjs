@@ -21,7 +21,7 @@ import { handleCssFile } from './stylesheets/handle-css.mjs';
  * @param {object} options  The options
  * @param {string} path     The folder that needs to be compiled, optional
  */
-export async function stylesheets(options, path) {
+async function stylesheets(options, path) {
   if (!existsSync(join(cwd(), 'media_source'))) {
     logger('The folder media_source does not exist. Exiting');
     exit(1);
@@ -55,3 +55,5 @@ export async function stylesheets(options, path) {
         .map((file) => handleScssFile(file, file.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(`${sep}media_source${sep}`, `${sep}media${sep}`).replace('.scss', '.css'))),
   ]);
 };
+
+export {stylesheets};

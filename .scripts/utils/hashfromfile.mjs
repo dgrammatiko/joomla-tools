@@ -14,3 +14,5 @@ export function createHashFromFile(filePath) {
     createReadStream(filePath).on('data', (data) => hash.update(data)).on('end', () => res(hash.digest('hex')));
   });
 }
+
+export {createHashFromFile};

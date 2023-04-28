@@ -7,7 +7,7 @@ import { logger } from './logger.mjs';
  *
  * @returns {{stop: stop}}
  */
-export class Timer {
+class Timer {
   constructor(name) {
     this.start = new Date();
     this.name = name;
@@ -17,3 +17,5 @@ export class Timer {
     logger(`Timer: ${this.name} finished in ${(new Date()).getTime() - this.start.getTime()}ms`);
   }
 }
+
+export {Timer}

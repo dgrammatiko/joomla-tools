@@ -14,7 +14,7 @@ import { logger } from '../utils/logger.mjs';
  *
  * @param file the full path to the file + filename + extension
  */
-export async function handleESMFile(file) {
+async function handleESMFile(file) {
   logger(`Transpiling ES2018 file: ${basename(file).replace('.mjs', '.js')}...`);
   const newPath = file.replace(/\.mjs$/, '').replace(`${sep}media_source${sep}`, `${sep}media${sep}`);
   const bundle = await rollup({
@@ -76,3 +76,5 @@ export async function handleESMFile(file) {
   // closes the bundle
   await bundle.close();
 };
+
+export {handleESMFile};

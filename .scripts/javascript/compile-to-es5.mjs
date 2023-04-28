@@ -11,7 +11,7 @@ import { logger } from '../utils/logger.mjs';
  *
  * @param file the full path to the file + filename + extension
  */
-export async function handleESMToLegacy(file) {
+async function handleESMToLegacy(file) {
   logger(`Transpiling ES5 file: ${basename(file).replace('.js', '-es5.js')}...`);
   const bundleLegacy = await rollup({
     input: resolve(file),
@@ -52,3 +52,5 @@ export async function handleESMToLegacy(file) {
     minifyJs(resolve(`${file.replace(/\.js$/, '')}-es5.js`));
   });
 };
+
+export {handleESMToLegacy};

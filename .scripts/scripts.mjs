@@ -23,7 +23,7 @@ const RootPath = process.cwd();
  * @param { string } path    The folder that needs to be compiled, optional
  * @param { string } mode    esm for ES2017, es5 for ES5, both for both
  */
-export async function scripts(options, path) {
+async function scripts(options, path) {
   const files = [];
   const folders = [];
 
@@ -50,3 +50,5 @@ export async function scripts(options, path) {
     ...[].concat(...computedFiles).filter(file => file.endsWith('.mjs')).map(hanler => handleESMFile(hanler)),
   ]);
 };
+
+export {scripts};
