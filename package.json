@@ -19,7 +19,8 @@
     "lint-css": "npx stylelint media_src/css/.",
     "lint-js": "npx eslint media_src/js/.",
     "lint": "npm run lint-css && npm run lint-js",
-    "update:browserlist": "npx browserslist@latest --update-db"
+    "update:browserlist": "npx browserslist@latest --update-db",
+    "prepublishOnly": "np --no-cleanup --yolo --no-publish"
   },
   "repository": {
     "type": "git",
@@ -77,5 +78,9 @@
     "stylelint-config-recommended": "^10.0.1",
     "symlink-dir": "^5.1.1",
     "terser": "^5.16.5"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.21.4",
+    "np": "^7.7.0"
   }
 }
