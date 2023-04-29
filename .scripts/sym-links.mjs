@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, mkdirSync } from 'node:fs';
 import symlinkDir from 'symlink-dir';
 
-async function symLink() {
+export async function symLink() {
   if (!existsSync('./media')) {
     mkdirSync('./media');
   }
@@ -28,7 +28,7 @@ async function symLink() {
         case 'plugins':
           for (const plgType of readdirSync(`./src/${extensionType}/${extensionName}`)) {
             for (const plgName of readdirSync(`./src/${extensionType}/${extensionName}/${plgType}`)) {
-              symlinkDir(`./src/${extensionType}/${extensionName}/${plgType}/${plgName}`, `./www/plugisn/${plgType}/${plgName}`);
+              symlinkDir(`./src/${extensionType}/${extensionName}/${plgType}/${plgName}`, `./www/plugins/${extensionName}/${plgType}/${plgName}`);
             }
           }
           break;
@@ -67,5 +67,3 @@ async function symLink() {
     });
   }
 };
-
-export {symLink};
