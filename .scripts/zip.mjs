@@ -1,9 +1,19 @@
-import { readdirSync, existsSync, mkdirSync } from 'node:fs';
+import { readdirSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
 const zips = [];
-let zip;
+let zip, replacables;
 
-async function packageExtensions() {
+function applyReplacements(file, replacables) {
+  const content = readFileSync(file, { encoding: 'utf8'});
+  return !replacables.version ? content : content.replace('{{version}}', replacables.version);
+}
+
+async function addFilesRecursively(folder, { base: base, replace: replace }, replacables, zipper) {
+  jetpack.find(folder).forEach((file) => zipper.addFile(file.replace(base, replace), applyReplacements(file, replacables)));
+}
+
+export async function packageExtensions(options) {
   if (!existsSync('./src')) {
     throw new Error('There are no extensions or media, please run build before linking...');
   }
@@ -12,60 +22,63 @@ async function packageExtensions() {
     for (const extensionName of readdirSync(`./src/${extensionType}`)) {
       switch(extensionType) {
         case 'components':
+          replacables = options['joomla-extensions'].components.filter((x) => x.name === extensionName)[0];
           zip = new admZip();
           if (existsSync(`./src/${extensionType}/${extensionName}/administrator`)) {
-            zip.addLocalFolder(`./src/${extensionType}/${extensionName}/administrator`, 'administrator', /^(?!\.DS_Store)/);
+            addFilesRecursively(`./src/${extensionType}/${extensionName}/administrator`, 'administrator', replacables, zip);
             const xml = zip.getEntry(`administrator/${extensionName}.xml`);
             zip.deleteEntry(`administrator/${extensionName}.xml`);
             zip.addFile(`${extensionName}.xml`, xml.getData())
           }
           if (existsSync(`./src/${extensionType}/${extensionName}/site`)) {
-            zip.addLocalFolder(`./src/${extensionType}/${extensionName}/site`, 'site', /^(?!\.DS_Store)/);
+            addFilesRecursively(`./src/${extensionType}/${extensionName}/site`, 'site', replacables, zip);
           }
           if (existsSync(`./media/com_${extensionName}`)) {
-            zip.addLocalFolder(`./media/com_${extensionName}`, 'media', /^(?!\.DS_Store)/);
+            addFilesRecursively(`./media/com_${extensionName}`, 'media', {}, zip);
           }
-          if (existsSync(`./media/com_${extensionName}`)) {
-            zip.addLocalFolder(`./media/com_${extensionName}`, 'media', /^(?!\.DS_Store)/);
-          }
-          zips.push({name: `com_${extensionName}.zip`, zip: zip });
+          zips.push({name: `com_${extensionName}_v${replacables.version}.zip`, zip: zip });
           break;
         case 'modules':
           zip = new admZip();
           for (const actualModName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
-            zip.addLocalFolder(`./src/${extensionType}/${extensionName}/${actualModName}`, '', /^(?!\.DS_Store)/);
+            replacables = options['joomla-extensions']['modules'][extensionName].filter((x) => x.name === actualModName)[0];
+            addFilesRecursively(`./src/${extensionType}/${extensionName}/${actualModName}`, '', replacables, zip);
             if (existsSync(`./media/mod_${actualModName}`)) {
-              zip.addLocalFolder(`./media/mod_${actualModName}`, 'media', /^(?!\.DS_Store)/);
+              addFilesRecursively(`./media/mod_${actualModName}`, 'media', replacables, zip);
             }
-            zips.push({name: `mod_${extensionName}_${actualModName}.zip`, zip: zip });
+            zips.push({name: `mod_${extensionName}_${actualModName}_v${replacables.version}.zip`, zip: zip });
           }
           break;
         case 'plugins':
           for (const plgName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
+            replacables = options['joomla-extensions'].plugins.filter((x) => x.name === extensionName)[0];
             zip = new admZip();
-            zip.addLocalFolder(`./src/${extensionType}/${extensionName}/${plgName}`, '', /^(?!\.DS_Store)/);
+            addFilesRecursively(`./src/${extensionType}/${extensionName}/${plgName}`, '', replacables, zip);
             if (existsSync(`./media/plg_${extensionName}_${plgName}`)) {
-              zip.addLocalFolder(`./media/plg_${extensionName}_${plgName}`, 'media', /^(?!\.DS_Store)/);
+              addFilesRecursively(`./media/plg_${extensionName}_${plgName}`, 'media', {}, zip);
             }
-            zips.push({name: `plg_${extensionName}_${plgName}.zip`, zip: zip });
+            zips.push({name: `plg_${extensionName}_${plgName}_v${replacables.version}.zip`, zip: zip });
           }
           break;
         case 'libraries':
+          replacables = options['joomla-extensions'].libraries.filter((x) => x.name === extensionName)[0];
           zip = new admZip();
-          zip.addLocalFolder(`./src/${extensionType}/${extensionName}`, '', /^(?!\.DS_Store)/);
+          addFilesRecursively(`./src/${extensionType}/${extensionName}`, '', replacables, zip);
           if (existsSync(`./media/lib_${extensionName}`)) {
-            zip.addLocalFolder(`./media/lib_${extensionName}`, 'media', /^(?!\.DS_Store)/);
+            addFilesRecursively(`./media/lib_${extensionName}`, 'media', replacables, zip);
           }
-          zips.push({name: `lib_${extensionType}_${extensionName}.zip`, zip: zip });
+          zips.push({name: `lib_${extensionType}_${extensionName}_v${replacables.version}.zip`, zip: zip });
           break;
         case 'templates':
           for (const actualTplName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
+            replacables = options['joomla-extensions'].templates[extensionName].filter((x) => x.name === actualTplName)[0];
             zip = new admZip();
-            zip.addLocalFolder(`./src/${extensionType}/${extensionName}/${actualTplName}`, '', /^(?!\.DS_Store)/);
+            addFilesRecursively(`./src/${extensionType}/${extensionName}/${actualTplName}`, '', replacables, zip);
             if (existsSync(`./media/${extensionType}/${extensionName}/${actualTplName}`)) {
+              addFilesRecursively(`./media/${extensionType}/${extensionName}/${actualTplName}`, 'media', {}, zip);
               zip.addLocalFolder(`./media/${extensionType}/${extensionName}/${actualTplName}`, 'media', /^(?!\.DS_Store)/);
             }
-            zips.push({name: `tpl_${extensionName}_${actualTplName}.zip`, zip: zip });
+            zips.push({name: `tpl_${extensionName}_${actualTplName}_v${replacables.version}.zip`, zip: zip });
           }
           break;
         default:
@@ -80,4 +93,3 @@ async function packageExtensions() {
   }
 };
 
-export {packageExtensions};
