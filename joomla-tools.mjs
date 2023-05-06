@@ -34,7 +34,6 @@ async function main() {
   const ppk = getPackage();
   const options = { ...defaultParams, ...ppk };
 
-  console.log(options)
   const opts = (new Command())
     .option('-i, --init', 'Initialise')
     .option('-l, --link [type]', 'Link')
@@ -63,7 +62,11 @@ async function main() {
   }
 
   if (opts.watch) {
+    if (globalThis.isJoomla) {
+      return;
+    }
     logger('Start watching...');
+    resolveFn('.scripts/watch.mjs', 'watching', 'media_source', options);
   }
 
   if (opts.release) {
