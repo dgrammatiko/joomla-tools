@@ -18,10 +18,9 @@ import { handleCssFile } from './stylesheets/handle-css.mjs';
  *         css files to have ext: .css
  * Ignores scss files that their filename starts with `_`
  *
- * @param {object} options  The options
  * @param {string} path     The folder that needs to be compiled, optional
  */
-async function stylesheets(options, path) {
+async function stylesheets(path) {
   if (!existsSync(join(cwd(), 'media_source'))) {
     logger('The folder media_source does not exist. Exiting');
     exit(1);

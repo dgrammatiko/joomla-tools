@@ -10,7 +10,7 @@ function getPackage() {
     throw new Error(`No package.json found in ${process.cwd()}`);
   }
   try {
-    return JSON.Parse(readFileSync(path, { encoding: 'utf-8' }));
+    return JSON.parse(readFileSync(path, { encoding: 'utf-8' }));
   } catch(err) {
     return {};
   }

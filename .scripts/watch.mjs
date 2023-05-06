@@ -11,7 +11,7 @@ import { debounce } from './utils/debounce.mjs';
 const RootPath = process.cwd();
 
 const processFile = (file) => {
-  if (extname(file) === '.js' || extname(file) === '.mjs' && !dirname(file).startsWith(join(RootPath, 'build/media_source/vendor/bootstrap/js'))) {
+  if ((extname(file) === '.js' || extname(file) === '.mjs') && !dirname(file).startsWith(join(RootPath, 'build/media_source/vendor/bootstrap/js'))) {
     if (file.match(/\.mjs$/) && !basename(file).startsWith('_')) {
       debounce(handleESMFile(file), 300);
     }
@@ -29,12 +29,15 @@ const processFile = (file) => {
 };
 
 const watching = (path) => {
-  const watchingPath = path ? join(RootPath, path) : join(RootPath, 'build/media_source');
-  const watcher = chokidar.watch(watchingPath, {
+  const watcher = chokidar.watch(path ? join(RootPath, path) : join(RootPath, 'media_source'),
+    {
      // ignore dotfiles
     ignored: /(^|[/\\])\../,
     persistent: true,
   });
+
+  // Close gracefully
+  process.on('SIGINT', () => watcher.close());
 
   watcher
     .on('add', (file) => processFile(file))

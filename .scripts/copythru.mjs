@@ -15,10 +15,9 @@ import { logger } from './utils/logger.mjs';
  *         css files to have ext: .css
  * Ignores scss files that their filename starts with `_`
  *
- * @param {object} options  The options
  * @param {string} path     The folder that needs to be compiled, optional
  */
-async function copyThru(options, path) {
+async function copyThru(path) {
   if (!existsSync(join(cwd(), 'media_source'))) {
     logger('The tools aren\'t initialized properly. Exiting');
     exit(1);

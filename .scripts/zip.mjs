@@ -13,10 +13,12 @@ async function addFilesRecursively(folder, { base: base, replace: replace }, rep
   jetpack.find(folder).forEach((file) => zipper.addFile(file.replace(base, replace), applyReplacements(file, replacables)));
 }
 
-export async function packageExtensions(options) {
+export async function packageExtensions() {
   if (!existsSync('./src')) {
     throw new Error('There are no extensions or media, please run build before linking...');
   }
+
+  const options = globalThis.options;
 
   for (const extensionType of readdirSync('./src')) {
     for (const extensionName of readdirSync(`./src/${extensionType}`)) {

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, mkdirSync } from 'node:fs';
 import symlinkDir from 'symlink-dir';
 
-export async function symLink() {
+export async function symLink(path) {
   if (!existsSync('./media')) {
     mkdirSync('./media');
   }
