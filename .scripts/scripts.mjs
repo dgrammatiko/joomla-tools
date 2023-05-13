@@ -1,11 +1,12 @@
 import { stat } from 'node:fs/promises';
-// import { sep } from 'path';
-import recursive from 'recursive-readdir';
+// import { sep } from 'node:path';
+import pkgFsJetpack from 'fs-jetpack';
+
 import { logger } from './utils/logger.mjs';
 import { handleES5File } from './javascript/handle-es5.mjs';
 import { handleESMFile } from './javascript/compile-to-es2018.mjs';
 
-
+const { find } = pkgFsJetpack;
 const RootPath = process.cwd();
 
 /**
@@ -42,7 +43,7 @@ async function scripts(path) {
   }
 
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = await Promise.all(folders.map(folder => recursive(folder, ['!*.+(mjs|js)'])));
+  const computedFiles = await Promise.all(folders.map(folder => find(folder, { matching: ['*.+(mjs|js)'] })));
 
   Promise.all([
     ...[].concat(...computedFiles).filter(file => file.endsWith('.js')).map(hanler => handleES5File(hanler)),

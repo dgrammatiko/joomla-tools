@@ -2,11 +2,13 @@ import { existsSync } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { cwd, exit } from 'node:process';
 import { join, sep } from 'node:path';
-import recursive from 'recursive-readdir';
+import pkgFsJetpack from 'fs-jetpack';
 
 import { logger } from './utils/logger.mjs';
 import { handleScssFile } from './stylesheets/handle-scss.mjs';
 import { handleCssFile } from './stylesheets/handle-css.mjs';
+
+const { find } = pkgFsJetpack;
 
 /**
  * Method that will crawl the media_source folder
@@ -45,7 +47,7 @@ async function stylesheets(path) {
   }
 
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = await Promise.all(folders.map(folder => recursive(folder, ['!*.+(scss|css)'])));
+  const computedFiles = await Promise.all(folders.map(folder => find(folder, { matching: ['*.+(scss|css)'] })));
 
   return Promise.all([
     ...[].concat(...computedFiles).filter(file => file.endsWith('.css') && !file.endsWith('.min.css')).map((file) => handleCssFile(file)),
