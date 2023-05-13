@@ -49,8 +49,7 @@ async function stylesheets(path) {
 
   return Promise.all([
     ...[].concat(...computedFiles).filter(file => file.endsWith('.css') && !file.endsWith('.min.css')).map((file) => handleCssFile(file)),
-    ...[].concat(...computedFiles)
-        .filter(file => file.endsWith('.scss') && !file.match(/(\/|\\)_[^/\\]+$/) && !(file.match(/\/scss\//) || file.match(/\\scss\\/)))
+    ...[].concat(...computedFiles).filter(file => file.endsWith('.scss') && !file.match(/(\/|\\)_[^/\\]+$/) && (file.match(/\/scss\//) || file.match(/\\scss\\/)))
         .map((file) => handleScssFile(file, file.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(`${sep}media_source${sep}`, `${sep}media${sep}`).replace('.scss', '.css'))),
   ]);
 };
