@@ -16,19 +16,22 @@ if (existsSync(join(cwd(), 'package.json'))) {
   globalThis.isJoomla = pkg.name === 'joomla';
 } else {
   logger('No package.json file. Exiting');
-  console.error(err), exit(1);
+  /* eslint-disable-next-line */
+  console.error(err);
+  exit(1);
 }
 
 function errorCatcher(err) {
   logger('Something blow up. Exiting');
+  /* eslint-disable-next-line */
   console.error(err), exit(1);
 }
 
 function resolveFn(path, resolvedFunction, ...args) {
   if (existsSync(join(cwd(), path))) {
-    import(join(cwd(), path)).then(mod => mod[resolvedFunction](...args)).catch(errorCatcher);
+    import(join(cwd(), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
   } else {
-    import(join(dirname(import.meta.url), path)).then(mod => mod[resolvedFunction](...args)).catch(errorCatcher);
+    import(join(dirname(import.meta.url), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
   }
 }
 
@@ -60,9 +63,9 @@ async function main() {
   if (opts.build) {
     if (globalThis.isJoomla) return;
 
-    logger('Start building...'),
-    resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args), // Copy files through
-    resolveFn('.scripts/stylesheets.mjs', 'stylesheets', ...program.args), // Compile css files
+    logger('Start building...');
+    resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
+    resolveFn('.scripts/stylesheets.mjs', 'stylesheets', ...program.args); // Compile css files
     resolveFn('.scripts/scripts.mjs', 'scripts', ...program.args); // Compile script files
   }
 
