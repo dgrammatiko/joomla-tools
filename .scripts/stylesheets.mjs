@@ -56,4 +56,4 @@ async function stylesheets(path) {
   ]);
 };
 
-export {stylesheets};
+export { stylesheets };

@@ -51,4 +51,4 @@ async function scripts(path) {
   ]);
 };
 
-export {scripts};
+export { scripts };

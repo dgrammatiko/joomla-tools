@@ -29,12 +29,7 @@ const processFile = (file) => {
 };
 
 const watching = (path) => {
-  const watcher = chokidar.watch(path ? join(RootPath, path) : join(RootPath, 'media_source'),
-    {
-     // ignore dotfiles
-    ignored: /(^|[/\\])\../,
-    persistent: true,
-  });
+  const watcher = chokidar.watch(path ? join(RootPath, path) : join(RootPath, 'media_source'), { ignored: /(^|[/\\])\../, persistent: true });
 
   // Close gracefully
   process.on('SIGINT', () => watcher.close());
@@ -45,4 +40,4 @@ const watching = (path) => {
   // @todo Handle the removal .on('unlink', path => log(`File ${path} has been removed`));
 };
 
-export {watching};
+export { watching };

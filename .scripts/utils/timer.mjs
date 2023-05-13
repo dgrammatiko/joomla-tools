@@ -18,4 +18,4 @@ class Timer {
   }
 }
 
-export {Timer}
+export { Timer }

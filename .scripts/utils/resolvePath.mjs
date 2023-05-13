@@ -9,10 +9,10 @@ import { sep } from 'node:path';
  */
 const resolvePath = (path, type = 'extension') => {
   if (type !== 'extension') {
-    return path.replace(`${sep}media_source${sep}`, `${sep}media${sep}`);
+    return path.replace(`${sep}build${sep}media_source${sep}`, `${sep}media${sep}`);
   } else {
     return path.replace(`${sep}media_source${sep}`, `${sep}media${sep}`);
   }
 }
 
-export {resolvePath};
+export { resolvePath };

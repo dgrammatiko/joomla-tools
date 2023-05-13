@@ -46,4 +46,4 @@ async function copyThru(path) {
     .forEach((file) => jetpack.copy(file, file.replace(`media_source${sep}`, `media${sep}`), { overwrite: true }));
 };
 
-export {copyThru};
+export { copyThru };
