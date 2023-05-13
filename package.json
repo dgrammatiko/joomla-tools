@@ -1,6 +1,6 @@
 {
   "name": "@dgrammatiko/joomla-tools",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "publishConfig": {
     "access": "public"
   },
@@ -21,7 +21,8 @@
     "lint-js": "npx eslint media_src/js/.",
     "lint": "npm run lint-css && npm run lint-js",
     "update:browserlist": "npx browserslist@latest --update-db",
-    "prepublishOnly": "np --no-cleanup --yolo --no-publish"
+    "prepublishOnly": "np --no-cleanup --yolo --no-publish",
+    "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact"
   },
   "repository": {
     "type": "git",
@@ -48,39 +49,38 @@
   },
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "peerDependencies": {
-    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-env": "7.21.5",
     "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-commonjs": "25.0.0",
     "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-node-resolve": "15.0.2",
     "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "0.4.1",
     "adm-zip": "^0.5.10",
     "autoprefixer": "^10.4.13",
-    "axios": "^1.3.4",
     "chalk": "^5.2.0",
     "chokidar": "^3.5.3",
-    "commander": "^10.0.0",
-    "cssnano": "^5.1.15",
-    "eslint": "^8.35.0",
+    "commander": "10.0.1",
+    "cssnano": "6.0.1",
+    "eslint": "8.40.0",
     "fs-jetpack": "^5.1.0",
-    "postcss": "^8.4.21",
+    "postcss": "8.4.23",
     "postcss-cli": "10.1.0",
     "postcss-custom-media": "9.1.3",
     "postcss-custom-selectors": "7.1.3",
-    "postcss-discard-comments": "5.1.2",
+    "postcss-discard-comments": "6.0.0",
     "postcss-easy-import": "^4.0.0",
     "postcss-mixins": "9.0.4",
     "postcss-nested": "6.0.1",
     "postcss-preset-env": "8.3.2",
     "recursive-readdir": "^2.2.3",
-    "rollup": "^3.17.3",
-    "rtlcss": "^4.0.0",
-    "sass": "^1.58.3",
-    "stylelint": "^15.2.0",
-    "stylelint-config-recommended": "^10.0.1",
+    "rollup": "3.21.6",
+    "rtlcss": "4.1.0",
+    "sass": "1.62.1",
+    "stylelint": "15.6.1",
+    "stylelint-config-recommended": "12.0.0",
     "symlink-dir": "^5.1.1",
-    "terser": "^5.16.5"
+    "terser": "5.17.3"
   },
   "devDependencies": {
     "np": "^7.7.0"

@@ -2,7 +2,6 @@ import { cwd } from 'node:process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { mkdir } from 'node:fs/promises';
-import axios from 'axios';
 import AdmZip from 'adm-zip';
 import { logger } from './utils/logger.mjs';
 
@@ -17,8 +16,9 @@ async function fetchJoomla(params) {
     }
     try {
       await mkdir('www', { recursive: true });
-      const { data } = await axios.get(url, { responseType: 'arraybuffer' });
-      await (new AdmZip(data)).extractAllTo(resolve(cwd(), 'www'), true);
+      const response = await fetch(url);
+      const data = await response.arrayBuffer();
+      (new AdmZip(Buffer.from(data))).extractAllTo(resolve(cwd(), 'www'), true);
     } catch(err) {
       logger('An error occured, Joomla was not downloaded!');
     }
