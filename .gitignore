@@ -6,3 +6,5 @@ www
 .git
 .vscode
 !bin
+coverage
+test/stubs

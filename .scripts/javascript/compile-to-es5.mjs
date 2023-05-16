@@ -51,10 +51,12 @@ async function handleESMToLegacy(file) {
     sourcemap: false,
     file: resolve(`${file.replace(/\.js$/, '')}-es5.js`),
   })
-  .then(() => {
+  .then((value) => minifyJsCode(value.output[0].code))
+  .then((content) => {
     logger(`ES5 file: ${basename(file).replace('.js', '-es5.js')}: ✅ transpiled`);
-    minifyJs(resolve(`${file.replace(/\.js$/, '')}-es5.js`));
-  });
+
+    return writeFile(resolve(`${file.replace(/\.js$/, '')}-es5.min.js`), content.code, { encoding: 'utf8', mode: 0o644 });
+  })
 };
 
 export { handleESMToLegacy };

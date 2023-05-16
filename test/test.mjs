@@ -1,15 +1,14 @@
-// import fs from 'node:fs/promises';
 import { existsSync, rmSync, readFileSync } from 'node:fs';
 import test from 'ava';
 import { handleESMFile } from '../.scripts/javascript/compile-to-es2018.mjs';
 
-test.beforeEach(async (t) => {
+test.before(async (t) => {
   if (existsSync('test/stubs/js/new')) {
     rmSync('test/stubs/js/new', { force: true, recursive: true });
   }
 });
 
-test.afterEach(async (t) => {
+test.after(async (t) => {
   if (existsSync('test/stubs/js/new')) {
     rmSync('test/stubs/js/new', { force: true, recursive: true });
   }
@@ -31,14 +30,9 @@ test('Module file without import', async (t) => {
   const inputFile = `${global.searchPath}/${file}`;
   const outputFile = `${global.replacePath}/${file.replace('.mjs', '.js')}`;
 
-  const cont = readFileSync(inputFile, { encoding: 'utf8' });
   await t.notThrowsAsync(handleESMFile(inputFile));
-
   await handleESMFile(inputFile);
 
   t.truthy(existsSync(outputFile));
-
-  const cont2 = readFileSync(outputFile, { encoding: 'utf8' });
-
-  t.is(cont2, cont);
+  t.is(readFileSync(inputFile, { encoding: 'utf8' }), readFileSync(outputFile, { encoding: 'utf8' }));
 });
