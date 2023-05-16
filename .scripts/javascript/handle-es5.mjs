@@ -1,9 +1,16 @@
 import { basename, dirname, sep } from 'node:path';
 import { copy } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { minifyJs } from './minify.mjs';
 import { logger } from '../utils/logger.mjs';
 
 async function handleES5File(file) {
+  if (!existsSync(file)) {
+    throw new Error(`File ${file} doesn't exist`);
+  }
+  if (!globalThis.searchPath || !globalThis.replacePath) {
+    throw new Error(`Global searchPath and replacePath are not defined`);
+  }
   if (file.endsWith('.es5.js')) {
     logger(`Processing Legacy js file: ${basename(file)}...`);
     // ES5 file, we will copy the file and then minify it in place

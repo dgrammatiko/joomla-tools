@@ -23,7 +23,8 @@
     "update:browserlist": "npx browserslist@latest --update-db",
     "prepublishOnly": "npx np --no-cleanup --yolo --no-publish",
     "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
-    "test": "ava"
+    "test": "ava",
+    "coverage": "c8 ava"
   },
   "repository": {
     "type": "git",
@@ -82,6 +83,7 @@
   },
   "devDependencies": {
     "ava": "^5.2.0",
+    "c8": "^7.13.0",
     "eslint": "8.40.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.27.5",

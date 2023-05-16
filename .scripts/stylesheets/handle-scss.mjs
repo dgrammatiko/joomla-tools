@@ -9,6 +9,12 @@ import { logger } from '../utils/logger.mjs';
 import { existsSync } from 'node:fs';
 
 async function handleScssFile(file) {
+  if (!existsSync(file)) {
+    throw new Error(`File ${file} doesn't exist`);
+  }
+  if (!globalThis.searchPath || !globalThis.replacePath) {
+    throw new Error(`Global searchPath and replacePath are not defined`);
+  }
   const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
     .replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath)
     .replace('.scss', '.css');

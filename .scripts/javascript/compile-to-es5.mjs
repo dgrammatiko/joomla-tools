@@ -1,4 +1,5 @@
 import { basename, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { rollup } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { babel } from '@rollup/plugin-babel';
@@ -12,6 +13,9 @@ import { logger } from '../utils/logger.mjs';
  * @param file the full path to the file + filename + extension
  */
 async function handleESMToLegacy(file) {
+  if (!existsSync(file)) {
+    throw new Error(`File ${file} doesn't exist`);
+  }
   logger(`Transpiling ES5 file: ${basename(file).replace('.js', '-es5.js')}...`);
   const bundleLegacy = await rollup({
     input: resolve(file),

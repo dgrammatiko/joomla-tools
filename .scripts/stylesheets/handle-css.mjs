@@ -1,11 +1,19 @@
 import { dirname } from 'node:path';
 import { copy, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import Postcss from 'postcss';
 import Autoprefixer from 'autoprefixer';
 import CssNano from 'cssnano';
 import { logger } from '../utils/logger.mjs';
 
 async function handleCssFile(file) {
+  if (!existsSync(file)) {
+    throw new Error(`File ${file} doesn't exist`);
+  }
+  if (!globalThis.searchPath || !globalThis.replacePath) {
+    throw new Error(`Global searchPath and replacePath are not defined`);
+  }
+
   const outputFile = file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath);
   try {
     // CSS file, we will copy the file and then minify it in place

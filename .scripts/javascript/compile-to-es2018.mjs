@@ -1,5 +1,6 @@
-import { basename, sep, resolve } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { basename, dirname, sep, resolve } from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { rollup } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import jsonFn from '@rollup/plugin-json';
@@ -15,8 +16,17 @@ import { logger } from '../utils/logger.mjs';
  * @param file the full path to the file + filename + extension
  */
 async function handleESMFile(file) {
+  if (!existsSync(file)) {
+    throw new Error(`File ${file} doesn't exist`);
+  }
+  if (!globalThis.searchPath || !globalThis.replacePath) {
+    throw new Error(`Global searchPath and replacePath are not defined`);
+  }
   logger(`Transpiling ES2018 file: ${basename(file).replace('.mjs', '.js')}...`);
-  const newPath = file.replace(/\.mjs$/, '').replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath);
+  const newPath = file.replace(/\.mjs$/, '').replace(`${globalThis.searchPath}`, globalThis.replacePath);
+  if (!existsSync(dirname(newPath))) {
+    await mkdir(dirname(newPath), { recursive: true, mode: 0o755 });
+  }
   const bundle = await rollup({
     input: resolve(file),
     plugins: [
