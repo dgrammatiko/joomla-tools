@@ -24,4 +24,4 @@ async function minifyJs(file) {
  */
 const minifyJsCode = async (code) => minify(code, { sourceMap: false, format: { comments: false } });
 
-export {minifyJs, minifyJsCode}
+export { minifyJs, minifyJsCode }

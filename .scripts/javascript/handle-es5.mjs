@@ -1,5 +1,5 @@
 import { basename, dirname, sep } from 'node:path';
-import FsExtra from 'fs-extra';
+import { copy } from 'node:fs/promises';
 import { minifyJs } from './minify.mjs';
 import { logger } from '../utils/logger.mjs';
 
@@ -8,12 +8,15 @@ async function handleES5File(file) {
     logger(`Processing Legacy js file: ${basename(file)}...`);
     // ES5 file, we will copy the file and then minify it in place
     // Ensure that the directories exist or create them
-    await FsExtra.ensureDir(dirname(file).replace(`${sep}media_source${sep}`, `${sep}media${sep}`));
-    await FsExtra.copy(file, file.replace(`${sep}media_source${sep}`, `${sep}media${sep}`).replace('.es5.js', '.js'), { preserveTimestamps: true });
+    if (!existsSync(dirname(file).replace(`${sep}${globalThis.searchPath}`, globalThis.replacePath))) {
+      await Fs.mkdir(dirname(file).replace(`${sep}${globalThis.searchPath}`, globalThis.replacePath), { recursive: true, mode: 0o755 });
+    }
+
+    await copy(file, file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath).replace('.es5.js', '.js'), { preserveTimestamps: true });
     logger(`Legacy js file: ${basename(file)}: ✅ copied`);
 
-    minifyJs(file.replace(`${sep}media_source${sep}`, `${sep}media${sep}`).replace('.es5.js', '.js'));
+    minifyJs(file.replace(globalThis.searchPath, globalThis.replacePath).replace('.es5.js', '.js'));
   }
 };
 
-export {handleES5File};
+export { handleES5File };

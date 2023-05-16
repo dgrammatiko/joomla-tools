@@ -1,6 +1,12 @@
-import { readdirSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import {
+  readdirSync,
+  existsSync,
+  mkdirSync,
+  readFileSync
+} from 'node:fs';
 import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
+
 const zips = [];
 let zip, replacables;
 

@@ -1,19 +1,25 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
 import { argv, cwd, exit } from 'node:process';
-import { dirname, join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 import { createCommand } from 'commander';
-import { createRequire } from 'module';
 
 import { logger } from './.scripts/utils/logger.mjs';
 import { defaultParams } from './.scripts/utils/defaultParams.mjs';
 import { getPackage } from './.scripts/utils/getPackage.mjs';
 
-const require = createRequire(import.meta.url);
+let pkg;
 
 if (existsSync(join(cwd(), 'package.json'))) {
-  const pkg = require(join(cwd(), 'package.json'));
+  pkg = getPackage('package.json');
   globalThis.isJoomla = pkg.name === 'joomla';
+  if (globalThis.jsJoomla) {
+    globalThis.searchPath = `build${sep}media_source`;
+    globalThis.replacePath = `${sep}media${sep}`;
+  } else {
+    globalThis.searchPath = 'media_source';
+    globalThis.replacePath = `${sep}media${sep}`;
+  }
 } else {
   logger('No package.json file. Exiting');
   /* eslint-disable-next-line */
@@ -24,7 +30,8 @@ if (existsSync(join(cwd(), 'package.json'))) {
 function errorCatcher(err) {
   logger('Something blow up. Exiting');
   /* eslint-disable-next-line */
-  console.error(err), exit(1);
+  console.error(err);
+  exit(1);
 }
 
 function resolveFn(path, resolvedFunction, ...args) {
@@ -36,8 +43,7 @@ function resolveFn(path, resolvedFunction, ...args) {
 }
 
 async function main() {
-  const ppk = getPackage();
-  globalThis.options = { ...ppk, ...defaultParams };
+  globalThis.options = { ...pkg, ...defaultParams };
   const program = createCommand();
   const opts = program
     .option('-i, --init', 'Initialise')

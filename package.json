@@ -21,8 +21,9 @@
     "lint-js": "npx eslint **/*.mjs",
     "lint": "npm run lint-css && npm run lint-js",
     "update:browserlist": "npx browserslist@latest --update-db",
-    "prepublishOnly": "np --no-cleanup --yolo --no-publish",
-    "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact"
+    "prepublishOnly": "npx np --no-cleanup --yolo --no-publish",
+    "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
+    "test": "ava"
   },
   "repository": {
     "type": "git",
@@ -80,7 +81,7 @@
     "terser": "^5.17.3"
   },
   "devDependencies": {
-    "np": "^7.7.0",
+    "ava": "^5.2.0",
     "eslint": "8.40.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.27.5",

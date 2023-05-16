@@ -1,5 +1,7 @@
-import { readFileSync, existsSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join } from 'node:path';
+
+const require = createRequire(import.meta.url);
 
 /**
  * Read the package.json
@@ -10,10 +12,10 @@ function getPackage() {
     throw new Error(`No package.json found in ${process.cwd()}`);
   }
   try {
-    return JSON.parse(readFileSync(path, { encoding: 'utf-8' }));
+    return require(join(process.cwd(), 'package.json'));
   } catch(err) {
     return {};
   }
 };
 
-export {getPackage};
+export { getPackage };

@@ -2,7 +2,6 @@ import Fs from 'node:fs/promises';
 import { dirname, sep } from 'node:path';
 import Autoprefixer from 'autoprefixer';
 import CssNano from 'cssnano';
-import FsExtra from 'fs-extra';
 import Postcss from 'postcss';
 import Sass from 'sass';
 import { logger } from '../utils/logger.es6.js';
@@ -10,7 +9,7 @@ import { logger } from '../utils/logger.es6.js';
 async function compile(file) {
   const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
     .replace(/\.scss$/, '.css')
-    .replace(`${sep}media_source${sep}`, `${sep}media${sep}`);
+    .replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath);
 
   let compiled;
   try {
@@ -25,7 +24,10 @@ async function compile(file) {
   const res = await cleaner.process(compiled.css.toString(), { from: undefined });
 
   // Ensure the folder exists or create it
-  await FsExtra.mkdirs(dirname(cssFile), {});
+  if (!existsSync(dirname(cssFile))) {
+    await Fs.mkdir(dirname(cssFile), { recursive: true, mode: 0o755 });
+  }
+
   await Fs.writeFile(
     cssFile,
     res.css.toString(),
@@ -35,7 +37,7 @@ async function compile(file) {
   const cssMin = await Postcss([CssNano]).process(res.css.toString(), { from: undefined });
 
   // Ensure the folder exists or create it
-  FsExtra.mkdirs(dirname(cssFile.replace('.css', '.min.css')), {});
+  await Fs.mkdir(dirname(cssFile.replace('.css', '.min.css')), { recursive: true });
   await Fs.writeFile(
     cssFile.replace('.css', '.min.css'),
     cssMin.css.toString(),
@@ -45,4 +47,4 @@ async function compile(file) {
   logger(`✅ SCSS File compiled: ${cssFile}`);
 };
 
-export {compile};
+export { compile };

@@ -3,16 +3,14 @@ import { writeFile } from 'node:fs/promises';
 import Autoprefixer from 'autoprefixer';
 import CssNano from 'cssnano';
 import rtlcss from 'rtlcss';
-import fsExtra from 'fs-extra';
 import Postcss from 'postcss';
 import Sass from 'sass';
 import { logger } from '../utils/logger.mjs';
-
-const { ensureDir } = fsExtra;
+import { existsSync } from 'node:fs';
 
 async function handleScssFile(file) {
   const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
-    .replace(`${sep}media_source${sep}`, `${sep}media${sep}`)
+    .replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath)
     .replace('.scss', '.css');
 
   let compiled;
@@ -31,7 +29,10 @@ async function handleScssFile(file) {
   const res = await cleaner.process(compiled.css.toString(), { from: undefined });
 
   // Ensure the folder exists or create it
-  await ensureDir(dirname(cssFile), {});
+  if (!existsSync(dirname(cssFile))) {
+    await Fs.mkdir(dirname(cssFile), { recursive: true, mode: 0o755 });
+  }
+
   await writeFile(
     cssFile,
     res.css,
@@ -41,7 +42,10 @@ async function handleScssFile(file) {
   const cssMin = await Postcss([CssNano]).process(res.css, { from: undefined });
 
   // Ensure the folder exists or create it
-  await ensureDir(dirname(cssFile.replace('.css', '.min.css')), {});
+  if (!existsSync(dirname(cssFile.replace('.css', '.min.css')))) {
+    await Fs.mkdir(dirname(cssFile.replace('.css', '.min.css')), { recursive: true, mode: 0o755 });
+  }
+
   await writeFile(
     cssFile.replace('.css', '.min.css'),
     cssMin.css,
@@ -51,4 +55,4 @@ async function handleScssFile(file) {
   logger(`✅ SCSS File compiled: ${cssFile}`);
 };
 
-export {handleScssFile};
+export { handleScssFile };

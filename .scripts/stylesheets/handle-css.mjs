@@ -1,21 +1,21 @@
 import { dirname } from 'node:path';
-import { readFile, writeFile } from 'node:fs/promises';
-import FsExtra from 'fs-extra';
+import { copy, readFile, writeFile } from 'node:fs/promises';
 import Postcss from 'postcss';
 import Autoprefixer from 'autoprefixer';
 import CssNano from 'cssnano';
 import { logger } from '../utils/logger.mjs';
-import { resolvePath } from '../utils/resolvePath.mjs';
 
 async function handleCssFile(file) {
-  const outputFile = resolvePath(file, 'extension');
+  const outputFile = file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath);
   try {
     // CSS file, we will copy the file and then minify it in place
     // Ensure that the directories exist or create them
-    await FsExtra.ensureDir(dirname(outputFile), { recursive: true, mode: 0o755 });
+    if (!existsSync(dirname(outputFile))) {
+      await Fs.mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
+    }
 
     if (file !== outputFile) {
-      await FsExtra.copy(file, outputFile, { preserveTimestamps: true, overwrite: true });
+      await copy(file, outputFile, { preserveTimestamps: true, overwrite: true });
     }
 
     const content = await readFile(file, { encoding: 'utf8' });
@@ -30,4 +30,4 @@ async function handleCssFile(file) {
   }
 };
 
-export {handleCssFile};
+export { handleCssFile };

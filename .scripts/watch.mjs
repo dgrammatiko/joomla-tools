@@ -1,5 +1,8 @@
 import {
-  join, extname, basename, dirname,
+  join,
+  extname,
+  basename,
+  dirname,
 } from 'node:path';
 import chokidar from 'chokidar';
 import { handleESMFile } from './javascript/compile-to-es2018.mjs';
@@ -29,7 +32,7 @@ const processFile = (file) => {
 };
 
 const watching = (path) => {
-  const watcher = chokidar.watch(path ? join(RootPath, path) : join(RootPath, 'media_source'), { ignored: /(^|[/\\])\../, persistent: true });
+  const watcher = chokidar.watch(path ? join(RootPath, path) : join(RootPath, globalThis.searchPath), { ignored: /(^|[/\\])\../, persistent: true });
 
   // Close gracefully
   process.on('SIGINT', () => watcher.close());

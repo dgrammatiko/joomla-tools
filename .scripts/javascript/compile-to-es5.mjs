@@ -53,4 +53,4 @@ async function handleESMToLegacy(file) {
   });
 };
 
-export {handleESMToLegacy};
+export { handleESMToLegacy };
