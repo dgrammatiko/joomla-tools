@@ -4,7 +4,7 @@ import { rollup } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import { minifyJs } from './minify.mjs';
+import { minifyJsCode } from './minify.mjs';
 import { logger } from '../utils/logger.mjs';
 
 /**
