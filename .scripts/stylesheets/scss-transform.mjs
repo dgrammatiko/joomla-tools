@@ -1,4 +1,4 @@
-import Fs from 'node:fs/promises';
+import { mkdir, writeFile} from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, sep } from 'node:path';
 import Autoprefixer from 'autoprefixer';
@@ -32,10 +32,10 @@ async function compile(file) {
 
   // Ensure the folder exists or create it
   if (!existsSync(dirname(cssFile))) {
-    await Fs.mkdir(dirname(cssFile), { recursive: true, mode: 0o755 });
+    await mkdir(dirname(cssFile), { recursive: true, mode: 0o755 });
   }
 
-  await Fs.writeFile(
+  await writeFile(
     cssFile,
     res.css.toString(),
     { encoding: 'utf8', mode: 0o644 },
@@ -44,8 +44,8 @@ async function compile(file) {
   const cssMin = await Postcss([CssNano]).process(res.css.toString(), { from: undefined });
 
   // Ensure the folder exists or create it
-  await Fs.mkdir(dirname(cssFile.replace('.css', '.min.css')), { recursive: true });
-  await Fs.writeFile(
+  await mkdir(dirname(cssFile.replace('.css', '.min.css')), { recursive: true });
+  await writeFile(
     cssFile.replace('.css', '.min.css'),
     cssMin.css.toString(),
     { encoding: 'utf8', mode: 0o644 },

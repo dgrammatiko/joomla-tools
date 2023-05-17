@@ -1,5 +1,5 @@
 import { dirname } from 'node:path';
-import { copy, readFile, writeFile } from 'node:fs/promises';
+import { copy, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import Postcss from 'postcss';
 import Autoprefixer from 'autoprefixer';
@@ -17,9 +17,8 @@ async function handleCssFile(file) {
   const outputFile = file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath);
   try {
     // CSS file, we will copy the file and then minify it in place
-    // Ensure that the directories exist or create them
     if (!existsSync(dirname(outputFile))) {
-      await Fs.mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
+      await mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
     }
 
     if (file !== outputFile) {

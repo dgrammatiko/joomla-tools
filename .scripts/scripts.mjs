@@ -1,10 +1,11 @@
 import { stat } from 'node:fs/promises';
-// import { sep } from 'node:path';
 import pkgFsJetpack from 'fs-jetpack';
+import { handleESMToLegacy } from './compile-to-es5.mjs';
+
 
 import { logger } from './utils/logger.mjs';
-import { handleES5File } from './javascript/handle-es5.mjs';
-import { handleESMFile } from './javascript/compile-to-es2018.mjs';
+import { handleES5File } from './javascript/handleES5.mjs';
+import { handleESMFile } from './javascript/handleESMFile.mjs';
 
 const { find } = pkgFsJetpack;
 const RootPath = process.cwd();
@@ -47,8 +48,21 @@ async function scripts(path) {
 
   Promise.all([
     ...[].concat(...computedFiles).filter(file => file.endsWith('.js')).map(hanler => handleES5File(hanler)),
-    ...[].concat(...computedFiles).filter(file => file.endsWith('.mjs')).map(hanler => handleESMFile(hanler)),
+    ...[].concat(...computedFiles).filter(file => file.endsWith('.mjs')).map(hanler => handleESM(hanler)),
   ]);
 };
+
+async function handleESM(inputFile) {
+  if (!globalThis.searchPath || !globalThis.replacePath) {
+    throw new Error(`Global searchPath and replacePath are not defined`);
+  }
+
+  const outputFile = file.replace(/\.mjs$/, '.js').replace(`${globalThis.searchPath}`, globalThis.replacePath);
+  await handleESMFile(inputFile, outputFile);
+
+  if (globalThis.supportES5) {
+    await handleESMToLegacy(outputFile, `${outputFile.replace(/\.js$/, '-es5.js')}`);
+  }
+}
 
 export { scripts };

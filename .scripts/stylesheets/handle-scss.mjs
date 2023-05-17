@@ -1,12 +1,12 @@
 import { dirname, sep } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
 import Autoprefixer from 'autoprefixer';
 import CssNano from 'cssnano';
 import rtlcss from 'rtlcss';
 import Postcss from 'postcss';
 import Sass from 'sass';
 import { logger } from '../utils/logger.mjs';
-import { existsSync } from 'node:fs';
 
 async function handleScssFile(file) {
   if (!existsSync(file)) {
@@ -36,7 +36,7 @@ async function handleScssFile(file) {
 
   // Ensure the folder exists or create it
   if (!existsSync(dirname(cssFile))) {
-    await Fs.mkdir(dirname(cssFile), { recursive: true, mode: 0o755 });
+    await mkdir(dirname(cssFile), { recursive: true, mode: 0o755 });
   }
 
   await writeFile(
@@ -49,7 +49,7 @@ async function handleScssFile(file) {
 
   // Ensure the folder exists or create it
   if (!existsSync(dirname(cssFile.replace('.css', '.min.css')))) {
-    await Fs.mkdir(dirname(cssFile.replace('.css', '.min.css')), { recursive: true, mode: 0o755 });
+    await mkdir(dirname(cssFile.replace('.css', '.min.css')), { recursive: true, mode: 0o755 });
   }
 
   await writeFile(

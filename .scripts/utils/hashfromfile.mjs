@@ -15,4 +15,4 @@ export function createHashFromFile(filePath) {
   });
 }
 
-export {createHashFromFile};
+export { createHashFromFile };
