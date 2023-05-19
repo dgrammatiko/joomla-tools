@@ -3,11 +3,11 @@ import test from 'ava';
 import { handleScssFile } from '../.scripts/stylesheets/handle-scss.mjs';
 
 // Cleanup
-// test.after.always(async () => {
-//   if (existsSync('test/stubs/scss/new')) {
-//     rmSync('test/stubs/scss/new', { force: true, recursive: true });
-//   }
-// });
+test.after.always(async () => {
+  if (existsSync('test/stubs/new')) {
+    rmSync('test/stubs/new', { force: true, recursive: true });
+  }
+});
 
 test('Non existing SCSS file', async (t) => {
   global.searchPath = 'test/stubs/scss';

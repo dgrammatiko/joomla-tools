@@ -3,11 +3,11 @@ import test from 'ava';
 import { handleCssFile } from '../.scripts/stylesheets/handle-css.mjs';
 
 // Cleanup
-// test.after.always(async () => {
-//   if (existsSync('test/stubs/new/css')) {
-//     rmSync('test/stubs/new/css', { force: true, recursive: true });
-//   }
-// });
+test.after.always(async () => {
+  if (existsSync('test/stubs/new')) {
+    rmSync('test/stubs/new', { force: true, recursive: true });
+  }
+});
 
 test('Non existing CSS file', async (t) => {
   global.searchPath = 'test/stubs/css';

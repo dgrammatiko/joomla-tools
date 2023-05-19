@@ -2,18 +2,10 @@ import { existsSync, rmSync, readFileSync } from 'node:fs';
 import test from 'ava';
 import { handleESMToLegacy } from '../.scripts/javascript/ESMtoES5.mjs';
 
-const outputString = `(function () {
-    'use strict';
-
-    var a = 'hello';
-    window.Joomla = a;
-
-})();`;
-
 // Cleanup
 test.after.always(async (t) => {
-  if (existsSync('test/stubs/js/new')) {
-    rmSync('test/stubs/js/new', { force: true, recursive: true });
+  if (existsSync('test/stubs/new')) {
+    rmSync('test/stubs/new', { force: true, recursive: true });
   }
 });
 

@@ -4,8 +4,8 @@ import { handleESMFile } from '../.scripts/javascript/handleESMFile.mjs';
 
 // Cleanup
 test.after.always(async (t) => {
-  if (existsSync('test/stubs/js/new')) {
-    rmSync('test/stubs/js/new', { force: true, recursive: true });
+  if (existsSync('test/stubs/new')) {
+    rmSync('test/stubs/new', { force: true, recursive: true });
   }
 });
 
