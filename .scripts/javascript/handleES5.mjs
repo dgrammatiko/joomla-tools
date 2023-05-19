@@ -5,8 +5,7 @@ import { minify } from 'terser';
 import { logger } from '../utils/logger.mjs';
 
 /**
- *
- * @param {string} file
+ * @param { string } file
  */
 async function handleES5File(file) {
   if (!existsSync(file)) {

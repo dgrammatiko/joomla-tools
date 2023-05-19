@@ -20,7 +20,7 @@ const { find } = pkgFsJetpack;
  *         css files to have ext: .css
  * Ignores scss files that their filename starts with `_`
  *
- * @param {string} path     The folder that needs to be compiled, optional
+ * @param { string } path  The folder that needs to be compiled, optional
  */
 async function handleStylesheets(path) {
   if (!existsSync(join(cwd(), 'media_source'))) {
@@ -46,20 +46,21 @@ async function handleStylesheets(path) {
     folders.push(`${cwd()}/media_source`);
   }
 
+  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(scss|css)'] })));
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = [
-    ...files,
-    ...await Promise.all(folders.map(folder => find(folder, { matching: ['*.+(scss|css)'] }))),
-  ];
+  const computedFiles = [ ...files, ...fromFolder.flat() ];
 
   return Promise.all(computedFiles.map((file) => handleStylesheet(file)));
 };
 
+/**
+ * @param { string } inputFile
+ * @returns { Promise<unknown> }
+ */
 async function handleStylesheet(inputFile) {
   if (!globalThis.searchPath || !globalThis.replacePath) {
     throw new Error(`Global searchPath and replacePath are not defined`);
   }
-
   if (inputFile.endsWith('.css') && !inputFile.endsWith('.min.css')) {
     return handleCssFile(inputFile);
   }

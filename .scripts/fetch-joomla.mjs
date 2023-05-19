@@ -6,11 +6,11 @@ import AdmZip from 'adm-zip';
 import { logger } from './utils/logger.mjs';
 
 
-/** @type {string} */
+/** @type { string } */
 let version  =  globalThis.joomlaVersion || '4.3.1';
 
 /**
- * @param {string} params
+ * @param { string } params
  */
 async function fetchJoomla(params) {
   if (existsSync(resolve(cwd(), 'www'))) {
@@ -34,4 +34,4 @@ async function fetchJoomla(params) {
   }
 };
 
-export {fetchJoomla};
+export { fetchJoomla };

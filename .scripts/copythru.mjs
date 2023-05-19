@@ -15,7 +15,7 @@ import { logger } from './utils/logger.mjs';
  *         css files to have ext: .css
  * Ignores scss files that their filename starts with `_`
  *
- * @param {string} path     The folder that needs to be compiled, optional
+ * @param { string } path  The folder that needs to be compiled, optional
  */
 async function copyThru(path) {
   if (!existsSync(join(cwd(), globalThis.searchPath))) {
@@ -41,16 +41,9 @@ async function copyThru(path) {
     folders.push(globalThis.searchPath);
   }
 
-  // folders.forEach(async (folder) => {
-  //   if (['js', 'css', 'scss'].includes(folder)) return;
-
-  //   await cp(`${cwd()}/${folder}}`, `${cwd()}/${folder}}`, { preserveTimestamps: true, force: true, mode: 0o755 });
-
-  // })
-
   jetpack
-    .find(`${cwd()}/media_source`, { matching: 'images', files: false, directories: true })
-    .forEach((file) => jetpack.copy(file, file.replace(`media_source${sep}`, `media${sep}`), { overwrite: true }));
+    .find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
+    .forEach((file) => jetpack.copy(file, file.replace(`${globalThis.searchPath}${sep}`, `${globalThis.replacePath}${sep}`), { overwrite: true }));
 };
 
 export { copyThru };

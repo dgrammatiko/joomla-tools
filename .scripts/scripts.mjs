@@ -13,10 +13,10 @@ const { find } = pkgFsJetpack;
  * bundle ESM
  * copy any ES5 files to the appropriate destination and minify them in place
  *
- * Expects ES6 files to have ext: .mjs
+ * Expects ES Module files to have ext: .mjs
  *         ES5 files to have ext: .es5.js
  *
- * @param { string } path    The folder that needs to be compiled, optional
+ * @param { string } path  The folder that needs to be compiled, optional
  */
 async function handleScripts(path) {
   const files = [];
@@ -37,15 +37,17 @@ async function handleScripts(path) {
     folders.push(`${cwd()}/media_source`);
   }
 
+  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5\.js)'] })));
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = [
-    ... files,
-    ...await Promise.all(folders.map(folder => find(folder, { matching: ['*.+(mjs|es5\.js)'] }))),
-  ];
+  const computedFiles = [ ...files, ...fromFolder.flat() ];
 
-  Promise.all(computedFiles.map(file => handleScript(file)));
+  Promise.all(computedFiles.map((file) => handleScript(file)));
 };
 
+/**
+ * @param { string } inputFile
+ * @returns { Promise<unknown> }
+ */
 async function handleScript(inputFile) {
   if (!globalThis.searchPath || !globalThis.replacePath) {
     throw new Error(`Global searchPath and replacePath are not defined`);
@@ -55,7 +57,7 @@ async function handleScript(inputFile) {
     return handleES5File(inputFile);
   }
 
-  if (inputFile.endsWith('.mjs')) {
+  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
     const outputFile = inputFile.replace(/\.mjs$/, '.js').replace(`${globalThis.searchPath}`, globalThis.replacePath);
     return handleESMFile(inputFile, outputFile);
   }

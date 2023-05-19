@@ -9,8 +9,8 @@ import { logger } from '../utils/logger.mjs';
 /**
  * Compiles es6
  *
- * @param {string} inputFile the full path to the file + filename + extension
- * @param {string} outputFile the full path to the file + filename + extension
+ * @param { string } inputFile the full path to the file + filename + extension
+ * @param { string } outputFile the full path to the file + filename + extension
  */
 async function handleESMFile(inputFile, outputFile) {
   if (!existsSync(inputFile)) {

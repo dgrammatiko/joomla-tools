@@ -3,11 +3,13 @@ import { logger } from './logger.mjs';
 /**
  * Simple timer
  *
- * @param name
- *
  * @returns {{stop: stop}}
  */
 class Timer {
+  /**
+   *
+   * @param {string} name
+   */
   constructor(name) {
     this.start = new Date();
     this.name = name;

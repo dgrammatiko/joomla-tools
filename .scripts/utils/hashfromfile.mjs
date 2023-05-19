@@ -4,9 +4,9 @@ import { createReadStream } from 'node:fs';
 /**
  * Get an SHA1 hash for a given file
  *
- * @param filePath
+ * @param { string } filePath
  *
- * @returns {Promise<unknown>}
+ * @returns { Promise<unknown> }
  */
 function createHashFromFile(filePath) {
   return new Promise((res) => {

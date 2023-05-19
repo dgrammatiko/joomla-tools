@@ -9,4 +9,4 @@
 // eslint-disable-next-line no-param-reassign, no-return-assign, default-param-last
 const debounce = (callback, time = 250, interval) => (...args) => clearTimeout(interval, interval = setTimeout(callback, time, ...args));
 
-export {debounce};
+export { debounce };

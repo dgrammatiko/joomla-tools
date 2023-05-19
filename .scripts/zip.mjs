@@ -13,11 +13,24 @@ import admZip from 'adm-zip';
 const zips = [];
 let zip, replacables;
 
+/**
+ *
+ * @param { string } file
+ * @param { {} } replacables
+ * @returns
+ */
 function applyReplacements(file, replacables) {
   const content = readFileSync(file, { encoding: 'utf8'});
   return !replacables.version ? content : content.replace('{{version}}', replacables.version);
 }
 
+/**
+ *
+ * @param { string } folder
+ * @param { string } replace
+ * @param { {} } replacables
+ * @param { admZip } zipper
+ */
 async function addFilesRecursively(folder, replace, replacables, zipper) {
   jetpack.find(folder).forEach((file) => zipper.addFile(file.replace(folder, replace), applyReplacements(file, replacables)));
 }

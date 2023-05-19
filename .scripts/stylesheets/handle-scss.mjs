@@ -8,8 +8,8 @@ import { Autoprefixer, CssNano, rtlcss } from './configs/css.mjs';
 import { logger } from '../utils/logger.mjs';
 
 /**
- * @param {string} inputFile
- * @param {string} outputFile
+ * @param { string } inputFile
+ * @param { string } outputFile
  */
 async function handleScssFile(inputFile, outputFile) {
   if (!existsSync(inputFile)) {
@@ -20,13 +20,7 @@ async function handleScssFile(inputFile, outputFile) {
     await mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
-  // const cssFile = file.replace(`${sep}scss${sep}`, `${sep}css${sep}`)
-  //   .replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath)
-  //   .replace('.scss', '.css');
-
-
   const compiled = Sass.compile(inputFile);
-
   const plugins = [Autoprefixer];
   if (outputFile.endsWith('-rtl.scss')) plugins.push(rtlcss);
 

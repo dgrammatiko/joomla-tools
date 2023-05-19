@@ -7,11 +7,11 @@ import { Autoprefixer, CssNano } from './configs/css.mjs';
 import { logger } from '../utils/logger.mjs';
 
 /**
- * @typedef {Object} globalThis
- * @property {string} searchPath
+ * @typedef { Object } globalThis
+ * @property { string } searchPath
  */
 /**
- * @param {string} file
+ * @param { string } file
  */
 async function handleCssFile(file) {
   if (!existsSync(file)) {
@@ -20,7 +20,6 @@ async function handleCssFile(file) {
   if (!globalThis.searchPath || !globalThis.replacePath) {
     throw new Error(`Global searchPath and replacePath are not defined`);
   }
-  console.log(globalThis.searchPath, globalThis.replacePath)
 
   const outputFile = file.replace(`${globalThis.searchPath}`, globalThis.replacePath);
   try {

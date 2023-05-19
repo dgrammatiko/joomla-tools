@@ -17,11 +17,11 @@ if (existsSync(join(cwd(), 'package.json'))) {
   pkg = getPackage();
   globalThis.isJoomla = pkg.name === 'joomla';
   if (globalThis.jsJoomla) {
-    globalThis.searchPath = `build${sep}media_source`;
-    globalThis.replacePath = `${sep}media${sep}`;
+    globalThis.searchPath = `build${sep}media_source${sep}`;
+    globalThis.replacePath = `media${sep}`;
   } else {
-    globalThis.searchPath = 'media_source';
-    globalThis.replacePath = `${sep}media${sep}`;
+    globalThis.searchPath = 'media_source${sep}';
+    globalThis.replacePath = `media${sep}`;
   }
 } else {
   logger('No package.json file. Exiting');
