@@ -11,16 +11,16 @@ test.after.always(async (t) => {
 
 test('Non existing file', async (t) => {
   global.searchPath = 'test/stubs/js';
-  global.replacePath = 'test/stubs/js/new';
+  global.replacePath = 'test/stubs/new/js';
   const file = 'nonExisting.mjs';
   await t.throwsAsync(async () => {
     await handleESMFile(file);
-  }, { instanceOf: Error, message: 'File ' + file + ' doesn\'t exist' });
+  }, { instanceOf: Error, message: `File ${file} doesn't exist` });
 });
 
 test('Module file without import', async (t) => {
   global.searchPath = 'test/stubs/js';
-  global.replacePath = 'test/stubs/js/new';
+  global.replacePath = 'test/stubs/new/js';
   const file = 'module_without_import.mjs';
   const inputFile = `${global.searchPath}/${file}`;
   const outputFile = `${global.replacePath}/${file.replace('.mjs', '.js')}`;
@@ -36,7 +36,7 @@ test('Module file without import', async (t) => {
 
 test('Module file with import', async (t) => {
   global.searchPath = 'test/stubs/js';
-  global.replacePath = 'test/stubs/js/new';
+  global.replacePath = 'test/stubs/new/js';
   const file = 'module_with_import.mjs';
   const inputFile = `${global.searchPath}/${file}`;
   const outputFile = `${global.replacePath}/${file.replace('.mjs', '.js')}`;

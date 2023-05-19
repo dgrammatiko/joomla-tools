@@ -7,6 +7,9 @@ import {
 import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
 
+/**
+ * @type {[{ name: string, zip: admZip }]}
+ */
 const zips = [];
 let zip, replacables;
 
@@ -35,8 +38,9 @@ async function packageExtensions() {
           if (existsSync(`src/${extensionType}/${extensionName}/administrator`)) {
             addFilesRecursively(`src/${extensionType}/${extensionName}/administrator`, 'administrator', replacables, zip);
             const xml = zip.getEntry(`administrator/${extensionName}.xml`);
-            zip.deleteEntry(`administrator/${extensionName}.xml`);
-            zip.addFile(`${extensionName}.xml`, xml.getData())
+            const data = xml.getData();
+            zip.deleteFile(xml);
+            zip.addFile(`${extensionName}.xml`, data)
           }
           if (existsSync(`src/${extensionType}/${extensionName}/site`)) {
             addFilesRecursively(`src/${extensionType}/${extensionName}/site`, 'site', replacables, zip);

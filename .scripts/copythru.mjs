@@ -19,7 +19,7 @@ import { logger } from './utils/logger.mjs';
  */
 async function copyThru(path) {
   if (!existsSync(join(cwd(), globalThis.searchPath))) {
-    logger('The tools aren\'t initialized properly. Exiting');
+    logger(`The tools aren't initialized properly. Exiting`);
     exit(1);
   }
 
@@ -44,7 +44,7 @@ async function copyThru(path) {
   // folders.forEach(async (folder) => {
   //   if (['js', 'css', 'scss'].includes(folder)) return;
 
-  //   await cp(`${cwd()}/${folder}}`, `${cwd()}/${folder}}`, {recursive: true});
+  //   await cp(`${cwd()}/${folder}}`, `${cwd()}/${folder}}`, { preserveTimestamps: true, force: true, mode: 0o755 });
 
   // })
 

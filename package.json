@@ -24,7 +24,7 @@
     "prepublishOnly": "npx np --no-cleanup --yolo --no-publish",
     "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
     "test": "ava",
-    "coverage": "c8 ava"
+    "coverage": "c8 npm test"
   },
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
     "url": "https://github.com/dgrammatiko/joomla-tools/issues"
   },
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
-  "peerDependencies": {
+  "dependencies": {
     "@babel/preset-env": "^7.21.5",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^25.0.0",

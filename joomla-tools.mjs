@@ -8,10 +8,13 @@ import { logger } from './.scripts/utils/logger.mjs';
 import { defaultParams } from './.scripts/utils/defaultParams.mjs';
 import { getPackage } from './.scripts/utils/getPackage.mjs';
 
+/**
+ * @type {{}} pkg
+ */
 let pkg;
 
 if (existsSync(join(cwd(), 'package.json'))) {
-  pkg = getPackage('package.json');
+  pkg = getPackage();
   globalThis.isJoomla = pkg.name === 'joomla';
   if (globalThis.jsJoomla) {
     globalThis.searchPath = `build${sep}media_source`;
@@ -22,18 +25,24 @@ if (existsSync(join(cwd(), 'package.json'))) {
   }
 } else {
   logger('No package.json file. Exiting');
-  /* eslint-disable-next-line */
-  console.error(err);
   exit(1);
 }
 
-function errorCatcher(err) {
+/**
+ * @param {{}} error
+ */
+function errorCatcher(error) {
   logger('Something blow up. Exiting');
   /* eslint-disable-next-line */
-  console.error(err);
+  console.error(error);
   exit(1);
 }
 
+/**
+ * @param {string} path
+ * @param {string} resolvedFunction
+ * @param {[]} args
+ */
 function resolveFn(path, resolvedFunction, ...args) {
   if (existsSync(join(cwd(), path))) {
     import(join(cwd(), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
@@ -71,8 +80,8 @@ async function main() {
 
     logger('Start building...');
     resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
-    resolveFn('.scripts/stylesheets.mjs', 'stylesheets', ...program.args); // Compile css files
-    resolveFn('.scripts/scripts.mjs', 'scripts', ...program.args); // Compile script files
+    resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
+    resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
   }
 
   if (opts.watch) {

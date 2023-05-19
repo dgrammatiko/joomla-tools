@@ -1,68 +1,64 @@
 import { stat } from 'node:fs/promises';
 import pkgFsJetpack from 'fs-jetpack';
-import { handleESMToLegacy } from './compile-to-es5.mjs';
-
+import { cwd } from 'node:process';
 
 import { logger } from './utils/logger.mjs';
 import { handleES5File } from './javascript/handleES5.mjs';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
 
 const { find } = pkgFsJetpack;
-const RootPath = process.cwd();
 
 /**
  * Method that will crawl the media_source folder and
- * compile ES6 to ES5 and ES6
- * copy any ES5 files to the appropriate destination and
- * minify them in place
- * compile any custom elements/webcomponents
+ * bundle ESM
+ * copy any ES5 files to the appropriate destination and minify them in place
  *
- * Expects ES6 files to have ext: .es6.js
+ * Expects ES6 files to have ext: .mjs
  *         ES5 files to have ext: .es5.js
- *         WC/CE files to have ext: .w-c.es6.js
  *
  * @param { string } path    The folder that needs to be compiled, optional
- * @param { string } mode    esm for ES2017, es5 for ES5, both for both
  */
-async function scripts(path) {
+async function handleScripts(path) {
   const files = [];
   const folders = [];
 
   if (path) {
-    const stats = await stat(`${RootPath}/${path}`);
+    const stats = await stat(`${cwd()}/${path}`);
 
     if (stats.isDirectory()) {
-      folders.push(`${RootPath}/${path}`);
+      folders.push(`${cwd()}/${path}`);
     } else if (stats.isFile()) {
-      files.push(`${RootPath}/${path}`);
+      files.push(`${cwd()}/${path}`);
     } else {
       logger(`Unknown path ${path}`);
       process.exit(1);
     }
   } else {
-    folders.push(`${RootPath}/media_source`);
+    folders.push(`${cwd()}/media_source`);
   }
 
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = await Promise.all(folders.map(folder => find(folder, { matching: ['*.+(mjs|js)'] })));
+  const computedFiles = [
+    ... files,
+    ...await Promise.all(folders.map(folder => find(folder, { matching: ['*.+(mjs|es5\.js)'] }))),
+  ];
 
-  Promise.all([
-    ...[].concat(...computedFiles).filter(file => file.endsWith('.js')).map(hanler => handleES5File(hanler)),
-    ...[].concat(...computedFiles).filter(file => file.endsWith('.mjs')).map(hanler => handleESM(hanler)),
-  ]);
+  Promise.all(computedFiles.map(file => handleScript(file)));
 };
 
-async function handleESM(inputFile) {
+async function handleScript(inputFile) {
   if (!globalThis.searchPath || !globalThis.replacePath) {
     throw new Error(`Global searchPath and replacePath are not defined`);
   }
 
-  const outputFile = file.replace(/\.mjs$/, '.js').replace(`${globalThis.searchPath}`, globalThis.replacePath);
-  await handleESMFile(inputFile, outputFile);
+  if (inputFile.endsWith('.es5.js')) {
+    return handleES5File(inputFile);
+  }
 
-  if (globalThis.supportES5) {
-    await handleESMToLegacy(outputFile, `${outputFile.replace(/\.js$/, '-es5.js')}`);
+  if (inputFile.endsWith('.mjs')) {
+    const outputFile = inputFile.replace(/\.mjs$/, '.js').replace(`${globalThis.searchPath}`, globalThis.replacePath);
+    return handleESMFile(inputFile, outputFile);
   }
 }
 
-export { scripts };
+export { handleScripts };

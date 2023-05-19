@@ -4,6 +4,10 @@ import { existsSync } from 'node:fs';
 import { minify } from 'terser';
 import { logger } from '../utils/logger.mjs';
 
+/**
+ *
+ * @param {string} file
+ */
 async function handleES5File(file) {
   if (!existsSync(file)) {
     throw new Error(`File ${file} doesn't exist`);
@@ -20,12 +24,12 @@ async function handleES5File(file) {
       await mkdir(dirname(file).replace(`${sep}${globalThis.searchPath}`, globalThis.replacePath), { recursive: true, mode: 0o755 });
     }
 
-    await cp(file, file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath).replace('.es5.js', '.js'), { preserveTimestamps: true });
+    await cp(file, file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath).replace('.es5.js', '.js'), { preserveTimestamps: true, force: true, mode: 0o755 });
     logger(`Legacy js file: ${basename(file)}: ✅ copied`);
 
     const fileContent = await readFile(file, { encoding: 'utf8' });
     const content = await minify(fileContent, { sourceMap: false, format: { comments: false } });
-    await writeFile(file.replace('.js', '.min.js'), content.code, { encoding: 'utf8', mode: 0o644 });
+    await writeFile(file.replace('.js', '.min.js'), content.code, { encoding: 'utf8', mode: '0644' });
     logger(`✅ Legacy js file: ${basename(file)}: minified`);
   }
 };

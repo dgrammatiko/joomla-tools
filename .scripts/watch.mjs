@@ -5,18 +5,22 @@ import {
   dirname,
 } from 'node:path';
 import chokidar from 'chokidar';
-import { handleESMFile } from './javascript/compile-to-es2018.mjs';
-import { handleES5File } from './javascript/handle-es5.mjs';
+import { handleESMFile } from './javascript/handleESMFile.mjs';
+import { handleES5File } from './javascript/handleES5.mjs';
 import { handleScssFile } from './stylesheets/handle-scss.mjs';
 import { handleCssFile } from './stylesheets/handle-css.mjs';
 import { debounce } from './utils/debounce.mjs';
 
 const RootPath = process.cwd();
 
+/**
+ *
+ * @param {string} file
+ */
 const processFile = (file) => {
   if ((extname(file) === '.js' || extname(file) === '.mjs') && !dirname(file).startsWith(join(RootPath, 'build/media_source/vendor/bootstrap/js'))) {
     if (file.match(/\.mjs$/) && !basename(file).startsWith('_')) {
-      debounce(handleESMFile(file), 300);
+      debounce(handleESMFile(file, outpufile), 300, 0);
     }
     if (file.match(/\.js/)) {
       debounce(handleES5File(file), 300);
@@ -31,6 +35,9 @@ const processFile = (file) => {
   }
 };
 
+/**
+ * @param {string} path
+ */
 const watching = (path) => {
   const watcher = chokidar.watch(path ? join(RootPath, path) : join(RootPath, globalThis.searchPath), { ignored: /(^|[/\\])\../, persistent: true });
 

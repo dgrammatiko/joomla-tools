@@ -9,8 +9,8 @@ import { logger } from '../utils/logger.mjs';
 /**
  * Compiles es6 files to es5.
  *
- * @param inputFile the input file
- * @param outputFile the generated file
+ * @param {string} inputFile the input file
+ * @param {string} outputFile the generated file
  */
 async function handleESMToLegacy(inputFile, outputFile) {
   if (!existsSync(inputFile)) {
