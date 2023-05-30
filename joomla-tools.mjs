@@ -20,7 +20,7 @@ if (existsSync(join(cwd(), 'package.json'))) {
     globalThis.searchPath = `build${sep}media_source${sep}`;
     globalThis.replacePath = `media${sep}`;
   } else {
-    globalThis.searchPath = 'media_source${sep}';
+    globalThis.searchPath = `media_source${sep}`;
     globalThis.replacePath = `media${sep}`;
   }
 } else {

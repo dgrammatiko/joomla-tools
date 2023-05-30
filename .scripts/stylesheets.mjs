@@ -43,7 +43,7 @@ async function handleStylesheets(path) {
       exit(1);
     }
   } else {
-    folders.push(`${cwd()}/media_source`);
+    folders.push('media_source');
   }
 
   const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(scss|css)'] })));
@@ -66,7 +66,7 @@ async function handleStylesheet(inputFile) {
   }
 
   if (inputFile.endsWith('.scss') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    const outputFile = inputFile.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath).replace('.scss', '.css');
+    const outputFile = inputFile.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(globalThis.searchPath, globalThis.replacePath).replace('.scss', '.css');
     return handleScssFile(inputFile, outputFile);
   }
 }

@@ -34,7 +34,7 @@ async function handleScripts(path) {
       process.exit(1);
     }
   } else {
-    folders.push(`${cwd()}/media_source`);
+    folders.push('media_source');
   }
 
   const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5\.js)'] })));
@@ -58,7 +58,7 @@ async function handleScript(inputFile) {
   }
 
   if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    const outputFile = inputFile.replace(/\.mjs$/, '.js').replace(`${globalThis.searchPath}`, globalThis.replacePath);
+    const outputFile = inputFile.replace(/\.mjs$/, '.js').replace(globalThis.searchPath, globalThis.replacePath);
     return handleESMFile(inputFile, outputFile);
   }
 }
