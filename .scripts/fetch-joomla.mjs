@@ -5,15 +5,20 @@ import { mkdir } from 'node:fs/promises';
 import AdmZip from 'adm-zip';
 import { logger } from './utils/logger.mjs';
 
-let version = globalThis.joomlaVersion || '4.3.1';
 
+/** @type { string } */
+let version  =  globalThis.joomlaVersion || '4.3.1';
+
+/**
+ * @param { string } params
+ */
 async function fetchJoomla(params) {
   if (existsSync(resolve(cwd(), 'www'))) {
     logger('A Joomla installation already exists, skipping clonning...');
     exit(1);
   }
 
-  if (params) {
+  if (params && params) {
     version = params;
   }
 
@@ -29,4 +34,4 @@ async function fetchJoomla(params) {
   }
 };
 
-export {fetchJoomla};
+export { fetchJoomla };

@@ -1,28 +1,42 @@
-import { dirname } from 'node:path';
-import { readFile, writeFile } from 'node:fs/promises';
-import FsExtra from 'fs-extra';
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { dirname, sep } from 'node:path';
 import Postcss from 'postcss';
-import Autoprefixer from 'autoprefixer';
-import CssNano from 'cssnano';
-import { logger } from '../utils/logger.mjs';
-import { resolvePath } from '../utils/resolvePath.mjs';
 
+import { Autoprefixer, CssNano } from './configs/css.mjs';
+import { logger } from '../utils/logger.mjs';
+
+/**
+ * @typedef { Object } globalThis
+ * @property { string } searchPath
+ */
+/**
+ * @param { string } file
+ */
 async function handleCssFile(file) {
-  const outputFile = resolvePath(file, 'extension');
+  if (!existsSync(file)) {
+    throw new Error(`File ${file} doesn't exist`);
+  }
+  if (!globalThis.searchPath || !globalThis.replacePath) {
+    throw new Error(`Global searchPath and replacePath are not defined`);
+  }
+
+  const outputFile = file.replace(`${globalThis.searchPath}`, globalThis.replacePath);
   try {
     // CSS file, we will copy the file and then minify it in place
-    // Ensure that the directories exist or create them
-    await FsExtra.ensureDir(dirname(outputFile), { recursive: true, mode: 0o755 });
+    if (!existsSync(dirname(outputFile))) {
+      await mkdir(dirname(outputFile), { recursive: true, mode: '0755' });
+    }
 
     if (file !== outputFile) {
-      await FsExtra.copy(file, outputFile, { preserveTimestamps: true, overwrite: true });
+      await cp(file, outputFile, { preserveTimestamps: true, force: true });
     }
 
     const content = await readFile(file, { encoding: 'utf8' });
     const cssMin = await Postcss([Autoprefixer, CssNano]).process(content, { from: undefined });
 
     // Ensure the folder exists or create it
-    await writeFile(outputFile.replace('.css', '.min.css'), cssMin.css.toString(), { encoding: 'utf8', mode: 0o644 });
+    await writeFile(outputFile.replace('.css', '.min.css'), cssMin.css.toString(), { encoding: 'utf8', mode: '0644' });
 
     logger(`✅ CSS file copied/minified: ${file}`);
   } catch (err) {
@@ -30,4 +44,4 @@ async function handleCssFile(file) {
   }
 };
 
-export {handleCssFile};
+export { handleCssFile };

@@ -22,7 +22,9 @@
     "lint": "npm run lint-css && npm run lint-js",
     "update:browserlist": "npx browserslist@latest --update-db",
     "prepublishOnly": "npx np --no-cleanup --yolo --no-publish",
-    "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact"
+    "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
+    "test": "ava",
+    "coverage": "c8 npm test"
   },
   "repository": {
     "type": "git",
@@ -51,6 +53,8 @@
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.21.4",
     "@babel/preset-env": "^7.21.5",
+    "@babel/plugin-transform-runtime": "^7.21.4",
+    "@rollup/plugin-terser": "0.4.3",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-json": "^6.0.0",
@@ -58,7 +62,7 @@
     "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "0.4.3",
     "adm-zip": "^0.5.10",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.14",
     "chokidar": "^3.5.3",
     "commander": "^10.0.1",
     "cssnano": "^6.0.1",
@@ -75,10 +79,10 @@
     "postcss-easy-import": "^4.0.0",
     "postcss-mixins": "^9.0.4",
     "postcss-nested": "^6.0.1",
-    "postcss-preset-env": "^8.3.2",
+    "postcss-preset-env": "^8.4.0",
     "postcss-scss": "^4.0.6",
     "recursive-readdir": "^2.2.3",
-    "rollup": "^3.21.6",
+    "rollup": "3.22.0",
     "rtlcss": "^4.1.0",
     "sass": "^1.62.1",
     "stylelint": "^15.6.2",
@@ -87,6 +91,11 @@
     "stylelint-order": "^6.0.3",
     "stylelint-scss": "^5.0.0",
     "symlink-dir": "^5.1.1",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-vue": "9.13.0",
+    "stylelint": "15.6.2",
+    "stylelint-config-recommended": "^12.0.0"
     "terser": "5.17.7"
   },
   "devDependencies": {

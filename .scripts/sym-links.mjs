@@ -1,4 +1,8 @@
-import { existsSync, readdirSync, mkdirSync } from 'node:fs';
+import {
+  existsSync,
+  readdirSync,
+  mkdirSync
+} from 'node:fs';
 import symlinkDir from 'symlink-dir';
 
 async function symLink(path) {
