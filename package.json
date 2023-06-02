@@ -7,7 +7,8 @@
   "description": "Tools for developing J4 extensions",
   "bin": {
     "joomla-tools": "joomla-tools.mjs",
-    "eslint": "node_modules/eslint/bin/eslint.js"
+    "eslint": "eslint.cjs",
+    "stylelint": ""
   },
   "type": "module",
   "main": "joomla-tools.mjs",
