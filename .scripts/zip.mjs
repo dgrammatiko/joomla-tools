@@ -8,7 +8,7 @@ import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
 
 /**
- * @type {[{ name: string, zip: admZip }]}
+ * @type {[]} //{ name: string, zip: admZip }
  */
 const zips = [];
 let zip, replacables;
