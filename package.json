@@ -6,12 +6,10 @@
   },
   "description": "Tools for developing J4 extensions",
   "bin": {
-    "joomla-tools": "joomla-tools.mjs",
-    "eslint": "eslint.cjs",
-    "stylelint": ""
+    "joomla-tools": "joomla-tools.mjs"
   },
   "type": "module",
-  "main": "joomla-tools.mjs",
+  "exports": "./joomla-tools.mjs",
   "scripts": {
     "i": "node joomla-tools.mjs -i",
     "l": "node joomla-tools.mjs -l",
@@ -19,8 +17,8 @@
     "r": "node joomla-tools.mjs -r",
     "w": "node joomla-tools.mjs -w",
     "init": "npm run i && npm run l && npm run b",
-    "lint-css": "npx stylelint media_src/css/.",
-    "lint-js": "npx eslint **/*.mjs",
+    "lint-css": "stylelint media_src/css/.",
+    "lint-js": "eslint **/*.mjs",
     "lint": "npm run lint-css && npm run lint-js",
     "update:browserlist": "npx browserslist@latest --update-db",
     "prepublishOnly": "npx np --no-cleanup --yolo --no-publish",
@@ -84,6 +82,9 @@
     "sass": "^1.62.1",
     "stylelint": "^15.6.2",
     "stylelint-config-recommended": "^12.0.0",
+    "stylelint-config-standard": "^24.0.0",
+    "stylelint-order": "^5.0.0",
+    "stylelint-scss": "^5.0.0",
     "symlink-dir": "^5.1.1",
     "terser": "5.17.4"
   },
