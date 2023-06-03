@@ -13,24 +13,11 @@ import admZip from 'adm-zip';
 const zips = [];
 let zip, replacables;
 
-/**
- *
- * @param { string } file
- * @param { {} } replacables
- * @returns
- */
 function applyReplacements(file, replacables) {
   const content = readFileSync(file, { encoding: 'utf8'});
   return !replacables.version ? content : content.replace('{{version}}', replacables.version);
 }
 
-/**
- *
- * @param { string } folder
- * @param { string } replace
- * @param { {} } replacables
- * @param { admZip } zipper
- */
 async function addFilesRecursively(folder, replace, replacables, zipper) {
   jetpack.find(folder).forEach((file) => zipper.addFile(file.replace(folder, replace), applyReplacements(file, replacables)));
 }
@@ -51,9 +38,8 @@ async function packageExtensions() {
           if (existsSync(`src/${extensionType}/${extensionName}/administrator`)) {
             addFilesRecursively(`src/${extensionType}/${extensionName}/administrator`, 'administrator', replacables, zip);
             const xml = zip.getEntry(`administrator/${extensionName}.xml`);
-            const data = xml.getData();
-            zip.deleteFile(xml);
-            zip.addFile(`${extensionName}.xml`, data)
+            zip.deleteFile(`administrator/${extensionName}.xml`);
+            zip.addFile(`${extensionName}.xml`, xml.getData())
           }
           if (existsSync(`src/${extensionType}/${extensionName}/site`)) {
             addFilesRecursively(`src/${extensionType}/${extensionName}/site`, 'site', replacables, zip);
@@ -76,13 +62,17 @@ async function packageExtensions() {
           break;
         case 'plugins':
           for (const plgName of readdirSync(`src/${extensionType}/${extensionName}`)) {
-            replacables = options['joomla-extensions'].plugins.filter((x) => x.name === extensionName)[0];
-            zip = new admZip();
-            addFilesRecursively(`src/${extensionType}/${extensionName}/${plgName}`, {base: `src/${extensionType}/${extensionName}/${plgName}`, replace: ''}, replacables, zip);
-            if (existsSync(`mediamedia/plg_${extensionName}_${plgName}`)) {
-              addFilesRecursively(`media/plg_${extensionName}_${plgName}`, 'media', replacables, zip);
+            if (options['joomla-extensions'].plugins[extensionName]) {
+              replacables = options['joomla-extensions'].plugins[extensionName].filter((x) => x.name === plgName);
+              if (replacables.length) {
+                zip = new admZip();
+                addFilesRecursively(`src/${extensionType}/${extensionName}/${plgName}`, {base: `src/${extensionType}/${extensionName}/${plgName}`, replace: ''}, replacables[0], zip);
+                if (existsSync(`mediamedia/plg_${extensionName}_${plgName}`)) {
+                  addFilesRecursively(`media/plg_${extensionName}_${plgName}`, 'media', replacables[0], zip);
+                }
+                zips.push({name: `plg_${extensionName}_${plgName}_v${replacables[0].version}.zip`, zip: zip });
+              }
             }
-            zips.push({name: `plg_${extensionName}_${plgName}_v${replacables.version}.zip`, zip: zip });
           }
           break;
         case 'libraries':
