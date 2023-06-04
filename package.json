@@ -24,7 +24,7 @@
     "prepublishOnly": "npx np --no-cleanup --yolo --no-publish",
     "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
     "test": "ava",
-    "coverage": "c8 npm test"
+    "coverage": "c8 --reporter=lcov npm test"
   },
   "repository": {
     "type": "git",
