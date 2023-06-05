@@ -58,8 +58,7 @@ async function handleScript(inputFile) {
   }
 
   if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    const outputFile = inputFile.replace(/\.mjs$/, '.js').replace(globalThis.searchPath, globalThis.replacePath);
-    return handleESMFile(inputFile, outputFile);
+    return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.js').replace(globalThis.searchPath, globalThis.replacePath));
   }
 }
 
