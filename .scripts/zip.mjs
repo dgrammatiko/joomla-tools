@@ -51,13 +51,17 @@ async function packageExtensions() {
           break;
         case 'modules':
           for (const actualModName of readdirSync(`src/${extensionType}/${extensionName}`)) {
-            replacables = options['joomla-extensions'].modules[extensionName].filter((x) => x.name === actualModName)[0];
-            zip = new admZip();
-            addFilesRecursively(`src/${extensionType}/${extensionName}/${actualModName}`, '', replacables, zip);
-            if (existsSync(`media/mod_${actualModName}`)) {
-              addFilesRecursively(`media/mod_${actualModName}`, 'media', replacables, zip);
+            if (options['joomla-extensions'].modules[extensionName]) {
+              replacables = options['joomla-extensions'].modules[extensionName].filter((x) => x.name === actualModName);
+              if (replacables.length) {
+                zip = new admZip();
+                addFilesRecursively(`src/${extensionType}/${extensionName}/${actualModName}`, '', replacables[0], zip);
+                if (existsSync(`media/mod_${actualModName}`)) {
+                  addFilesRecursively(`media/mod_${actualModName}`, 'media', replacables[0], zip);
+                }
+                zips.push({name: `mod_${extensionName}_${actualModName}_v${replacables[0].version}.zip`, zip: zip });
+              }
             }
-            zips.push({name: `mod_${extensionName}_${actualModName}_v${replacables.version}.zip`, zip: zip });
           }
           break;
         case 'plugins':
@@ -66,7 +70,7 @@ async function packageExtensions() {
               replacables = options['joomla-extensions'].plugins[extensionName].filter((x) => x.name === plgName);
               if (replacables.length) {
                 zip = new admZip();
-                addFilesRecursively(`src/${extensionType}/${extensionName}/${plgName}`, {base: `src/${extensionType}/${extensionName}/${plgName}`, replace: ''}, replacables[0], zip);
+                addFilesRecursively(`src/${extensionType}/${extensionName}/${plgName}`, '', replacables[0], zip);
                 if (existsSync(`mediamedia/plg_${extensionName}_${plgName}`)) {
                   addFilesRecursively(`media/plg_${extensionName}_${plgName}`, 'media', replacables[0], zip);
                 }

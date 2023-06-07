@@ -5,3 +5,8 @@ media
 media_source
 coverage
 !bin
+test
+ava.config.mjs
+.eslintrc.json
+renovate.json
+jsconfig.json
