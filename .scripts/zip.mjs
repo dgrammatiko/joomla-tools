@@ -4,6 +4,7 @@ import {
   mkdirSync,
   readFileSync
 } from 'node:fs';
+import { extname } from 'node:path';
 import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
 
@@ -19,7 +20,15 @@ function applyReplacements(file, replacables) {
 }
 
 async function addFilesRecursively(folder, replace, replacables, zipper) {
-  jetpack.find(folder).forEach((file) => zipper.addFile(file.replace(folder, replace), applyReplacements(file, replacables)));
+  jetpack.find(folder).forEach((file) => {
+    let fileContent;
+    if (['.php', '.xml', '.ini', '.js', '.css'].includes(extname(file))) {
+      fileContent = applyReplacements(file, replacables);
+    } else {
+      fileContent = readFileSync(file);
+    }
+    zipper.addFile(file.replace(folder, replace), fileContent);
+  });
 }
 
 async function packageExtensions() {
