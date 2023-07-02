@@ -44,6 +44,8 @@ jobs:
       uses: actions-js/push@master
       with:
         message: "no publish"
+        author_email: "d.grammatiko@gmail.com"
+        author_name: "dgrammatiko"
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - run: npm publish
