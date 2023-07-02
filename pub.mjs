@@ -5,13 +5,7 @@ import { join } from 'node:path';
 import semver from 'semver';
 
 const require = createRequire(import.meta.url);
-
-/**
- * Read the package.json
- */
-function getPackage(pack = 'package.json') {
-  return require(join(cwd(), pack));
-}
+const getPackage = (pack = 'package.json') => require(join(cwd(), pack));
 
 const pkg = getPackage();
 const pkgLock = getPackage('package-lock.json');
