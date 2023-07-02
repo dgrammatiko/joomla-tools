@@ -8,3 +8,4 @@ www
 !bin
 coverage
 test/stubs
+node_modules
