@@ -20,7 +20,12 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -31,7 +36,16 @@ jobs:
     - run: npm run build --if-present
     - run: npm run coverage
 
-      if: success()
+      if: success() && ${{ github.event.commits[0].message != 'no publish' }}
+    - name: Increase Version
+      run: npm version patch
+
+    - name: Commit & Push changes
+      uses: actions-js/push@master
+      with:
+        message: "no publish"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
