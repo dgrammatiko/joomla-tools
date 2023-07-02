@@ -1,7 +1,6 @@
 export default {
   files: [
     'test/**/*.test.mjs',
-    // '!test/stubs/**/*',
   ],
   // match: [
   //   '*oo',
