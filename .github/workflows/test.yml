@@ -39,6 +39,8 @@ jobs:
       if: success() && ${{ github.event.commits[0].message != 'no publish' }}
     - name: Increase Version
       run: npm version patch
+            git config --global user.email "d.grammatiko@gmail.com"
+            git config --global user.name "dgrammatiko"
 
     - name: Commit & Push changes
       uses: actions-js/push@master
