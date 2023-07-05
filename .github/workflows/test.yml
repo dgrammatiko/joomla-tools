@@ -38,6 +38,13 @@ jobs:
     - run: npm run build --if-present
     - run: npm run coverage
 
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        fail_ci_if_error: true
+        verbose: true
+        token: ${{secrets.CODECOV_TOKEN}}
+
       if: success() && github.event_name != 'push' && github.event.commits[0].message != 'no publish'
     - name: Increase Version
       run: npm version patch -m "Bump to %s"
@@ -55,11 +62,3 @@ jobs:
     - run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        fail_ci_if_error: true
-        verbose: true
-        token: ${{secrets.CODECOV_TOKEN}}
-
