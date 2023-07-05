@@ -42,6 +42,7 @@ jobs:
     - name: Increase Version
       run: npm version patch
 
+      if: success()
     - name: Commit & Push changes
       uses: actions-js/push@master
       with:
@@ -50,6 +51,7 @@ jobs:
         author_name: "dgrammatiko"
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      if: success() && ${{ github.event.commits[0].message != 'no publish' }}
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
