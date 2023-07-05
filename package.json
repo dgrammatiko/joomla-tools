@@ -24,7 +24,10 @@
     "prepub": "npx np --no-cleanup --yolo --no-publish",
     "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
     "test": "ava",
-    "coverage": "c8 --reporter=lcov npm test"
+    "coverage": "c8 --reporter=lcov npm test",
+    "release:major": "npm version $(semver $npm_package_version -i major) && npm publish --tag latest",
+    "release:minor": "npm version $(semver $npm_package_version -i minor) && npm publish --tag latest",
+    "release:patch": "npm version $(semver $npm_package_version -i patch) && npm publish --tag latest"
   },
   "repository": {
     "type": "git",
