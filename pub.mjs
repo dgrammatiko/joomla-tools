@@ -3,7 +3,6 @@ import { createRequire } from 'node:module';
 import { cwd } from 'node:process';
 import { join } from 'node:path';
 import semver from 'semver';
-import { exec } from 'node:child_process';
 
 const require = createRequire(import.meta.url);
 
