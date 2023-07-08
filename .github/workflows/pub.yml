@@ -6,8 +6,6 @@ name: Node.js CI
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -42,11 +40,9 @@ jobs:
         verbose: true
         token: ${{secrets.CODECOV_TOKEN}}
 
-      if: success() && github.event_name != 'push' && github.event.commits[0].message != 'no publish'
     - name: Increase Version
       run: node pub.mjs && npm install
 
-      if: success()
     - name: Commit & Push changes
       uses: actions-js/push@master
       with:
@@ -55,7 +51,6 @@ jobs:
         author_name: "dgrammatiko"
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      if: success() && github.event_name != 'push' && github.event.commits[0].message != 'no publish'
     - run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
