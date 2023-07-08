@@ -22,5 +22,3 @@ pkg.version = `${semver.major(version)}.${semver.minor(version)}.${semver.patch(
 writeFileSync('package.json', JSON.stringify(pkg, '', 2));
 
 rmSync('package-lock.json');
-
-exec('npm install');
