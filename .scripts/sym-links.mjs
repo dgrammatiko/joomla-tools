@@ -37,7 +37,7 @@ async function symLink(path) {
           }
           break;
         case 'libraries':
-          symlinkDir(`./src/${extensionType}/${extensionName}`, `./www/library/${extensionName}`);
+          symlinkDir(`./src/${extensionType}/${extensionName}`, `./www/libraries/${extensionName}`);
           break;
         case 'templates':
           for (const actualTplName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
