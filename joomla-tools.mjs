@@ -100,8 +100,9 @@ async function main() {
 
   if (opts.init) {
     if (globalThis.isJoomla) return;
+    if (pkg.joomlaVersion) globalThis.joomlaVersion = pkg.joomlaVersion;
 
-    logger(`Fetching a joomla instance... Args: ${program.args.join(' ')}`);
+    logger(`Fetching a joomla instance... Version: ${pkg.joomlaVersion}`);
     resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
   }
 }
