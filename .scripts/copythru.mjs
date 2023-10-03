@@ -44,6 +44,35 @@ async function copyThru(path) {
   jetpack
     .find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
     .forEach((file) => jetpack.copy(file, file.replace(`${globalThis.searchPath}${sep}`, `${globalThis.replacePath}${sep}`), { overwrite: true }));
+
+  // Copy the joomla.asset.json files
+  if (existsSync('./media')) {
+    readdirSync('./media').forEach((ext) => {
+      if (ext !== 'templates') {
+        if (existsSync(`${process.cwd()}/media_source/${ext}/joomla.asset.json`) && !existsSync(`${process.cwd()}/media/${ext}/joomla.asset.json`)) {
+          if (!existsSync(`${process.cwd()}/media/${ext}`)) mkdirSync(`${process.cwd()}/media/${ext}`, {recursive: true});
+          if (!existsSync(`${process.cwd()}/media/${ext}/joomla.asset.json`)) copyFileSync(`${process.cwd()}/media_source/${ext}/joomla.asset.json`, `${process.cwd()}/media/${ext}/joomla.asset.json`);
+        }
+      } else {
+        if (existsSync('./media/templates/administrator')) {
+          readdirSync('./media/templates/administrator').forEach((exta) => {
+            if (existsSync(`${process.cwd()}/media_source/templates/administrator/${exta}/joomla.asset.json`) && !existsSync(`${process.cwd()}/media/templates/administrator/${exta}/joomla.asset.json`)) {
+              if (!existsSync(`${process.cwd()}/media/templates/administrator/${exta}`)) mkdirSync(`${process.cwd()}/media/templates/administrator/${exta}`, {recursive: true});
+              if (!existsSync(`${process.cwd()}/media/templates/administrator/${exta}/joomla.asset.json`)) copyFileSync(`${process.cwd()}/media_source/templates/administrator/${exta}/joomla.asset.json`, `${process.cwd()}/media/templates/administrator/${exta}/joomla.asset.json`);
+            }
+          });
+        }
+        if (existsSync('./media/templates/site')) {
+          readdirSync('./media/templates/site').forEach((exta) => {
+            if (existsSync(`${process.cwd()}/media_source/templates/site/${exta}/joomla.asset.json`) && !existsSync(`${process.cwd()}/media/templates/site/${exta}/joomla.asset.json`)) {
+              if (!existsSync(`${process.cwd()}/media/templates/site/${exta}`)) mkdirSync(`${process.cwd()}/media/templates/site/${exta}`, {recursive: true});
+              if (!existsSync(`${process.cwd()}/media/templates/site/${exta}/joomla.asset.json`)) copyFileSync(`${process.cwd()}/media_source/templates/site/${exta}/joomla.asset.json`, `${process.cwd()}/media/templates/administrator/${exta}/joomla.asset.json`);
+            }
+          });
+        }
+      }
+    });
+  }
 };
 
 export { copyThru };
