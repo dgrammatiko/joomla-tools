@@ -79,9 +79,9 @@ async function main() {
     if (globalThis.isJoomla) return;
 
     logger('Start building...');
-    resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
     resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
     resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
+    resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
   }
 
   if (opts.watch) {
