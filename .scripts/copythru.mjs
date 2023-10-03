@@ -1,6 +1,6 @@
 import { cwd, exit } from 'node:process';
 import { join, sep } from 'node:path';
-import { stat, existsSync } from 'node:fs';
+import { stat, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import jetpack from 'fs-jetpack';
 
 import { logger } from './utils/logger.mjs';
