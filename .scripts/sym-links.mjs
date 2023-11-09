@@ -5,7 +5,7 @@ import {
   symlinkSync,
   lstatSync
 } from 'node:fs';
-import { basename, dirname, sep } from 'path';
+import { basename, dirname, sep, resolve } from 'path';
 import jetpack from 'fs-jetpack';
 import symlinkDir from 'symlink-dir';
 
@@ -56,11 +56,18 @@ async function symLink(path) {
             const newPath = xml.replace(`src${sep}libraries`, `www${sep}administrator${sep}manifests${sep}libraries`);
             const skippedName = dirname(dirname(newPath));
             const xmlFileName = basename(newPath, '.xml');
-            if (!existsSync(skippedName)) {
+            if (skippedName !== `www${sep}administrator${sep}manifests${sep}libraries` && !existsSync(skippedName)) {
               mkdirSync(skippedName, {recursive: true});
             }
 
-            if (!existsAlterSync(`${skippedName}${sep}${xmlFileName}.xml`)) symlinkSync(xml, `${skippedName}${sep}${xmlFileName}.xml`)
+            console.log({
+              xml,
+              newPath,
+              skippedName,
+              xmlFileName,
+              x: `${skippedName}${sep}${xmlFileName}.xml`
+            })
+            if (!existsAlterSync(`${skippedName}${sep}${xmlFileName}.xml`)) symlinkSync(resolve(xml), `${skippedName}${sep}${xmlFileName}.xml`)
           });
           symlinkDir(`./src/${extensionType}/${extensionName}`, `./www/libraries/${extensionName}`);
           break;
