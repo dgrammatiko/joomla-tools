@@ -1,9 +1,23 @@
 import {
   existsSync,
   readdirSync,
-  mkdirSync
+  mkdirSync,
+  symlinkSync,
+  lstatSync
 } from 'node:fs';
+import { dirname, sep } from 'path';
+import jetpack from 'fs-jetpack';
 import symlinkDir from 'symlink-dir';
+
+function existsAlterSync(path) {
+  try {
+    lstatSync(path)
+    return true
+  } catch (err) {
+    // if (err.code !== 'EEXIST') throw err
+    return false
+  }
+}
 
 async function symLink(path) {
   if (!existsSync('./media')) {
@@ -37,6 +51,14 @@ async function symLink(path) {
           }
           break;
         case 'libraries':
+          const xmls = jetpack.find(`./src/${extensionType}`, { matching: `${extensionName}/**/*.xml` });
+          xmls.forEach((xml) => {
+            const newPath = xml.replace(`src${sep}libraries`, `www${sep}administrator${sep}manifests${sep}libraries`);
+            if (dirname(newPath) !== extensionName && !existsSync(dirname(newPath))) {
+              mkdirSync(dirname(newPath), {recursive: true});
+            }
+            if (!existsAlterSync(newPath)) symlinkSync(xml, newPath)
+          });
           symlinkDir(`./src/${extensionType}/${extensionName}`, `./www/libraries/${extensionName}`);
           break;
         case 'templates':
