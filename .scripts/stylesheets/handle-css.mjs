@@ -1,10 +1,7 @@
-import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import { dirname, sep } from 'node:path';
-import Postcss from 'postcss';
-
-import { Autoprefixer, CssNano } from './configs/css.mjs';
+import { existsSync, cp, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { logger } from '../utils/logger.mjs';
+import { transform, Features } from 'lightningcss';
 
 /**
  * @typedef { Object } globalThis
@@ -25,20 +22,23 @@ async function handleCssFile(file) {
   try {
     // CSS file, we will copy the file and then minify it in place
     if (!existsSync(dirname(outputFile))) {
-      await mkdir(dirname(outputFile), { recursive: true, mode: '0755' });
+      mkdirSync(dirname(outputFile), { recursive: true, mode: '0755' });
     }
 
-    if (file !== outputFile) {
-      await cp(file, outputFile, { preserveTimestamps: true, force: true });
-    }
-
-    const content = await readFile(file, { encoding: 'utf8' });
-    const cssMin = await Postcss([Autoprefixer, CssNano]).process(content, { from: undefined });
+    let cssMin = transform({
+      filename: file,
+      code: readFileSync(file),
+      minify: true,
+      targets: {
+        safari: 15 << 16
+      },
+      exclude: Features.VendorPrefixes
+    });
 
     // Ensure the folder exists or create it
-    await writeFile(outputFile.replace('.css', '.min.css'), cssMin.css.toString(), { encoding: 'utf8', mode: '0644' });
+    writeFileSync(outputFile.replace('.css', '.min.css'), cssMin.code.toString(), { encoding: 'utf8', mode: '0644' });
 
-    logger(`✅ CSS file copied/minified: ${file}`);
+    logger(`✅ CSS file minified: ${file}`);
   } catch (err) {
     logger(err.message);
   }

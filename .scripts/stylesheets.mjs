@@ -6,7 +6,6 @@ import pkgFsJetpack from 'fs-jetpack';
 
 import { logger } from './utils/logger.mjs';
 import { handleScssFile } from './stylesheets/handle-scss.mjs';
-import { handleCssFile } from './stylesheets/handle-css.mjs';
 
 const { find } = pkgFsJetpack;
 
@@ -40,7 +39,8 @@ async function handleStylesheets(path) {
       files.push(`${cwd()}/${path}`);
     } else {
       logger(`Unknown path ${path}`);
-      exit(1);
+      // exit(1);
+      return Promise.reject();
     }
   } else {
     folders.push('media_source');
@@ -58,17 +58,15 @@ async function handleStylesheets(path) {
  * @returns { Promise<unknown> }
  */
 async function handleStylesheet(inputFile) {
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
-  if (inputFile.endsWith('.css') && !inputFile.endsWith('.min.css')) {
-    return handleCssFile(inputFile);
-  }
-
-  if (inputFile.endsWith('.scss') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
+  if ((inputFile.endsWith('.css') || inputFile.endsWith('.scss')) && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
+    if (!globalThis.searchPath || !globalThis.replacePath) {
+      console.error(`Global searchPath and replacePath are not defined`);
+      return Promise.reject();
+    }
     const outputFile = inputFile.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(globalThis.searchPath, globalThis.replacePath).replace('.scss', '.css');
     return handleScssFile(inputFile, outputFile);
   }
+  return Promise.resolve();
 }
 
 export { handleStylesheets };

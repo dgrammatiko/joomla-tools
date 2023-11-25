@@ -1,10 +1,8 @@
-import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, sep } from 'node:path';
-import Postcss from 'postcss';
-import Sass from 'sass';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { basename, dirname } from 'node:path';
+import * as sass from 'sass';
+import rtlcss from 'rtlcss';
 
-import { Autoprefixer, CssNano, rtlcss } from './configs/css.mjs';
 import { logger } from '../utils/logger.mjs';
 
 /**
@@ -17,27 +15,22 @@ async function handleScssFile(inputFile, outputFile) {
   }
 
   if (!existsSync(dirname(outputFile))) {
-    await mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
+    mkdirSync(dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
-  const compiled = Sass.compile(inputFile);
-  const plugins = [Autoprefixer];
-  if (outputFile.endsWith('-rtl.scss')) plugins.push(rtlcss);
+  let contents = sass.compile(inputFile, {sourceMap: true, style: 'compressed'});
+  const code = (outputFile.endsWith('-rtl.scss')) ? rtlcss.process(contents.css.toString()) : contents.css.toString();
 
-  // Auto prefixing
-  const res = await Postcss(plugins).process(compiled.css.toString(), { from: inputFile });
-
-  await writeFile(
-    outputFile,
-    res.css.toString(),
+  writeFileSync(
+    outputFile.replace('.css', '.min.css'),
+    `${code}
+//# sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`,
     { encoding: 'utf8', mode: '0644' },
   );
 
-  const cssMin = await Postcss([CssNano]).process(res.css.toString(), { from: inputFile });
-
-  await writeFile(
-    outputFile.replace('.css', '.min.css'),
-    cssMin.css,
+  writeFileSync(
+    outputFile.replace('.css', '.css.map'),
+    contents.sourceMap ? JSON.stringify(contents.sourceMap) : '',
     { encoding: 'utf8', mode: '0644' },
   );
 

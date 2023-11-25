@@ -11,7 +11,7 @@ import jetpack from 'fs-jetpack';
 
 import { logger } from './utils/logger.mjs';
 
-/** text
+/**
  * Method that will crawl the media_source folder
  * and compile any scss files to css and .min.css
  * copy any css files to the appropriate destination and
@@ -26,7 +26,7 @@ import { logger } from './utils/logger.mjs';
 async function copyThru(path) {
   if (!existsSync(join(cwd(), globalThis.searchPath))) {
     logger(`The tools aren't initialized properly. Exiting`);
-    exit(1);
+    return Promise.reject();
   }
 
   const files = [];
@@ -41,7 +41,7 @@ async function copyThru(path) {
       files.push(`${path}`);
     } else {
       logger(`Unknown path ${path}`);
-      process.exit(1);
+      return Promise.reject();
     }
   } else {
     folders.push(globalThis.searchPath);

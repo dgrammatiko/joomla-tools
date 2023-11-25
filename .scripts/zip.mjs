@@ -33,7 +33,8 @@ async function addFilesRecursively(folder, replace, replacables, zipper) {
 
 async function packageExtensions() {
   if (!existsSync('src')) {
-    throw new Error('There are no extensions or media, please run build before linking...');
+    console.error('There are no extensions or media, please run build before linking...');
+    return Promise.reject();
   }
 
   const options = globalThis.options;

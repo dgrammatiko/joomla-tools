@@ -1,46 +1,29 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import jsonFn from '@rollup/plugin-json';
-// import replace from '@rollup/plugin-replace';
-import { babel } from '@rollup/plugin-babel';
+import { swc, defineRollupSwcOption } from 'rollup-plugin-swc3';
 
 const plugins = [
   nodeResolve({ preferBuiltins: false }),
   jsonFn(),
-  // replace({
-  //   preventAssignment: true,
-  //   // CSS_CONTENTS_PLACEHOLDER: minifiedCss,
-  //   delimiters: ['{{', '}}'],
-  // }),
-  babel({
-    exclude: 'node_modules/core-js/**',
-    babelHelpers: 'bundled',
-    babelrc: false,
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          targets: {
-            browsers: [
-              '> 1%',
-              'not op_mini all',
-              'not dead',
-            ],
-          },
-          bugfixes: true,
-          loose: true,
-        },
-      ],
-    ],
-  }),
-  // terser(),
+  swc(defineRollupSwcOption({
+    minify: true,
+    jsc: {
+      target: "es2018",
+      minify: {
+        sourceMap: true,
+      }
+    },
+    tsconfig: false,
+    sourceMaps: true
+  })),
 ];
 
 const config = {
   inputOptions: { plugins },
   outputOptions: {
     format: 'es',
-    sourcemap: false,
-    externalImportAssertions: false,
+    sourcemap: true,
+    externalImportAttributes: false,
   }
 }
 

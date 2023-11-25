@@ -1,6 +1,12 @@
 import { existsSync, rmSync, readFileSync } from 'node:fs';
+import { basename } from 'node:path';
 import test from 'ava';
 import { handleScssFile } from '../.scripts/stylesheets/handle-scss.mjs';
+
+test.beforeEach(() => {
+  global.searchPath = 'test/stubs/scss';
+  global.replacePath = 'test/stubs/new/css';
+});
 
 // Cleanup
 test.after.always(async () => {
@@ -10,8 +16,6 @@ test.after.always(async () => {
 });
 
 test('Non existing SCSS file', async (t) => {
-  global.searchPath = 'test/stubs/scss';
-  global.replacePath = 'test/stubs/new/css';
   const file = 'nonExisting.scss';
   await t.throwsAsync(async () => {
     await handleScssFile(file);
@@ -19,8 +23,6 @@ test('Non existing SCSS file', async (t) => {
 });
 
 test('SCSS file without import', async (t) => {
-  global.searchPath = 'test/stubs/scss';
-  global.replacePath = 'test/stubs/new/css';
   const file = 'scss_without_import.scss';
   const inputFile = `${global.searchPath}/${file}`;
   const outputFile = `${global.replacePath}/${file.replace('.scss', '.css')}`;
@@ -28,17 +30,14 @@ test('SCSS file without import', async (t) => {
   await t.notThrowsAsync(handleScssFile(inputFile, outputFile));
   await handleScssFile(inputFile, outputFile);
 
-  t.truthy(existsSync(outputFile));
+  const inp = `body{color:red}
+//${'#'} sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`;
+
   t.truthy(existsSync(outputFile.replace('.css', '.min.css')));
-  t.is(readFileSync(outputFile, { encoding: 'utf8' }), `body {
-  color: red;
-}`);
-  t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), 'body{color:red}');
+  t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), inp);
 });
 
 test('SCSS file with import', async (t) => {
-  global.searchPath = 'test/stubs/scss';
-  global.replacePath = 'test/stubs/new/css';
   const file = 'scss_with_import.scss';
   const inputFile = `${global.searchPath}/${file}`;
   const outputFile = `${global.replacePath}/${file.replace('.scss', '.css')}`;
@@ -46,17 +45,14 @@ test('SCSS file with import', async (t) => {
   await t.notThrowsAsync(handleScssFile(inputFile, outputFile));
   await handleScssFile(inputFile, outputFile);
 
-  t.truthy(existsSync(outputFile));
+  const inp = `body{color:red}
+//${'#'} sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`;
+
   t.truthy(existsSync(outputFile.replace('.css', '.min.css')));
-  t.is(readFileSync(outputFile, { encoding: 'utf8' }), `body {
-  color: red;
-}`);
-  t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), 'body{color:red}');
+  t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), inp);
 });
 
 test('RTL SCSS file with import', async (t) => {
-  global.searchPath = 'test/stubs/scss';
-  global.replacePath = 'test/stubs/new/css';
   const file = 'scss_with_import-rtl.scss';
   const inputFile = `${global.searchPath}/${file}`;
   const outputFile = `${global.replacePath}/${file.replace('.scss', '.css')}`;
@@ -64,10 +60,9 @@ test('RTL SCSS file with import', async (t) => {
   await t.notThrowsAsync(handleScssFile(inputFile, outputFile));
   await handleScssFile(inputFile, outputFile);
 
-  t.truthy(existsSync(outputFile));
+  const inp = `body{color:red}
+//${'#'} sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`;
+
   t.truthy(existsSync(outputFile.replace('.css', '.min.css')));
-  t.is(readFileSync(outputFile, { encoding: 'utf8' }), `body {
-  color: red;
-}`);
-  t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), 'body{color:red}');
+  t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), inp);
 });

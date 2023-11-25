@@ -7,12 +7,12 @@ import { logger } from './utils/logger.mjs';
 
 
 /** @type { string } */
-let version  =  globalThis.joomlaVersion || '4.3.1';
+let version  =  globalThis.joomlaVersion || '5.0.0';
 
 async function fetchJoomla() {
   if (existsSync(resolve(cwd(), 'www'))) {
     logger('A Joomla installation already exists, skipping clonning...');
-    exit(1);
+    return Promise.reject();
   }
 
   let des;
@@ -32,7 +32,7 @@ async function fetchJoomla() {
     (new AdmZip(Buffer.from(data))).extractAllTo(resolve(cwd(), 'www'), true);
   } catch(err) {
     logger('An error occured, Joomla was not downloaded!');
-    exit(1);
+    return Promise.reject();
   }
 };
 

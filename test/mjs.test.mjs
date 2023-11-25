@@ -1,17 +1,21 @@
 import { existsSync, rmSync, readFileSync } from 'node:fs';
+import { basename } from 'node:path';
 import test from 'ava';
 import { handleESMFile } from '../.scripts/javascript/handleESMFile.mjs';
 
+test.beforeEach(() => {
+  global.searchPath = 'test/stubs/js';
+  global.replacePath = 'test/stubs/new/js';
+});
+
 // Cleanup
-test.after.always(async (t) => {
+test.after.always(() => {
   if (existsSync('test/stubs/new')) {
     rmSync('test/stubs/new', { force: true, recursive: true });
   }
 });
 
 test('Non existing file', async (t) => {
-  global.searchPath = 'test/stubs/js';
-  global.replacePath = 'test/stubs/new/js';
   const file = 'nonExisting.mjs';
   await t.throwsAsync(async () => {
     await handleESMFile(file);
@@ -19,36 +23,29 @@ test('Non existing file', async (t) => {
 });
 
 test('Module file without import', async (t) => {
-  global.searchPath = 'test/stubs/js';
-  global.replacePath = 'test/stubs/new/js';
   const file = 'module_without_import.mjs';
   const inputFile = `${global.searchPath}/${file}`;
-  const outputFile = `${global.replacePath}/${file.replace('.mjs', '.js')}`;
+  const outputFile = `${global.replacePath}/${file.replace('.mjs', '.min.js')}`;
 
   await t.notThrowsAsync(handleESMFile(inputFile, outputFile));
   await handleESMFile(inputFile, outputFile);
 
+  const inp = `let e="hello";export{e as a};\n//${'#'} sourceMappingURL=${basename(outputFile.replace('.js', '.js.map'))}\n`;
+
   t.truthy(existsSync(outputFile));
-  t.truthy(existsSync(outputFile.replace('.js', '.min.js')));
-  t.is(readFileSync(inputFile, { encoding: 'utf8' }), readFileSync(outputFile, { encoding: 'utf8' }));
-  t.is(readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }), 'const a="hello";export{a};');
+  t.is(readFileSync(outputFile, { encoding: 'utf8' }), inp);
 });
 
 test('Module file with import', async (t) => {
-  global.searchPath = 'test/stubs/js';
-  global.replacePath = 'test/stubs/new/js';
   const file = 'module_with_import.mjs';
   const inputFile = `${global.searchPath}/${file}`;
-  const outputFile = `${global.replacePath}/${file.replace('.mjs', '.js')}`;
+  const outputFile = `${global.replacePath}/${file.replace('.mjs', '.min.js')}`;
 
   await t.notThrowsAsync(handleESMFile(inputFile, outputFile));
   await handleESMFile(inputFile, outputFile);
 
-  t.truthy(existsSync(outputFile));
-  t.truthy(existsSync(outputFile.replace('.js', '.min.js')));
-  t.is(readFileSync(outputFile, { encoding: 'utf8' }), `const a = 'hello';
+  const inp = `let e="hello";export{e as a};\n//${'#'} sourceMappingURL=${basename(outputFile.replace('.js', '.js.map'))}\n`;
 
-export { a };
-`);
-  t.is(readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }), 'const a="hello";export{a};');
+  t.truthy(existsSync(outputFile));
+  t.is(readFileSync(outputFile, { encoding: 'utf8' }), inp);
 });
