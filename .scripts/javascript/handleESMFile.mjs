@@ -3,6 +3,9 @@ import { existsSync } from 'node:fs';
 import { rollup } from 'rollup';
 import { config } from './configs/rollup.2018.mjs';
 
+/**
+ * @param {string} inp
+ */
 function logger(inp) {
   process.stdout.write(inp);
 }

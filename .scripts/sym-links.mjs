@@ -5,6 +5,11 @@ const { find } = fsJetpack;
 
 import symlinkDir from 'symlink-dir';
 
+/**
+ *
+ * @param {String} path
+ * @returns {boolean}
+ */
 function existsAlterSync(path) {
   try {
     lstatSync(path);
@@ -15,6 +20,11 @@ function existsAlterSync(path) {
   }
 }
 
+/**
+ *
+ * @param {String} base
+ * @param {String} suffix
+ */
 function linkPath(base, suffix) {
   if (!existsSync(`${process.cwd()}${base}${suffix}`)) {
     mkdirSync(`${process.cwd()}${base}${suffix}`, { recursive: true });
@@ -22,6 +32,11 @@ function linkPath(base, suffix) {
   symlinkDir(`${process.cwd()}${base}${suffix}`, `./www${base}${suffix}`);
 }
 
+/**
+ *
+ * @param {String} path
+ * @returns
+ */
 async function symLink(path) {
   if (!existsSync('./src')) {
     console.error('There are no extensions or media, please run build before linking...');
