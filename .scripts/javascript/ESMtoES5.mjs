@@ -2,7 +2,10 @@ import { basename, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { rollup } from 'rollup';
 import { config } from './configs/rollup.es5.mjs';
-import { logger } from '../utils/logger.mjs';
+
+function logger(inp) {
+  process.stdout.write(inp);
+}
 
 /**
  * Compiles es6 files to es5.
@@ -17,11 +20,9 @@ async function handleESMToLegacy(inputFile, outputFile) {
 
   logger(`Transpiling ES5 file: ${basename(outputFile)}...`);
 
-  if (!existsSync(inputFile)) return;
-
   const bundle = await rollup({ ...config.inputOptions, input: inputFile });
   await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
   await bundle.close();
-};
+}
 
 export { handleESMToLegacy };

@@ -2,7 +2,10 @@ import { basename, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { rollup } from 'rollup';
 import { config } from './configs/rollup.2018.mjs';
-import { logger } from '../utils/logger.mjs';
+
+function logger(inp) {
+  process.stdout.write(inp);
+}
 
 /**
  * Compiles es6
@@ -21,6 +24,6 @@ async function handleESMFile(inputFile, outputFile) {
 
   logger(`✅ ES2018 file: ${basename(outputFile)}: transpiled`);
   await bundle.close();
-};
+}
 
 export { handleESMFile };

@@ -5,17 +5,19 @@ import { swc, defineRollupSwcOption } from 'rollup-plugin-swc3';
 const plugins = [
   nodeResolve({ preferBuiltins: false }),
   commonjs(),
-  swc(defineRollupSwcOption({
-    minify: true,
-    jsc: {
-      target: "es2018",
-      minify: {
-        sourceMap: true,
-      }
-    },
-    tsconfig: false,
-    sourceMaps: true
-  })),
+  swc(
+    defineRollupSwcOption({
+      minify: true,
+      jsc: {
+        target: 'es2018',
+        minify: {
+          sourceMap: true,
+        },
+      },
+      tsconfig: false,
+      sourceMaps: true,
+    }),
+  ),
 ];
 
 const config = {
@@ -23,7 +25,7 @@ const config = {
   outputOptions: {
     format: 'iife',
     sourcemap: true,
-  }
-}
+  },
+};
 
 export { config };

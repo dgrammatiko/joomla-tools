@@ -4,9 +4,12 @@ src
 media
 media_source
 coverage
+codecov.yml
+swc.json
 !bin
 test
 ava.config.mjs
-.eslintrc.json
+biome.json
 renovate.json
 jsconfig.json
+pub.mjs

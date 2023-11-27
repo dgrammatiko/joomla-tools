@@ -4,7 +4,6 @@ import { cwd, exit } from 'node:process';
 import { join, sep } from 'node:path';
 import pkgFsJetpack from 'fs-jetpack';
 
-import { logger } from './utils/logger.mjs';
 import { handleScssFile } from './stylesheets/handle-scss.mjs';
 
 const { find } = pkgFsJetpack;
@@ -23,7 +22,7 @@ const { find } = pkgFsJetpack;
  */
 async function handleStylesheets(path) {
   if (!existsSync(join(cwd(), 'media_source'))) {
-    logger('The folder media_source does not exist. Exiting');
+    process.stdout.write('The folder media_source does not exist. Exiting');
     exit(1);
   }
 
@@ -38,7 +37,7 @@ async function handleStylesheets(path) {
     } else if (stats.isFile()) {
       files.push(`${cwd()}/${path}`);
     } else {
-      logger(`Unknown path ${path}`);
+      process.stdout.write(`Unknown path ${path}`);
       // exit(1);
       return Promise.reject();
     }
@@ -47,11 +46,9 @@ async function handleStylesheets(path) {
   }
 
   const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(scss|css)'] })));
-  // Loop to get the files that should be compiled via parameter
-  const computedFiles = [ ...files, ...fromFolder.flat() ];
 
-  return Promise.all(computedFiles.map((file) => handleStylesheet(file)));
-};
+  return Promise.all([...files, ...fromFolder.flat()].map((file) => handleStylesheet(file)));
+}
 
 /**
  * @param { string } inputFile
@@ -59,9 +56,8 @@ async function handleStylesheets(path) {
  */
 async function handleStylesheet(inputFile) {
   if ((inputFile.endsWith('.css') || inputFile.endsWith('.scss')) && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    if (!globalThis.searchPath || !globalThis.replacePath) {
-      console.error(`Global searchPath and replacePath are not defined`);
-      return Promise.reject();
+    if (globalThis.searchPath === undefined || globalThis.replacePath === undefined) {
+      throw new Error('Global searchPath and replacePath are not defined');
     }
     const outputFile = inputFile.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(globalThis.searchPath, globalThis.replacePath).replace('.scss', '.css');
     return handleScssFile(inputFile, outputFile);
@@ -69,4 +65,4 @@ async function handleStylesheet(inputFile) {
   return Promise.resolve();
 }
 
-export { handleStylesheets };
+export { handleStylesheet, handleStylesheets };

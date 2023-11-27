@@ -6,6 +6,7 @@ www
 .git
 .vscode
 !bin
+swc.json
 coverage
 test/stubs
 node_modules

@@ -2,7 +2,6 @@ import { stat } from 'node:fs/promises';
 import pkgFsJetpack from 'fs-jetpack';
 import { cwd } from 'node:process';
 
-import { logger } from './utils/logger.mjs';
 import { handleESMToLegacy } from './javascript/ESMtoES5.mjs';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
 
@@ -30,7 +29,7 @@ async function handleScripts(path) {
     } else if (stats.isFile()) {
       files.push(`${cwd()}/${path}`);
     } else {
-      logger(`Unknown path ${path}`);
+      process.stdout.write(`Unknown path ${path}`);
       return Promise.reject();
       // process.exit(1);
     }
@@ -38,12 +37,10 @@ async function handleScripts(path) {
     folders.push('media_source');
   }
 
-  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5\.js)'] })));
-  // Loop to get the files that should be compiled via parameter
-  const computedFiles = [ ...files, ...fromFolder.flat() ];
+  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5.js)'] })));
 
-  Promise.all(computedFiles.map((file) => handleScript(file)));
-};
+  Promise.all([...files, ...fromFolder.flat()].map((file) => handleScript(file)));
+}
 
 /**
  * @param { string } inputFile
@@ -51,12 +48,12 @@ async function handleScripts(path) {
  */
 async function handleScript(inputFile) {
   if (!globalThis.searchPath || !globalThis.replacePath) {
-    console.error(`Global searchPath and replacePath are not defined`);
+    console.error('Global searchPath and replacePath are not defined');
     return Promise.reject();
   }
 
   if (inputFile.endsWith('-es5.js')) {
-    return handleESMToLegacy(inputFile, inputFile.replace(\/-es5/.js$/, '.min.js').replace(globalThis.searchPath, globalThis.replacePath));
+    return handleESMToLegacy(inputFile, inputFile.replace(/-es5\.js$/, '.min.js').replace(globalThis.searchPath, globalThis.replacePath));
   }
 
   if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {

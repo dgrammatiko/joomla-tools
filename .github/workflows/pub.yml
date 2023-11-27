@@ -21,17 +21,42 @@ jobs:
         persist-credentials: false
         fetch-depth: 0
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
       with:
-        node-version: ${{ matrix.node-version }}
-        registry-url: 'https://registry.npmjs.org'
-        cache: 'npm'
-    - run: git config --global user.email "d.grammatiko@gmail.com"
+        version: 8
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    # - uses: actions/cache@v3
+    #   name: Setup pnpm cache
+    #   with:
+    #     path: ${{ env.STORE_PATH }}
+    #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: git config --global user.email "d.grammatiko@gmail.com"
     - run: git config --global user.name "dgrammatiko"
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm run coverage
+    - run: pnpm install
+    - run: pnpm coverage
+
+    # - name: Use Node.js ${{ matrix.node-version }}
+    #   uses: actions/setup-node@v4
+    #   with:
+    #     node-version: ${{ matrix.node-version }}
+    #     registry-url: 'https://registry.npmjs.org'
+    #     cache: 'npm'
+    # - run: git config --global user.email "d.grammatiko@gmail.com"
+    # - run: git config --global user.name "dgrammatiko"
+    # - run: npm ci
+    # - run: npm run build --if-present
+    # - run: npm run coverage
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
@@ -41,7 +66,7 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
 
     - name: Increase Version
-      run: node pub.mjs && npm install
+      run: node pub.mjs && pnpm install
 
     - name: Commit & Push changes
       uses: actions-js/push@master

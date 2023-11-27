@@ -30,7 +30,7 @@ test('Module file without import', async (t) => {
   await t.notThrowsAsync(handleESMFile(inputFile, outputFile));
   await handleESMFile(inputFile, outputFile);
 
-  const inp = `let e="hello";export{e as a};\n//${'#'} sourceMappingURL=${basename(outputFile.replace('.js', '.js.map'))}\n`;
+  const inp = `const o="hello";export{o as a};\n//${'#'} sourceMappingURL=${basename(outputFile.replace('.js', '.js.map'))}\n`;
 
   t.truthy(existsSync(outputFile));
   t.is(readFileSync(outputFile, { encoding: 'utf8' }), inp);
@@ -44,8 +44,9 @@ test('Module file with import', async (t) => {
   await t.notThrowsAsync(handleESMFile(inputFile, outputFile));
   await handleESMFile(inputFile, outputFile);
 
-  const inp = `let e="hello";export{e as a};\n//${'#'} sourceMappingURL=${basename(outputFile.replace('.js', '.js.map'))}\n`;
+  const inp = `const o="hello";export{o as a};\n//${'#'} sourceMappingURL=${basename(outputFile.replace('.js', '.js.map'))}\n`;
 
   t.truthy(existsSync(outputFile));
+  t.truthy(existsSync(`${outputFile}.map`));
   t.is(readFileSync(outputFile, { encoding: 'utf8' }), inp);
 });

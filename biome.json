@@ -1,0 +1,28 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.4.0/schema.json",
+  "organizeImports": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 160,
+      "quoteStyle": "single"
+    }
+  },
+  "files": {
+    "include": ["joomla-tools.mjs", "src/**/*.mjs"],
+    "ignore": ["node_modules/**/*.mjs", ".scripts/utils/debounce.mjs"]
+  },
+  "formatter": {
+    "formatWithErrors": true
+  }
+}

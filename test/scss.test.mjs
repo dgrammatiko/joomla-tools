@@ -34,6 +34,7 @@ test('SCSS file without import', async (t) => {
 //${'#'} sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`;
 
   t.truthy(existsSync(outputFile.replace('.css', '.min.css')));
+  t.truthy(existsSync(`${outputFile}.map`));
   t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), inp);
 });
 
@@ -49,6 +50,7 @@ test('SCSS file with import', async (t) => {
 //${'#'} sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`;
 
   t.truthy(existsSync(outputFile.replace('.css', '.min.css')));
+  t.truthy(existsSync(`${outputFile}.map`));
   t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), inp);
 });
 
@@ -64,5 +66,6 @@ test('RTL SCSS file with import', async (t) => {
 //${'#'} sourceMappingURL=${basename(outputFile.replace('.css', '.min.css.map'))}`;
 
   t.truthy(existsSync(outputFile.replace('.css', '.min.css')));
+  t.truthy(existsSync(`${outputFile}.map`));
   t.is(readFileSync(outputFile.replace('.css', '.min.css'), { encoding: 'utf8' }), inp);
 });

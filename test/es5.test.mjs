@@ -34,5 +34,6 @@ test('JS file without import', async (t) => {
   await handleESMToLegacy(inputFile, outputFile);
 
   t.truthy(existsSync(outputFile));
+  t.truthy(existsSync(`${outputFile}.map`));
   t.is(readFileSync(outputFile, { encoding: 'utf8' }), inp);
 });
