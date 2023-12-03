@@ -1,6 +1,6 @@
 {
   "name": "@dgrammatiko/joomla-tools",
-  "version": "0.0.129",
+  "version": "0.0.144",
   "publishConfig": {
     "access": "public"
   },
@@ -65,11 +65,11 @@
     "eslint": "8.54.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.29.0",
-    "eslint-plugin-vue": "9.18.1",
+    "eslint-plugin-vue": "9.19.2",
     "fs-jetpack": "5.1.0",
     "lightningcss": "1.22.1",
     "recursive-readdir": "^2.2.3",
-    "rollup": "4.5.2",
+    "rollup": "4.6.1",
     "rollup-plugin-swc3": "^0.10.4",
     "rtlcss": "4.1.1",
     "sass": "1.69.5",
