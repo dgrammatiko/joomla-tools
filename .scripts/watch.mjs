@@ -1,9 +1,4 @@
-import {
-  join,
-  extname,
-  basename,
-  dirname,
-} from 'node:path';
+import { join, extname, basename, dirname } from 'node:path';
 import { cwd, on as processOn } from 'node:process';
 import { watch } from 'chokidar';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
@@ -38,7 +33,7 @@ const processFile = (file) => {
  */
 const watching = (path) => {
   if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
+    throw new Error('Global searchPath and replacePath are not defined');
   }
 
   const watcher = watch(path ? join(cwd(), path) : join(cwd(), globalThis.searchPath), { ignored: /(^|[/\\])\../, persistent: true });
@@ -46,9 +41,7 @@ const watching = (path) => {
   // Close gracefully
   processOn('SIGINT', () => watcher.close());
 
-  watcher
-    .on('add', (file) => processFile(file))
-    .on('change', (file) => processFile(file));
+  watcher.on('add', (file) => processFile(file)).on('change', (file) => processFile(file));
   // @todo Handle the removal .on('unlink', path => log(`File ${path} has been removed`));
 };
 

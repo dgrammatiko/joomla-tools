@@ -1,47 +1,79 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import jsonFn from '@rollup/plugin-json';
-// import replace from '@rollup/plugin-replace';
-import { babel } from '@rollup/plugin-babel';
+import { swc, defineRollupSwcOption } from 'rollup-plugin-swc3';
 
 const plugins = [
   nodeResolve({ preferBuiltins: false }),
   jsonFn(),
-  // replace({
-  //   preventAssignment: true,
-  //   // CSS_CONTENTS_PLACEHOLDER: minifiedCss,
-  //   delimiters: ['{{', '}}'],
-  // }),
-  babel({
-    exclude: 'node_modules/core-js/**',
-    babelHelpers: 'bundled',
-    babelrc: false,
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          targets: {
-            browsers: [
-              '> 1%',
-              'not op_mini all',
-              'not dead',
-            ],
+  swc(
+    defineRollupSwcOption({
+      minify: true,
+      jsc: {
+        target: 'es2018',
+        minify: {
+          sourceMap: true,
+          compress: {
+            arguments: false,
+            arrows: true,
+            booleans: true,
+            booleans_as_integers: false,
+            collapse_vars: true,
+            comparisons: true,
+            computed_props: true,
+            conditionals: true,
+            dead_code: true,
+            directives: true,
+            drop_console: false,
+            drop_debugger: true,
+            evaluate: true,
+            expression: false,
+            hoist_funs: false,
+            hoist_props: true,
+            hoist_vars: false,
+            if_return: true,
+            join_vars: true,
+            keep_classnames: false,
+            keep_fargs: true,
+            keep_fnames: false,
+            keep_infinity: false,
+            loops: true,
+            negate_iife: true,
+            properties: true,
+            reduce_funcs: false,
+            reduce_vars: false,
+            side_effects: true,
+            switches: true,
+            typeofs: true,
+            unsafe: false,
+            unsafe_arrows: false,
+            unsafe_comps: false,
+            unsafe_Function: false,
+            unsafe_math: false,
+            unsafe_symbols: false,
+            unsafe_methods: false,
+            unsafe_proto: false,
+            unsafe_regexp: false,
+            unsafe_undefined: false,
+            unused: true,
+            const_to_let: false,
+            pristine_globals: true,
           },
-          bugfixes: true,
-          loose: true,
+          mangle: true,
         },
-      ],
-    ],
-  }),
-  // terser(),
+      },
+      tsconfig: false,
+      sourceMaps: true,
+    }),
+  ),
 ];
 
 const config = {
   inputOptions: { plugins },
   outputOptions: {
     format: 'es',
-    sourcemap: false,
-    externalImportAssertions: false,
-  }
-}
+    sourcemap: true,
+    externalImportAttributes: false,
+  },
+};
 
 export { config };

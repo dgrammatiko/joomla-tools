@@ -1,45 +1,31 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-// import jsonFn from '@rollup/plugin-json';
-// import replace from '@rollup/plugin-replace';
-import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
+import { swc, defineRollupSwcOption } from 'rollup-plugin-swc3';
 
 const plugins = [
-  nodeResolve(),
+  nodeResolve({ preferBuiltins: false }),
   commonjs(),
-  babel({
-    exclude: ['node_modules/core-js/**', 'media/system/js/core.js'],
-    babelHelpers: 'runtime', // runtime
-    babelrc: false,
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          corejs: '3.8',
-          useBuiltIns: 'entry', // entry
-          targets: {
-            firefox: '40',
-          },
-          loose: true,
-          bugfixes: false,
-          modules: false,
+  swc(
+    defineRollupSwcOption({
+      minify: true,
+      jsc: {
+        target: 'es2018',
+        minify: {
+          sourceMap: true,
         },
-      ],
-    ],
-    plugins: ['@babel/plugin-transform-runtime'],
-  }),
+      },
+      tsconfig: false,
+      sourceMaps: true,
+    }),
+  ),
 ];
-
-// if (globalThis.onlyMinimized) {
-//   plugins.push(terser());
-// }
 
 const config = {
   inputOptions: { plugins },
   outputOptions: {
     format: 'iife',
-    sourcemap: false,
-  }
-}
+    sourcemap: true,
+  },
+};
 
 export { config };
