@@ -6,6 +6,7 @@ import {
   lstatSync
 } from 'node:fs';
 import { basename, dirname, sep, resolve } from 'path';
+import os from 'node:os';
 import jetpack from 'fs-jetpack';
 import symlinkDir from 'symlink-dir';
 
@@ -17,6 +18,10 @@ function existsAlterSync(path) {
     // if (err.code !== 'EEXIST') throw err
     return false
   }
+}
+
+function isWin() {
+  return os.platform() === 'win32';
 }
 
 async function symLink(path) {
@@ -59,17 +64,11 @@ async function symLink(path) {
             if (skippedName !== `www${sep}administrator${sep}manifests${sep}libraries` && !existsSync(skippedName)) {
               mkdirSync(skippedName, {recursive: true});
             }
-
-            console.log({
-              xml,
-              newPath,
-              skippedName,
-              xmlFileName,
-              x: `${skippedName}${sep}${xmlFileName}.xml`
-            })
-            if (!existsAlterSync(`${skippedName}${sep}${xmlFileName}.xml`)) symlinkSync(resolve(xml), `${skippedName}${sep}${xmlFileName}.xml`)
+            if (!existsAlterSync(`${skippedName}/${xmlFileName}.xml`)) {
+              symlinkSync(resolve(xml), `${skippedName}/${xmlFileName}.xml`, isWin() ? 'junction' : 'file');
+            }
           });
-          symlinkDir(`./src/${extensionType}/${extensionName}`, `./www/libraries/${extensionName}`);
+          symlinkDir(resolve(`./src/${extensionType}/${extensionName}`), resolve(`./www/libraries/${extensionName}`));
           break;
         case 'templates':
           for (const actualTplName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
