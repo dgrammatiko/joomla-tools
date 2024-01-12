@@ -10,6 +10,10 @@ import os from 'node:os';
 import jetpack from 'fs-jetpack';
 import symlinkDir from 'symlink-dir';
 
+/**
+ * @param {String} path
+ * @returns
+ */
 function existsAlterSync(path) {
   try {
     lstatSync(path)
@@ -24,6 +28,10 @@ function isWin() {
   return os.platform() === 'win32';
 }
 
+/**
+ * @param {String} path
+ * @returns
+ */
 async function symLink(path) {
   if (!existsSync('./media')) {
     mkdirSync('./media');
@@ -33,46 +41,99 @@ async function symLink(path) {
   }
 
   for (const extensionType of readdirSync('./src')) {
+    if (extensionType === '.DS_Store') return;
     for (const extensionName of readdirSync(`./src/${extensionType}`)) {
-      switch(extensionType) {
-        case 'components':
-          if (existsSync(`./src/${extensionType}/${extensionName}/administrator`)) {
-            symlinkDir(`./src/${extensionType}/${extensionName}/administrator`, `./www/administrator/${extensionType}/com_${extensionName}`);
+      if (extensionName === '.DS_Store') return;
+      switch (extensionType) {
+        case "components":
+          if (
+            existsSync(
+              `./src/${extensionType}/${extensionName}/administrator`,
+            )
+          ) {
+            symlinkDir(
+              `./src/${extensionType}/${extensionName}/administrator`,
+              `./www/administrator/${extensionType}/com_${extensionName}`,
+            );
           }
-          if (existsSync(`./src/${extensionType}/${extensionName}/site`)) {
-            symlinkDir(`./src/${extensionType}/${extensionName}/site`, `./www/${extensionType}/com_${extensionName}`);
+          if (
+            existsSync(`./src/${extensionType}/${extensionName}/site`)
+          ) {
+            symlinkDir(
+              `./src/${extensionType}/${extensionName}/site`,
+              `./www/${extensionType}/com_${extensionName}`,
+            );
           }
           break;
-        case 'modules':
-          for (const actualModName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
-            symlinkDir(`./src/${extensionType}/${extensionName}/${actualModName}`, `./www/${extensionName === 'site' ? '' : 'administrator/'}modules/mod_${actualModName}`);
+        case "modules":
+          for (const actualModName of readdirSync(
+            `./src/${extensionType}/${extensionName}`,
+          )) {
+            symlinkDir(
+              `./src/${extensionType}/${extensionName}/${actualModName}`,
+              `./www/${
+                extensionName === "site" ? "" : "administrator/"
+              }modules/mod_${actualModName}`,
+            );
           }
           break;
-        case 'plugins':
-          for (const plgType of readdirSync(`./src/${extensionType}/${extensionName}`)) {
-            for (const plgName of readdirSync(`./src/${extensionType}/${extensionName}/${plgType}`)) {
-              symlinkDir(`./src/${extensionType}/${extensionName}/${plgType}/${plgName}`, `./www/plugins/${extensionName}/${plgType}/${plgName}`);
+        case "plugins":
+          for (const plgType of readdirSync(
+            `./src/${extensionType}/${extensionName}`,
+          )) {
+            for (const plgName of readdirSync(
+              `./src/${extensionType}/${extensionName}/${plgType}`,
+            )) {
+              symlinkDir(
+                `./src/${extensionType}/${extensionName}/${plgType}/${plgName}`,
+                `./www/plugins/${extensionName}/${plgType}/${plgName}`,
+              );
             }
           }
           break;
-        case 'libraries':
-          const xmls = jetpack.find(`./src/${extensionType}`, { matching: `${extensionName}/**/*.xml` });
-          xmls.forEach((xml) => {
-            const newPath = xml.replace(`src${sep}libraries`, `www${sep}administrator${sep}manifests${sep}libraries`);
+        case "libraries": {
+          const xmls = jetpack.find(`./src/${extensionType}`, {
+            matching: `${extensionName}/**/*.xml`,
+          });
+          for (const xml of xmls) {
+            const newPath = xml.replace(
+              `src${sep}libraries`,
+              `www${sep}administrator${sep}manifests${sep}libraries`,
+            );
             const skippedName = dirname(dirname(newPath));
-            const xmlFileName = basename(newPath, '.xml');
-            if (skippedName !== `www${sep}administrator${sep}manifests${sep}libraries` && !existsSync(skippedName)) {
-              mkdirSync(skippedName, {recursive: true});
+            const xmlFileName = basename(newPath, ".xml");
+            if (
+              skippedName !==
+                `www${sep}administrator${sep}manifests${sep}libraries` &&
+              !existsSync(skippedName)
+            ) {
+              mkdirSync(skippedName, { recursive: true });
             }
             if (!existsAlterSync(`${skippedName}/${xmlFileName}.xml`)) {
-              symlinkSync(resolve(xml), `${skippedName}/${xmlFileName}.xml`, isWin() ? 'junction' : 'file');
+              symlinkSync(
+                resolve(xml),
+                `${skippedName}/${xmlFileName}.xml`,
+                isWin() ? "junction" : "file",
+              );
             }
-          });
-          symlinkDir(resolve(`./src/${extensionType}/${extensionName}`), resolve(`./www/libraries/${extensionName}`));
+          }
+          symlinkDir(
+            resolve(`./src/${extensionType}/${extensionName}`),
+            resolve(`./www/libraries/${extensionName}`),
+          );
           break;
-        case 'templates':
-          for (const actualTplName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
-            symlinkDir(`./src/${extensionType}/${extensionName}/${actualTplName}`, `./www/${extensionName === 'site' ? '' : 'administrator/'}templates/${actualTplName}`);
+        }
+        case "templates":
+          for (const actualTplName of readdirSync(
+            `./src/${extensionType}/${extensionName}`,
+          )) {
+            if (actualTplName === '.DS_Store') return;
+            symlinkDir(
+              `./src/${extensionType}/${extensionName}/${actualTplName}`,
+              `./www/${
+                extensionName === "site" ? "" : "administrator/"
+              }templates/${actualTplName}`,
+            );
           }
           break;
         default:
@@ -82,24 +143,48 @@ async function symLink(path) {
   }
 
   if (existsSync('./media')) {
-    readdirSync('./media').forEach((ext) => {
-      if (ext !== 'templates') {
+    const mediaContent = readdirSync("./media");
+    for (const ext of mediaContent) {
+      if (ext !== "templates" && ext !== ".DS_Store") {
         symlinkDir(`${process.cwd()}/media/${ext}`, `./www/media/${ext}`);
       } else {
-        if (existsSync('./media/templates/administrator')) {
-          readdirSync('./media/templates/administrator').forEach((exta) => {
-            if (!existsSync(`${process.cwd()}/media/templates/administrator/${exta}`)) mkdirSync(`${process.cwd()}/media/templates/administrator/${exta}`, { recursive: true });
-            symlinkDir(`${process.cwd()}/media/templates/administrator/${exta}`, `./www/media/templates/administrator/${exta}`);
-          });
+        if (existsSync("./media/templates/administrator")) {
+          const adminTmpl = readdirSync("./media/templates/administrator");
+          for (const exta of adminTmpl) {
+            if (exta === ".DS_Store") return;
+            if (
+              !existsSync(
+                `${process.cwd()}/media/templates/administrator/${exta}`,
+              )
+            )
+              mkdirSync(
+                `${process.cwd()}/media/templates/administrator/${exta}`,
+                { recursive: true },
+              );
+            symlinkDir(
+              `${process.cwd()}/media/templates/administrator/${exta}`,
+              `./www/media/templates/administrator/${exta}`,
+            );
+          };
         }
-        if (existsSync('./media/templates/site')) {
-          readdirSync('./media/templates/site').forEach((exta) => {
-            if (!existsSync(`${process.cwd()}/media/templates/site/${exta}`)) mkdirSync(`${process.cwd()}/media/templates/site/${exta}`, { recursive: true });
-            symlinkDir(`${process.cwd()}/media/templates/site/${exta}`, `./www/media/templates/site/${exta}`);
-          });
+        if (existsSync("./media/templates/site")) {
+          const siteTmpl = readdirSync("./media/templates/site");
+          for (const exta of siteTmpl) {
+            if (exta === ".DS_Store") return;
+            if (
+              !existsSync(`${process.cwd()}/media/templates/site/${exta}`)
+            )
+              mkdirSync(`${process.cwd()}/media/templates/site/${exta}`, {
+                recursive: true,
+              });
+            symlinkDir(
+              `${process.cwd()}/media/templates/site/${exta}`,
+              `./www/media/templates/site/${exta}`,
+            );
+          }
         }
       }
-    });
+    }
   }
 };
 
