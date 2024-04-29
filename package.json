@@ -92,7 +92,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-order": "^6.0.3",
     "stylelint-scss": "^5.0.0",
-    "symlink-dir": "^5.1.1",
+    "symlink-dir": "^6.0.0",
     "terser": "5.31.0"
   },
   "devDependencies": {
