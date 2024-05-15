@@ -39,7 +39,6 @@ async function packageExtensions() {
   const options = globalThis.options;
 
   for (const extensionType of readdirSync('src')) {
-    console.log(extensionType);
     if ([".", "..", ".DS_Store"].includes(extensionType)) {
       continue;
     }
