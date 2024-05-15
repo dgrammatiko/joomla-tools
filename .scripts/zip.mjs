@@ -39,7 +39,14 @@ async function packageExtensions() {
   const options = globalThis.options;
 
   for (const extensionType of readdirSync('src')) {
+    console.log(extensionType);
+    if ([".", "..", ".DS_Store"].includes(extensionType)) {
+      continue;
+    }
     for (const extensionName of readdirSync(`src/${extensionType}`)) {
+      if ([".", "..", ".DS_Store"].includes(extensionName)) {
+        continue;
+      }
       switch(extensionType) {
         case 'components':
           replacables = options['joomla-extensions'].components.filter((x) => x.name === extensionName)[0];
@@ -60,6 +67,9 @@ async function packageExtensions() {
           break;
         case 'modules':
           for (const actualModName of readdirSync(`src/${extensionType}/${extensionName}`)) {
+            if ([".", "..", ".DS_Store"].includes(actualModName)) {
+              continue;
+            }
             if (options['joomla-extensions'].modules[extensionName]) {
               replacables = options['joomla-extensions'].modules[extensionName].filter((x) => x.name === actualModName);
               if (replacables.length) {
@@ -75,6 +85,9 @@ async function packageExtensions() {
           break;
         case 'plugins':
           for (const plgName of readdirSync(`src/${extensionType}/${extensionName}`)) {
+            if ([".", "..", ".DS_Store"].includes(plgName)) {
+              continue;
+            }
             if (options['joomla-extensions'].plugins[extensionName]) {
               replacables = options['joomla-extensions'].plugins[extensionName].filter((x) => x.name === plgName);
               if (replacables.length) {
@@ -99,6 +112,9 @@ async function packageExtensions() {
           break;
         case 'templates':
           for (const actualTplName of readdirSync(`src/${extensionType}/${extensionName}`)) {
+            if ([".", "..", ".DS_Store"].includes(actualTplName)) {
+              continue;
+            }
             replacables = options['joomla-extensions'].templates[extensionName].filter((x) => x.name === actualTplName)[0];
             zip = new admZip();
             addFilesRecursively(`src/${extensionType}/${extensionName}/${actualTplName}`, '', replacables, zip);
