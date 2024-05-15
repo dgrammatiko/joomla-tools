@@ -1,6 +1,7 @@
 import { cwd, exit } from 'node:process';
 import { join, sep } from 'node:path';
 import {
+  cp,
   stat,
   existsSync,
   copyFileSync,
@@ -49,7 +50,7 @@ async function copyThru(path) {
 
   jetpack
     .find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
-    .forEach((file) => jetpack.copy(file, file.replace(`${globalThis.searchPath}${sep}`, `${globalThis.replacePath}${sep}`), { overwrite: true }));
+    .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
 
   // Copy the joomla.asset.json files
   if (existsSync('./media')) {
