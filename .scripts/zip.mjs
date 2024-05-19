@@ -92,7 +92,7 @@ async function packageExtensions() {
               if (replacables.length) {
                 zip = new admZip();
                 addFilesRecursively(`src/${extensionType}/${extensionName}/${plgName}`, '', replacables[0], zip);
-                if (existsSync(`mediamedia/plg_${extensionName}_${plgName}`)) {
+                if (existsSync(`media/plg_${extensionName}_${plgName}`)) {
                   addFilesRecursively(`media/plg_${extensionName}_${plgName}`, 'media', replacables[0], zip);
                 }
                 zips.push({name: `plg_${extensionName}_${plgName}_v${replacables[0].version}.zip`, zip: zip });
