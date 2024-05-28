@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, sep } from 'node:path';
 import Postcss from 'postcss';
-import Sass from 'sass';
+import { compile } from "sass";
 
 import { Autoprefixer, CssNano, rtlcss } from './configs/css.mjs';
 import { logger } from '../utils/logger.mjs';
@@ -20,7 +20,7 @@ async function handleScssFile(inputFile, outputFile) {
     await mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
-  const compiled = Sass.compile(inputFile);
+  const compiled = compile(inputFile);
   const plugins = [Autoprefixer];
   if (outputFile.endsWith('-rtl.scss')) plugins.push(rtlcss);
 

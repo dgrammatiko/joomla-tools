@@ -38,10 +38,10 @@ const plugins = [
 const config = {
   inputOptions: { plugins },
   outputOptions: {
-    format: 'es',
+    format: "es",
     sourcemap: false,
-    externalImportAssertions: false,
-  }
-}
+    externalImportAttributes: false,
+  },
+};
 
 export { config };
