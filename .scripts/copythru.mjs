@@ -30,6 +30,10 @@ async function copyThru(path) {
     exit(1);
   }
 
+  if (!existsSync("./media")) {
+    mkdirSync("./media");
+  }
+
   const files = [];
   const folders = [];
 
@@ -48,21 +52,15 @@ async function copyThru(path) {
     folders.push(globalThis.searchPath);
   }
 
+  // Copy any images folders
   jetpack
     .find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
     .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
 
   // Copy the joomla.asset.json files
-  if (existsSync('./media')) {
-    readdirSync('./media').forEach((ext) => {
-      if (ext !== 'templates') {
-        if (existsSync(`${process.cwd()}/media_source/${ext}/joomla.asset.json`) && !existsSync(`${process.cwd()}/media/${ext}/joomla.asset.json`)) {
-          if (!existsSync(`${process.cwd()}/media/${ext}`)) mkdirSync(`${process.cwd()}/media/${ext}`, {recursive: true});
-          if (!existsSync(`${process.cwd()}/media/${ext}/joomla.asset.json`)) copyFileSync(`${process.cwd()}/media_source/${ext}/joomla.asset.json`, `${process.cwd()}/media/${ext}/joomla.asset.json`);
-        }
-      }
-    });
-  }
+  jetpack
+  .find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false })
+  .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
 };
 
 export { copyThru };
