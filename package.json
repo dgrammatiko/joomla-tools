@@ -93,7 +93,7 @@
     "stylelint-order": "^6.0.3",
     "stylelint-scss": "^5.0.0",
     "symlink-dir": "^6.0.0",
-    "terser": "5.31.4"
+    "terser": "5.31.5"
   },
   "devDependencies": {
     "ava": "^6.0.0",
