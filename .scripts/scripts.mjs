@@ -37,29 +37,24 @@ async function handleScripts(path) {
     folders.push('media_source');
   }
 
-  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5\.js)'] })));
+  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5.js)'] })));
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = [ ...files, ...fromFolder.flat() ];
+  const computedFiles = [...files, ...fromFolder.flat()];
 
   Promise.all(computedFiles.map((file) => handleScript(file)));
-};
+}
 
 /**
  * @param { string } inputFile
  * @returns { Promise<unknown> }
  */
 async function handleScript(inputFile) {
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
+  if (!globalThis.searchPath || !globalThis.replacePath) throw new Error(`Global searchPath and replacePath are not defined`);
 
-  if (inputFile.endsWith('.es5.js')) {
-    return handleES5File(inputFile);
-  }
+  if (inputFile.endsWith('.es5.js')) return handleES5File(inputFile);
 
-  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
+  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/))
     return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.js').replace(globalThis.searchPath, globalThis.replacePath));
-  }
 }
 
 export { handleScripts };

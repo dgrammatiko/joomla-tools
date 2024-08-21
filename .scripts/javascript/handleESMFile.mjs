@@ -25,11 +25,11 @@ async function handleESMFile(inputFile, outputFile) {
   const bundle = await rollup({ ...config.inputOptions, input: resolve(inputFile) });
   const output = await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
   const minified = await minify(output.output[0].code, { sourceMap: false, format: { comments: false } });
-  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, {encoding: 'utf8', mode: '0644'});
+  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, { encoding: 'utf8', mode: '0644' });
   logger(`✅ ES2018 file: ${basename(outputFile)}: transpiled`);
   await bundle.close();
 
   return output.output[0].code;
-};
+}
 
 export { handleESMFile };
