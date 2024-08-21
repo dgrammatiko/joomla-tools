@@ -20,11 +20,7 @@ const plugins = [
         '@babel/preset-env',
         {
           targets: {
-            browsers: [
-              '> 1%',
-              'not op_mini all',
-              'not dead',
-            ],
+            browsers: ['> 1%', 'not op_mini all', 'not dead'],
           },
           bugfixes: true,
           loose: true,
@@ -38,7 +34,7 @@ const plugins = [
 const config = {
   inputOptions: { plugins },
   outputOptions: {
-    format: "es",
+    format: 'es',
     sourcemap: false,
     externalImportAttributes: false,
   },

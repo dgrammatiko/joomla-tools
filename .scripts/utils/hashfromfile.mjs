@@ -11,7 +11,9 @@ import { createReadStream } from 'node:fs';
 function createHashFromFile(filePath) {
   return new Promise((res) => {
     const hash = createHash('sha1');
-    createReadStream(filePath).on('data', (data) => hash.update(data)).on('end', () => res(hash.digest('hex')));
+    createReadStream(filePath)
+      .on('data', (data) => hash.update(data))
+      .on('end', () => res(hash.digest('hex')));
   });
 }
 

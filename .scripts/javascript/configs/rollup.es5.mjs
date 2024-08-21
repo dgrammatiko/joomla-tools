@@ -39,7 +39,7 @@ const config = {
   outputOptions: {
     format: 'iife',
     sourcemap: false,
-  }
-}
+  },
+};
 
 export { config };

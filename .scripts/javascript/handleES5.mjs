@@ -31,6 +31,6 @@ async function handleES5File(file) {
     await writeFile(file.replace('.js', '.min.js'), content.code, { encoding: 'utf8', mode: '0644' });
     logger(`✅ Legacy js file: ${basename(file)}: minified`);
   }
-};
+}
 
 export { handleES5File };
