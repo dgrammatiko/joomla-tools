@@ -25,8 +25,8 @@ async function handleESMToLegacy(inputFile, outputFile) {
   const bundle = await rollup({ ...config.inputOptions, input: inputFile });
   const output = await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
   const minified = await minify(output.output[0].code, { sourceMap: false, format: { comments: false } });
-  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, {encoding: 'utf8', mode: 0o644});
+  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, { encoding: 'utf8', mode: 0o644 });
   await bundle.close();
-};
+}
 
 export { handleESMToLegacy };

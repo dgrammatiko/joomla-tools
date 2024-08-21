@@ -15,9 +15,9 @@ function getPackage() {
   }
   try {
     return require(join(cwd(), 'package.json'));
-  } catch(err) {
+  } catch (err) {
     return {};
   }
-};
+}
 
 export { getPackage };

@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { dirname, sep } from 'node:path';
 import Postcss from 'postcss';
 
-import { Autoprefixer, CssNano } from './configs/css.mjs';
+// import { Autoprefixer, CssNano } from './configs/css.mjs';
 import { logger } from '../utils/logger.mjs';
 
 /**
@@ -28,20 +28,20 @@ async function handleCssFile(file) {
       await mkdir(dirname(outputFile), { recursive: true, mode: '0755' });
     }
 
-    if (file !== outputFile) {
-      await cp(file, outputFile, { preserveTimestamps: true, force: true });
-    }
+    // if (file !== outputFile) {
+    //   await cp(file, outputFile, { preserveTimestamps: true, force: true });
+    // }
 
     const content = await readFile(file, { encoding: 'utf8' });
-    const cssMin = await Postcss([Autoprefixer, CssNano]).process(content, { from: undefined });
+    // const cssMin = await Postcss([Autoprefixer, CssNano]).process(content, { from: undefined });
 
     // Ensure the folder exists or create it
-    await writeFile(outputFile.replace('.css', '.min.css'), cssMin.css.toString(), { encoding: 'utf8', mode: '0644' });
+    await writeFile(outputFile.replace('.css', '.min.css'), content, { encoding: 'utf8', mode: '0644' });
 
     logger(`✅ CSS file copied/minified: ${file}`);
   } catch (err) {
     logger(err.message);
   }
-};
+}
 
 export { handleCssFile };

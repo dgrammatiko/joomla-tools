@@ -16,8 +16,8 @@ class Timer {
   }
 
   stop() {
-    logger(`Timer: ${this.name} finished in ${(new Date()).getTime() - this.start.getTime()}ms`);
+    logger(`Timer: ${this.name} finished in ${new Date().getTime() - this.start.getTime()}ms`);
   }
 }
 
-export { Timer }
+export { Timer };
