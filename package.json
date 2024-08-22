@@ -55,7 +55,7 @@
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "7.25.3",
+    "@babel/preset-env": "7.25.4",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^26.0.0",
     "@rollup/plugin-json": "^6.0.0",
