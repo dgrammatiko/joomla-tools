@@ -15,12 +15,12 @@ function isProd() {
  * @param { string } outputFile
  */
 function handleCssFile(inputFile, outputFile = '') {
-  // biome-ignore lint/style/noParameterAssign:
-  outputFile = !outputFile ? inputFile.replace('.css', '.min.css').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
-
-  if (!fs.existsSync(inputFile)) {
+  if (!inputFile || !fs.existsSync(inputFile)) {
     throw new Error(`File ${inputFile} doesn't exist`);
   }
+
+  // biome-ignore lint/style/noParameterAssign:
+  outputFile = !outputFile ? inputFile.replace('.css', '.min.css').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
 
   if (!fs.existsSync(dirname(outputFile))) {
     fs.mkdirSync(dirname(outputFile), { recursive: true, mode: 0o755 });
@@ -37,9 +37,11 @@ function handleCssFile(inputFile, outputFile = '') {
   writeFileSync(
     outputFile,
     `${new TextDecoder().decode(code)}\n/*# sourceMappingURL=${
-      isProd() ? basename(outputFile.replace('.css', '.css.map')) : `data:application/json;charset=utf-8;base64,${Buffer.from(map).toString('base64')}`
+      isProd()
+        ? basename(outputFile.replace('.css', '.css.map'))
+        : `data:application/json;charset=utf-8;base64,${Buffer.from(map).toString('base64')}`
     } */`,
-    { encoding: 'utf8' }
+    { encoding: 'utf8' },
   );
 
   if (isProd()) {

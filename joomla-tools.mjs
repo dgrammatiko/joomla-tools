@@ -69,7 +69,7 @@ async function main() {
 
   if (opts.build) {
     logger('Start building...');
-    process.env.production = 'development';
+    process.env.production = process.env.production ? process.env.production : 'development';
     await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
     await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
     await resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
@@ -77,13 +77,13 @@ async function main() {
 
   if (opts.watch) {
     logger(`Start watching... Args: ${program.args.join(' ')}`);
-    process.env.production = 'development';
+    process.env.production = process.env.production ? process.env.production : 'development';
     await resolveFn('.scripts/watch.mjs', 'watching', ...program.args);
   }
 
   if (opts.release) {
     logger(`Release... Args: ${program.args.join(' ')}`);
-    process.env.production = 'production';
+    process.env.production = process.env.production ? process.env.production : 'production';
     await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
     await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
     await resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
