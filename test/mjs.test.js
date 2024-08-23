@@ -3,17 +3,14 @@ import assert from 'node:assert';
 import { describe, it, test } from 'node:test';
 import { handleESMFile } from '../.scripts/javascript/handleESMFile.mjs';
 
-const noImportMap = `{"version":3,"file":"module_without_import.min.js","names":[],"sources":["../../js/module_without_import.mjs"],"sourcesContent":["const a = 'hello';\\n\\nexport { a };\\n"],"mappings":"AAAA,MAAM,EAAI,QAAA,QAAA"}`;
-const importMap = `{"version":3,"file":"module_with_import.min.js","names":[],"sources":["../../js/module_without_import.mjs"],"sourcesContent":["const a = 'hello';\\n\\nexport { a };\\n"],"mappings":"AAAA,MAAM,EAAI,QAAA,QAAA"}`;
+const noImportMap = `{"version":3,"file":"module_without_import.min.js","names":[],"sources":["../../../media_source/stubs/js/module_without_import.mjs"],"sourcesContent":["const a = 'hello';\\n\\nexport { a };\\n"],"mappings":"AAAA,MAAM,EAAI,QAAA,QAAA"}`;
+const importMap = `{"version":3,"file":"module_with_import.min.js","names":[],"sources":["../../../media_source/stubs/js/module_without_import.mjs"],"sourcesContent":["const a = 'hello';\\n\\nexport { a };\\n"],"mappings":"AAAA,MAAM,EAAI,QAAA,QAAA"}`;
 
 describe('ESM js handling tests', {concurrency: false}, async () => {
   // Cleanup
   test.afterEach(async () => {
-    if (existsSync('test/stubs/new/js')) rmSync('test/stubs/new/js', { force: true, recursive: true });
+    if (existsSync('test/stubs/js')) rmSync('media/stubs/js', { force: true, recursive: true });
   });
-  // test.beforeEach(async () => {
-  //   if (existsSync('test/stubs/new/js')) rmSync('test/stubs/new/js', { force: true, recursive: true });
-  // });
 
   it('Non existing file', async (t) => {
     process.env.production = 'production';
@@ -29,8 +26,8 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   it('Module file without import [production]', async (t) => {
     process.env.production = 'production';
     const file = 'module_without_import.mjs';
-    const inputFile = `test/stubs/js/${file}`;
-    const outputFile = `test/stubs/new/js/${file.replace('.mjs', '.js')}`;
+    const inputFile = `media_source/stubs/js/${file}`;
+    const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
     await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
     assert.equal(existsSync(outputFile.replace('.js', '.min.js')), true);
@@ -42,8 +39,8 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   it('Module file without import [development]', async (t) => {
     process.env.production = 'development';
     const file = 'module_without_import.mjs';
-    const inputFile = `test/stubs/js/${file}`;
-    const outputFile = `test/stubs/new/js/${file.replace('.mjs', '.js')}`;
+    const inputFile = `media_source/stubs/js/${file}`;
+    const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
     await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
     assert.equal(existsSync(outputFile.replace('.js', '.min.js')), true);
@@ -53,8 +50,8 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   it('Module file with import [production]', async (t) => {
     process.env.production = 'production';
     const file = 'module_with_import.mjs';
-    const inputFile = `test/stubs/js/${file}`;
-    const outputFile = `test/stubs/new/js/${file.replace('.mjs', '.js')}`;
+    const inputFile = `media_source/stubs/js/${file}`;
+    const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
     await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
 
@@ -67,8 +64,8 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   it('Module file with import [development]', async (t) => {
     process.env.production = 'development';
     const file = 'module_with_import.mjs';
-    const inputFile = `test/stubs/js/${file}`;
-    const outputFile = `test/stubs/new/js/${file.replace('.mjs', '.js')}`;
+    const inputFile = `media_source/stubs/js/${file}`;
+    const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
     await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
 
