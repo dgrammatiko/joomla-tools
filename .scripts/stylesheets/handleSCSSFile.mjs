@@ -1,6 +1,5 @@
-import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, sep } from 'node:path';
+import fs from 'node:fs';
+import Path from 'node:path';
 // import Postcss from 'postcss';
 import { compile } from 'sass';
 
@@ -12,12 +11,12 @@ import { logger } from '../utils/logger.mjs';
  * @param { string } outputFile
  */
 async function handleScssFile(inputFile, outputFile) {
-  if (!existsSync(inputFile)) {
+  if (!fs.existsSync(inputFile)) {
     throw new Error(`File ${inputFile} doesn't exist`);
   }
 
-  if (!existsSync(dirname(outputFile))) {
-    await mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
+  if (!fs.existsSync(Path.dirname(outputFile))) {
+    fs.mkdirSync(Path.dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
   const compiled = compile(inputFile);
@@ -27,11 +26,11 @@ async function handleScssFile(inputFile, outputFile) {
   // Auto prefixing
   // const res = await Postcss(plugins).process(compiled.css.toString(), { from: inputFile });
 
-  // await writeFile(outputFile, res.css.toString(), { encoding: 'utf8', mode: '0644' });
+  // fs.writeFileSync(outputFile, res.css.toString(), { encoding: 'utf8', mode: '0644' });
 
   // const cssMin = await Postcss([CssNano]).process(res.css.toString(), { from: inputFile });
 
-  // await writeFile(outputFile.replace('.css', '.min.css'), cssMin.css, { encoding: 'utf8', mode: '0644' });
+  // fs.writeFileSync(outputFile.replace('.css', '.min.css'), cssMin.css, { encoding: 'utf8', mode: '0644' });
 
   logger(`✅ SCSS File compiled: ${outputFile}`);
 }

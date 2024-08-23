@@ -1,12 +1,8 @@
-import { stat } from 'node:fs/promises';
-import pkgFsJetpack from 'fs-jetpack';
-import { cwd } from 'node:process';
+import fs from 'node:fs';
 
 import { logger } from './utils/logger.mjs';
 import { handleES5File } from './javascript/handleES5.mjs';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
-
-const { find } = pkgFsJetpack;
 
 /**
  * Method that will crawl the media_source folder and
@@ -23,12 +19,12 @@ async function handleScripts(path) {
   const folders = [];
 
   if (path) {
-    const stats = await stat(`${cwd()}/${path}`);
+    const stats = fs.statSync(`${process.cwd()}/${path}`);
 
     if (stats.isDirectory()) {
-      folders.push(`${cwd()}/${path}`);
+      folders.push(`${process.cwd()}/${path}`);
     } else if (stats.isFile()) {
-      files.push(`${cwd()}/${path}`);
+      files.push(`${process.cwd()}/${path}`);
     } else {
       logger(`Unknown path ${path}`);
       process.exit(1);
@@ -37,11 +33,15 @@ async function handleScripts(path) {
     folders.push('media_source');
   }
 
-  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5.js)'] })));
-  // Loop to get the files that should be compiled via parameter
-  const computedFiles = [...files, ...fromFolder.flat()];
+  for (const folder of folders) {
+    for (const file of fs.readdirSync(folder, {recursive: true, encoding: 'utf8'})) {
+      if (file.endsWith('.mjs') || file.endsWith('.es5.js')) {
+        files.push(file);
+      }
+    }
+  }
 
-  Promise.all(computedFiles.map((file) => handleScript(file)));
+  Promise.all(files.map((file) => handleScript(file)));
 }
 
 /**

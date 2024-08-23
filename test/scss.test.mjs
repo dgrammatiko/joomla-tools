@@ -1,9 +1,15 @@
 import { existsSync, rmSync, readFileSync } from 'node:fs';
-import test from 'ava';
-import { handleScssFile } from '../.scripts/stylesheets/handle-scss.mjs';
+import assert from 'node:assert';
+import { test } from 'node:test';
+import { handleScssFile } from '../.scripts/stylesheets/handleSCSSFile.mjs';
 
 // Cleanup
-test.after.always(async () => {
+test.afterEach(async () => {
+  if (existsSync('test/stubs/new')) {
+    rmSync('test/stubs/new', { force: true, recursive: true });
+  }
+});
+test.beforeEach(async () => {
   if (existsSync('test/stubs/new')) {
     rmSync('test/stubs/new', { force: true, recursive: true });
   }

@@ -10,3 +10,5 @@ ava.config.mjs
 .eslintrc.json
 renovate.json
 jsconfig.json
+test/stubs/new
+coverage.txt

@@ -1,7 +1,5 @@
-import { cwd, exit } from 'node:process';
-import { join, sep } from 'node:path';
-import { cp, stat, existsSync, copyFileSync, readdirSync, mkdirSync } from 'node:fs';
-import jetpack from 'fs-jetpack';
+import Path from 'node:path';
+import fs from 'node:fs';
 
 import { logger } from './utils/logger.mjs';
 
@@ -18,20 +16,20 @@ import { logger } from './utils/logger.mjs';
  * @param { string } path  The folder that needs to be compiled, optional
  */
 async function copyThru(path) {
-  if (!existsSync(join(cwd(), globalThis.searchPath))) {
+  if (!fs.existsSync(Path.join(process.cwd(), globalThis.searchPath))) {
     logger(`The tools aren't initialized properly. Exiting`);
-    exit(1);
+    process.exit(1);
   }
 
-  if (!existsSync('./media')) {
-    mkdirSync('./media');
+  if (!fs.existsSync('media')) {
+    fs.mkdirSync('media');
   }
 
   const files = [];
   const folders = [];
 
   if (path) {
-    const stats = await stat(`${path}`);
+    const stats = fs.statSync(`${path}`);
 
     if (stats.isDirectory()) {
       folders.push(`${path}`);
@@ -46,18 +44,14 @@ async function copyThru(path) {
   }
 
   // Copy any images folders
-  jetpack.find(globalThis.searchPath, { matching: 'images', files: false, directories: true }).forEach((file) =>
-    cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => {
-      if (err) console.error(err);
-    }),
-  );
+  // jetpack.find(globalThis.searchPath, { matching: 'images', files: false, directories: true }).forEach((file) =>
+  //   cpSync(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }),
+  // );
 
-  // Copy the joomla.asset.json files
-  jetpack.find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false }).forEach((file) =>
-    cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => {
-      if (err) console.error(err);
-    }),
-  );
+  // // Copy the joomla.asset.json files
+  // jetpack.find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false }).forEach((file) =>
+  //   cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }),
+  // );
 }
 
 export { copyThru };
