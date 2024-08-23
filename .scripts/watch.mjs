@@ -1,18 +1,21 @@
-import { join, extname, basename, dirname } from 'node:path';
-import { cwd, on as processOn } from 'node:process';
+import Path from 'node:path';
+
 import { watch } from 'chokidar';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
 import { handleES5File } from './javascript/handleES5.mjs';
-import { handleScssFile } from './stylesheets/handle-scss.mjs';
-import { handleCssFile } from './stylesheets/handle-css.mjs';
+import { handleScssFile } from './stylesheets/handleSCSSFile.mjs/index.js';
+import { handleCssFile } from './stylesheets/handleCSSFile.mjs/index.js';
 import { debounce } from './utils/debounce.mjs';
 
 /**
  * @param { string } file
  */
 const processFile = (file) => {
-  if ((extname(file) === '.js' || extname(file) === '.mjs') && !dirname(file).startsWith(join(globalThis.searchPath, 'vendor', 'bootstrap', 'js'))) {
-    if (file.match(/\.mjs$/) && !basename(file).startsWith('_')) {
+  if (
+    (Path.extname(file) === '.js' || Path.extname(file) === '.mjs') &&
+    !Path.dirname(file).startsWith(Path.join(globalThis.searchPath, 'vendor', 'bootstrap', 'js'))
+  ) {
+    if (file.match(/\.mjs$/) && !Path.basename(file).startsWith('_')) {
       return debounce(handleESMFile(file, outpufile), 300, 0);
     }
     if (file.match(/\.js/)) {
@@ -20,10 +23,10 @@ const processFile = (file) => {
     }
   }
 
-  if (extname(file) === '.scss' && !basename(file).startsWith('_')) {
+  if (Path.extname(file) === '.scss' && !Path.basename(file).startsWith('_')) {
     return debounce(handleScssFile(file, outpufile), 300);
   }
-  if (extname(file) === '.css') {
+  if (Path.extname(file) === '.css') {
     return debounce(handleCssFile(file), 300);
   }
 };
@@ -32,17 +35,18 @@ const processFile = (file) => {
  * @param { string } path
  */
 const watching = (path) => {
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
+  if (!(searchPath in globalThis) || !(replacePath in globalThis)) throw new Error('Global searchPath and replacePath are not defined');
 
-  const watcher = watch(path ? join(cwd(), path) : join(cwd(), globalThis.searchPath), { ignored: /(^|[/\\])\../, persistent: true });
+  const watcher = watch(path ? Path.join(process.cwd(), path) : Path.join(process.cwd(), globalThis.searchPath), { ignored: /(^|[/\\])\../, persistent: true });
 
   // Close gracefully
-  processOn('SIGINT', () => watcher.close());
+  process.on('SIGINT', () => watcher.close());
 
-  watcher.on('add', (file) => processFile(file)).on('change', (file) => processFile(file));
-  // @todo Handle the removal .on('unlink', path => log(`File ${path} has been removed`));
+  watcher
+    .on('add', (file) => processFile(file))
+    .on('change', (file) => processFile(file))
+    // @todo Handle properly the removal
+    .on('unlink', path => console.log(`File ${path} has been removed`));
 };
 
 export { watching };
