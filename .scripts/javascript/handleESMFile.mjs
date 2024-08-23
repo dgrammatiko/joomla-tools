@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { dirname, basename, sep } from 'node:path';
 
 import { rolldown } from 'rolldown';
-import { config } from './configs/rollup.2018.mjs';
+import { config } from './configs/rollup.2022.mjs';
 import { logger } from '../utils/logger.mjs';
 
 function isProd() {
