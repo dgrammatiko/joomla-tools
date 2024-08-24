@@ -1,7 +1,5 @@
 import fs from 'node:fs';
 import Path from 'node:path';
-
-import { logger } from './utils/logger.mjs';
 import { handleScssFile } from './stylesheets/handleSCSSFile.mjs';
 import { handleCssFile } from './stylesheets/handleCSSFile.mjs';
 
@@ -11,16 +9,14 @@ import { handleCssFile } from './stylesheets/handleCSSFile.mjs';
  * copy any css files to the appropriate destination and
  * minify them in place
  *
- * Expects scss files to have ext: .scss
- *         css files to have ext: .css
+ * Expects scss files to have ext: .scss and css files to have ext: .css
  * Ignores scss files that their filename starts with `_`
  *
  * @param { string } path  The folder that needs to be compiled, optional
  */
 async function handleStylesheets(path) {
   if (!fs.existsSync(Path.join(process.cwd(), 'media_source'))) {
-    logger('The folder media_source does not exist. Exiting');
-    process.exit(1);
+    throw new Error('The folder media_source does not exist. Exiting');
   }
 
   const files = [];
@@ -34,8 +30,7 @@ async function handleStylesheets(path) {
     } else if (stats.isFile()) {
       files.push(`${process.cwd()}/${path}`);
     } else {
-      logger(`Unknown path ${path}`);
-      process.exit(1);
+      throw new Error(`Unknown path ${path}`);
     }
   } else {
     folders.push('media_source');
@@ -49,7 +44,7 @@ async function handleStylesheets(path) {
     }
   }
 
-  Promise.all(files.map((file) => handleStylesheet(file, file.replace(/\.css$/, '.min.css').replace(globalThis.searchPath, globalThis.replacePath))));
+  Promise.all(files.map((file) => handleStylesheet(file));
 }
 
 /**
@@ -57,13 +52,12 @@ async function handleStylesheets(path) {
  * @returns { Promise<unknown> }
  */
 async function handleStylesheet(inputFile) {
-  if (!globalThis.searchPath || !globalThis.replacePath) throw new Error(`Global searchPath and replacePath are not defined`);
   if (inputFile.endsWith('.css') && !inputFile.endsWith('.min.css')) {
-    return handleCssFile(inputFile);
+    return handleCssFile(inputFile, inputFile.replace(/\.css$/, '.min.css').replace(/^media_source(\/|\\)/, 'media/'));
   }
 
   if (inputFile.endsWith('.scss') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    const outputFile = inputFile.replace(`${Path.sep}scss${Path.sep}`, `${Path.sep}css${Path.sep}`).replace(globalThis.searchPath, globalThis.replacePath).replace('.scss', '.css');
+    const outputFile = inputFile.replace(`${Path.sep}scss${Path.sep}`, `${Path.sep}css${Path.sep}`).replace('.scss', '.css').replace(/^media_source(\/|\\)/, 'media/');
     return handleScssFile(inputFile, outputFile);
   }
 }

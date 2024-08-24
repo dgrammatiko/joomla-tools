@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import { rollup } from 'rollup';
 import { minify } from 'terser';
 import { config } from './configs/rollup.es5.mjs';
-import { logger } from '../utils/logger.mjs';
 
 /**
  * Compiles es6 files to es5.
@@ -23,7 +22,7 @@ async function handleESMToLegacy(inputFile, outputFile) {
   const output = await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
   const minified = await minify(output.output[0].code, { sourceMap: false, format: { comments: false } });
 
-  logger(`Transpiling ES5 file: ${basename(outputFile)}...`);
+  process.stdout.write(`Transpiling ES5 file: ${basename(outputFile)}...\n`);
   fs.writeFileSync(resolve(outputFile.replace('.js', '.min.js')), minified.code, { encoding: 'utf8', mode: 0o644 });
 
   await bundle.close();

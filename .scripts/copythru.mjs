@@ -1,7 +1,5 @@
-import Path from 'node:path';
-import fs from 'node:fs';
-
-import { logger } from './utils/logger.mjs';
+import { join } from 'node:path';
+import { existsSync, statSync, mkdirSync, readdirSync} from 'node:fs';
 
 /** text
  * Method that will crawl the media_source folder
@@ -16,33 +14,42 @@ import { logger } from './utils/logger.mjs';
  * @param { string } path  The folder that needs to be compiled, optional
  */
 async function copyThru(path) {
-  if (!fs.existsSync(Path.join(process.cwd(), globalThis.searchPath))) {
-    logger(`The tools aren't initialized properly. Exiting`);
-    process.exit(1);
+  if (!existsSync(join('media_source'))) {
+    throw new Error(`The tools aren't initialized properly. Exiting`);
   }
 
-  if (!fs.existsSync('media')) {
-    fs.mkdirSync('media');
+  if (!existsSync('media')) {
+    mkdirSync('media');
   }
 
   const files = [];
   const folders = [];
 
   if (path) {
-    const stats = fs.statSync(`${path}`);
+    const stats = statSync(`${path}`);
 
     if (stats.isDirectory()) {
       folders.push(`${path}`);
     } else if (stats.isFile()) {
       files.push(`${path}`);
     } else {
-      logger(`Unknown path ${path}`);
-      process.exit(1);
+      throw new Error(`Unknown path ${path}`);
     }
-  } else {
-    folders.push(globalThis.searchPath);
   }
 
+  if (!files.length && !folders.length) {
+    folders.push('media_source');
+  }
+
+  for (const folderName of folders) {
+    for (const folder of readdirSync(folderName, {recursive: true, withFileTypes: true})) {
+      // push the right files
+    }
+  }
+
+  for (const file of files) {
+    // copy the file over
+  }
   // Copy any images folders
   // jetpack.find(globalThis.searchPath, { matching: 'images', files: false, directories: true }).forEach((file) =>
   //   cpSync(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }),
