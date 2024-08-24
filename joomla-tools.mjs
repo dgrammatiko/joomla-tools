@@ -1,35 +1,30 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
+import { existsSync } from 'node:fs';
 import { dirname, sep, join } from 'node:path';
 import { createCommand } from 'commander';
-
-import { logger } from './.scripts/utils/logger.mjs';
 import { defaultParams } from './.scripts/utils/defaultParams.mjs';
 import { getPackage } from './.scripts/utils/getPackage.mjs';
+
+
+if (!existsSync(join(process.cwd(), 'package.json'))) {
+  throw new Error('No package.json file. Exiting');
+}
 
 /**
  * @type {{}} pkg
  */
-let pkg;
-
-if (fs.existsSync(join(process.cwd(), 'package.json'))) {
-  pkg = getPackage();
-  globalThis.searchPath = `media_source${sep}`;
-  globalThis.replacePath = `media${sep}`;
-  // /^media_source(\/|\\)/, 'media/'
-} else {
-  logger('No package.json file. Exiting');
-  process.exit(1);
-}
+const pkg = getPackage();
+// globalThis.searchPath = `media_source${sep}`;
+// globalThis.replacePath = `media${sep}`;
+// /^media_source(\/|\\)/, 'media/'
 
 /**
  * @param {{}} error
  */
 function errorCatcher(error) {
-  logger('Something blow up. Exiting');
   /* eslint-disable-next-line */
   console.error(error);
-  process.exit(1);
+  throw new Error('Something blow up. Exiting');
 }
 
 /**
@@ -38,7 +33,7 @@ function errorCatcher(error) {
  * @param {[]} args
  */
 async function resolveFn(path, resolvedFunction, ...args) {
-  if (fs.existsSync(join(process.cwd(), path))) {
+  if (existsSync(join(process.cwd(), path))) {
     await import(join(process.cwd(), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
   } else {
     await import(join(dirname(import.meta.url), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
@@ -58,17 +53,17 @@ async function main() {
     .opts();
 
   if (opts.link) {
-    if (!fs.existsSync(join(process.cwd(), 'www'))) {
-      logger('Initializing...');
+    if (!existsSync(join(process.cwd(), 'www'))) {
+      process.stdout.write('Initializing...');
       await resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
     }
 
-    logger('linking...');
+    process.stdout.write('linking...');
     await resolveFn('.scripts/sym-links.mjs', 'symLink');
   }
 
   if (opts.build) {
-    logger('Start building...');
+    process.stdout.write('Start building...');
     process.env.production = process.env.production ? process.env.production : 'development';
     await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
     await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
@@ -76,22 +71,22 @@ async function main() {
   }
 
   if (opts.watch) {
-    logger(`Start watching... Args: ${program.args.join(' ')}`);
+    process.stdout.write(`Start watching... Args: ${program.args.join(' ')}`);
     process.env.production = process.env.production ? process.env.production : 'development';
     await resolveFn('.scripts/watch.mjs', 'watching', ...program.args);
   }
 
   if (opts.release) {
-    logger(`Release... Args: ${program.args.join(' ')}`);
+    process.stdout.write(`Release... Args: ${program.args.join(' ')}`);
     process.env.production = process.env.production ? process.env.production : 'production';
-    await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
-    await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
-    await resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
+    await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args);
+    await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args);
+    await resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args);
     await resolveFn('.scripts/zip.mjs', 'packageExtensions', ...program.args);
   }
 
   if (opts.init) {
-    logger(`Fetching a joomla instance...`);
+    process.stdout.write('Fetching a joomla instance...');
     await resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
   }
 }

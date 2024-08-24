@@ -1,13 +1,8 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, basename } from 'node:path';
 import { initCompiler } from 'sass';
-import { logger } from '../utils/logger.mjs';
 
 const ScssCompiler = new initCompiler();
-
-function isProd() {
-  return !process.env.production || process.env.production === 'production' ? true : false;
-}
 
 /**
  * @param { string } inputFile
@@ -25,29 +20,30 @@ async function handleScssFile(inputFile, outputFile) {
     mkdirSync(dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
-  const isProdFlag = isProd();
+  const isProd = !process.env.production || process.env.production === 'production' ? true : false;
   const options = {
     charset: true,
     sourceMap: true,
-    sourceMapIncludeSources: !isProdFlag,
-    style: isProdFlag ? 'compressed' : 'expanded',
+    sourceMapIncludeSources: !isProd,
+    style: isProd ? 'compressed' : 'expanded',
   };
   const { css, sourceMap } = ScssCompiler.compile(inputFile, options);
 
   const mapJSON = JSON.stringify(sourceMap);
   const content = `${css}\n/*# sourceMappingURL=${
-    isProdFlag
+    isProd
       ? basename(outputFile.replace('.css', '.css.map'))
       : `data:application/json;charset=utf-8;base64,${Buffer.from(mapJSON).toString('base64')}`
   } */`;
-  // @todo make all the paths in the sourcemap relative to the output css file
 
+  // @todo make all the paths in the sourcemap relative to the output css file
   writeFileSync(outputFile, content, { encoding: 'utf8' });
 
-  if (isProdFlag)
+  if (isProd) {
     writeFileSync(outputFile.replace('.css', '.css.map'), mapJSON, { encoding: 'utf8' });
+  }
 
-  logger(`✅ SCSS File compiled: ${outputFile}`);
+  process.stdout.write(`✅ SCSS: ${inputFile} === ${outputFile}\n`);
 }
 
 export { handleScssFile };

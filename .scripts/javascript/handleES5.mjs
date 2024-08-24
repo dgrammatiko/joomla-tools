@@ -1,35 +1,50 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import { minify } from 'terser';
-import { logger } from '../utils/logger.mjs';
+import { existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { rolldown } from 'rolldown';
+import { config } from './configs/rollup.es5.mjs';
+
+function isProd() {
+  return !process.env.production || process.env.production === 'production' ? true : false;
+}
 
 /**
- * @param { string } file
+ * @param { string } inputFile
+ * @param { string } outputFile
  */
-async function handleES5File(file) {
-  if (!fs.existsSync(file)) {
-    throw new Error(`File ${file} doesn't exist`);
+async function handleES5File(inputFile, outputFile = '') {
+  if (!inputFile.endsWith('.es5.js')) {
+    return;
+  }
+  if (!existsSync(inputFile)) {
+    throw new Error(`File ${inputFile} doesn't exist`);
   }
 
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
+  // biome-ignore lint/style/noParameterAssign:
+  outputFile = !outputFile ? inputFile.replace('.es5.js', '.es5.min.js').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
 
-  if (file.endsWith('.es5.js')) {
-    // ES5 file, we will copy the file and then minify it in place
-    logger(`Processing Legacy js file: ${path.basename(file)}...`);
-    if (!fs.existsSync(path.dirname(file).replace(`${path.sep}${globalThis.searchPath}`, globalThis.replacePath))) {
-      fs.mkdirSync(path.dirname(file).replace(`${path.sep}${globalThis.searchPath}`, globalThis.replacePath), { recursive: true, mode: 0o755 });
-    }
+  const currentOpts = {
+    ...config.outputOptions,
+    dir: dirname(outputFile),
+    file: outputFile,
+    minify: true,
+    sourcemap: isProd() ? true : 'inline',
+    // after https://github.com/rolldown/rolldown/pull/1834 is merged
+    // entryFileNames: (chunk) => {
+    //   if (chunk.facadeModuleId.endsWith('.es5.js')) {
+    //     return chunk.facadeModuleId.replace('.es5.js', '.min.js');
+    //   }
+    //   return chunk.facadeModuleId;
+    // }
+    entryFileNames: '[name].min.js',
+    // chunkFileNames: '[name].min.js',
+  };
 
-    fs.cpSync(file, file.replace(`${path.sep}${globalThis.searchPath}${path.sep}`, globalThis.replacePath).replace('.es5.js', '.js'), { preserveTimestamps: true, force: true, mode: 0o755 });
-    logger(`Legacy js file: ${path.basename(file)}: ✅ copied`);
+  const bundle = await rolldown({ ...config.inputOptions, input: inputFile });
+  await bundle.write(currentOpts);
+  process.stdout.write(`✅ ESM: ${inputFile} === ${outputFile}\n`);
+  await bundle.destroy();
 
-    const fileContent = fs.readFileSync(file, { encoding: 'utf8' });
-    const content = await minify(fileContent, { sourceMap: false, format: { comments: false } });
-    fs.writeFileSync(file.replace('.js', '.min.js'), content.code, { encoding: 'utf8', mode: '0644' });
-    logger(`✅ Legacy js file: ${path.basename(file)}: minified`);
-  }
+  process.stdout.write(`✅ js: ${inputFile} === ${outputFile}\n`);
 }
 
 export { handleES5File };

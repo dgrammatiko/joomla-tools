@@ -1,5 +1,5 @@
-import crypto from 'node:crypto';
-import fs from 'node:fs';
+import { createHash } from 'node:crypto';
+import { createReadStream } from 'node:fs';
 
 /**
  * Get an SHA1 hash for a given file
@@ -10,8 +10,8 @@ import fs from 'node:fs';
  */
 function createHashFromFile(filePath) {
   return new Promise((res) => {
-    const hash = crypto.createHash('sha1');
-    fs.createReadStream(filePath)
+    const hash = createHash('sha1');
+    createReadStream(filePath)
       .on('data', (data) => hash.update(data))
       .on('end', () => res(hash.digest('hex')));
   });

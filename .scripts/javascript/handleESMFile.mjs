@@ -1,9 +1,7 @@
-import fs from 'node:fs';
-import { dirname, basename, sep } from 'node:path';
-
+import { existsSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.2022.mjs';
-import { logger } from '../utils/logger.mjs';
 
 function isProd() {
   return !process.env.production || process.env.production === 'production' ? true : false;
@@ -16,10 +14,14 @@ function isProd() {
  * @param { string } outputFile the full path to the file + filename + extension
  */
 async function handleESMFile(inputFile, outputFile = '') {
+  if (!inputFile.endsWith('js')) {
+    return;
+  }
+
   // biome-ignore lint/style/noParameterAssign:
   outputFile = !outputFile ? inputFile.replace('.mjs', '.min.js').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
 
-  if (!fs.existsSync(inputFile)) {
+  if (!existsSync(inputFile)) {
     throw new Error(`File ${inputFile} doesn't exist`);
   }
 
@@ -34,7 +36,7 @@ async function handleESMFile(inputFile, outputFile = '') {
 
   const bundle = await rolldown({ ...config.inputOptions, input: inputFile });
   await bundle.write(currentOpts);
-  logger(`✅ ES2018 file: ${basename(outputFile)}: transpiled`);
+  process.stdout.write(`✅ ESM: ${inputFile} === ${outputFile}\n`);
   await bundle.destroy();
 }
 

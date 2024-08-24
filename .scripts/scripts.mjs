@@ -1,6 +1,4 @@
 import fs from 'node:fs';
-
-import { logger } from './utils/logger.mjs';
 import { handleES5File } from './javascript/handleES5.mjs';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
 
@@ -19,17 +17,18 @@ async function handleScripts(path) {
   const folders = [];
 
   if (path) {
-    const stats = fs.statSync(`${process.cwd()}/${path}`);
+    const stats = fs.statSync(path);
 
     if (stats.isDirectory()) {
-      folders.push(`${process.cwd()}/${path}`);
+      folders.push(path);
     } else if (stats.isFile()) {
-      files.push(`${process.cwd()}/${path}`);
+      files.push(path);
     } else {
-      logger(`Unknown path ${path}`);
-      process.exit(1);
+      throw new Error(`Unknown path ${path}`);
     }
-  } else {
+  }
+
+  if (!files.length && !folders.length) {
     folders.push('media_source');
   }
 
@@ -49,12 +48,10 @@ async function handleScripts(path) {
  * @returns { Promise<unknown> }
  */
 async function handleScript(inputFile) {
-  if (!globalThis.searchPath || !globalThis.replacePath) throw new Error(`Global searchPath and replacePath are not defined`);
-
-  if (inputFile.endsWith('.es5.js')) return handleES5File(inputFile);
+  if (inputFile.endsWith('.es5.js')) return handleES5File(inputFile, inputFile.replace(/\.es5\.js$/, '.min.js').replace(/^media_source(\/|\\)/, 'media/'));
 
   if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/))
-    return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.js').replace(globalThis.searchPath, globalThis.replacePath));
+    return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.min.js').replace(/^media_source(\/|\\)/, 'media/'));
 }
 
 export { handleScripts };

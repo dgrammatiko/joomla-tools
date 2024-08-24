@@ -1,19 +1,20 @@
-import mod from 'node:module';
-import path from 'node:path';
-import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import { join } from 'node:path';
+import { existsSync } from 'node:fs';
+import { cwd } from 'node:process';
 
-const require = mod.createRequire(import.meta.url);
+const require = createRequire(import.meta.url);
 
 /**
  * Read the package.json
  */
 function getPackage() {
   const jsonPath = 'package.json';
-  if (!fs.existsSync(jsonPath)) {
-    throw new Error(`No package.json found in ${process.cwd()}`);
+  if (!existsSync(jsonPath)) {
+    throw new Error(`No package.json found in ${cwd()}`);
   }
   try {
-    return require(path.join(process.cwd(), 'package.json'));
+    return require(join(cwd(), 'package.json'));
   } catch (err) {
     return {};
   }

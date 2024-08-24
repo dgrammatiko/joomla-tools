@@ -1,16 +1,14 @@
 import { existsSync, rmSync, readFileSync } from 'node:fs';
 import assert from 'node:assert';
-import { describe, it, test } from 'node:test';
-
+import { describe, test } from 'node:test';
 import { handleCssFile } from '../.scripts/stylesheets/handleCSSFile.mjs';
 
 describe('CSS handling tests', { concurrency: false }, () => {
-  // Cleanup
-  test.afterEach(async () => {
+  test.afterEach(() => {
     if (existsSync('test/stubs/css')) rmSync('media/stubs/css', { force: true, recursive: true });
   });
 
-  it('Non existing CSS file', (t) => {
+  test('Non existing CSS file', (t) => {
     process.env.production = 'production';
     const inputFile = 'nonExistingCSS.css';
     const outputFile = 'nonExistingCSS.css';
@@ -24,7 +22,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
     assert.equal(message, `File ${inputFile} doesn't exist`);
   });
 
-  it('CSS file no outputFile argument [production]', (t) => {
+  test('CSS file no outputFile argument [production]', (t) => {
     process.env.production = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
@@ -35,7 +33,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
     assert.equal(readFileSync(outputFile, { encoding: 'utf8' }), 'body{color:red}\n/*# sourceMappingURL=css_without_import.min.css.map */');
   });
 
-  it('CSS file without import [production]', (t) => {
+  test('CSS file without import [production]', (t) => {
     process.env.production = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
@@ -49,7 +47,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
     );
   });
 
-  it('CSS file without import [development]', (t) => {
+  test('CSS file without import [development]', (t) => {
     process.env.production = 'nope';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
@@ -63,7 +61,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
     );
   });
 
-  it('CSS file with import', (t) => {
+  test('CSS file with import [production]', (t) => {
     process.env.production = 'production';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
@@ -72,5 +70,19 @@ describe('CSS handling tests', { concurrency: false }, () => {
     handleCssFile(inputFile, outputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(readFileSync(outputFile, { encoding: 'utf8' }), 'body{color:red}\n/*# sourceMappingURL=css_with_import.min.css.map */');
+  });
+
+  test('CSS file with import [development]', (t) => {
+    process.env.production = 'development';
+    const file = 'css_with_import.css';
+    const inputFile = `media_source/stubs/css/${file}`;
+    const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
+
+    handleCssFile(inputFile, outputFile);
+    assert.equal(existsSync(outputFile), true);
+    assert.equal(
+      readFileSync(outputFile, { encoding: 'utf8' }),
+      'body {\n  color: red;\n}\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjpudWxsLCJtYXBwaW5ncyI6IkFDQUEiLCJzb3VyY2VzIjpbIm1lZGlhX3NvdXJjZS9zdHVicy9jc3MvY3NzX3dpdGhfaW1wb3J0LmNzcyIsIm1lZGlhX3NvdXJjZS9zdHVicy9jc3MvY3NzX3dpdGhvdXRfaW1wb3J0LmNzcyJdLCJzb3VyY2VzQ29udGVudCI6WyJAaW1wb3J0IFwiY3NzX3dpdGhvdXRfaW1wb3J0LmNzc1wiO1xuIiwiYm9keSB7XG4gIGNvbG9yOiByZWQ7XG59XG4iXSwibmFtZXMiOltdfQ== */',
+    );
   });
 });
