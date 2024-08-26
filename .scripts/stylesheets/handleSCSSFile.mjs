@@ -20,7 +20,7 @@ async function handleScssFile(inputFile, outputFile) {
     mkdirSync(dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
-  const isProd = !process.env.production || process.env.production === 'production' ? true : false;
+  const isProd = !process.env.env || process.env.env === 'production' ? true : false;
   const options = {
     charset: true,
     sourceMap: true,

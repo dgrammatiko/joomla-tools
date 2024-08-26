@@ -12,7 +12,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   });
 
   test('Non existing file', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'nonExisting.mjs';
 
     try {
@@ -23,7 +23,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   });
 
   test('Module file without import [production]', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'module_without_import.mjs';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
@@ -36,7 +36,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   });
 
   test('Module file without import [development]', async (t) => {
-    process.env.production = 'development';
+    process.env.env = 'development';
     const file = 'module_without_import.mjs';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
@@ -47,7 +47,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   });
 
   test('Module file with import [production]', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'module_with_import.mjs';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
@@ -61,7 +61,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
   });
 
   test('Module file with import [development]', async (t) => {
-    process.env.production = 'development';
+    process.env.env = 'development';
     const file = 'module_with_import.mjs';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;

@@ -11,7 +11,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('Non existing file', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'nonexisting-legacy-es5.js';
 
     try {
@@ -23,7 +23,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('ES5 file [production]', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'legacy.es5.js';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.js', '.min.js')}`;
@@ -40,7 +40,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('ES5 file [development]', async (t) => {
-    process.env.production = 'development';
+    process.env.env = 'development';
     const file = 'legacy.es5.js';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.js', '.min.js')}`;

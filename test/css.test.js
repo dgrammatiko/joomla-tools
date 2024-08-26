@@ -9,7 +9,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('Non existing CSS file', (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const inputFile = 'nonExistingCSS.css';
     const outputFile = 'nonExistingCSS.css';
     let message;
@@ -23,7 +23,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file no outputFile argument [production]', (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -34,7 +34,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file without import [production]', (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -48,7 +48,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file without import [development]', (t) => {
-    process.env.production = 'nope';
+    process.env.env = 'nope';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -62,7 +62,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file with import [production]', (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -73,7 +73,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file with import [development]', (t) => {
-    process.env.production = 'development';
+    process.env.env = 'development';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
