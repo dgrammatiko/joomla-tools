@@ -35,8 +35,8 @@ const processFile = (file) => {
  * @param { string } path
  */
 const watching = (path) => {
-  if (!(searchPath in globalThis) || !(replacePath in globalThis)) throw new Error('Global searchPath and replacePath are not defined');
 
+  process.env.env = 'development';
   const watcher = watch(path ? Path.join(process.cwd(), path) : Path.join(process.cwd(), globalThis.searchPath), { ignored: /(^|[/\\])\../, persistent: true });
 
   // Close gracefully

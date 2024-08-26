@@ -4,7 +4,7 @@ import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.2022.mjs';
 
 function isProd() {
-  return !process.env.production || process.env.production === 'production' ? true : false;
+  return !process.env.env || process.env.env === 'production' ? true : false;
 }
 
 /**

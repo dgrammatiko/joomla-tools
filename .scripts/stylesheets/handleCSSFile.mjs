@@ -19,7 +19,7 @@ function handleCssFile(inputFile, outputFile = '') {
     mkdirSync(dirname(outputFile), { recursive: true, mode: 0o755 });
   }
 
-  const isProd = !process.env.production || process.env.production === 'production' ? true : false;
+  const isProd = !process.env.env || process.env.env === 'production' ? true : false;
   const { code, map } = bundle({
     filename: inputFile,
     minify: isProd,

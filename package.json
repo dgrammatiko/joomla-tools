@@ -54,13 +54,11 @@
     "url": "https://github.com/dgrammatiko/joomla-tools/issues"
   },
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
-  "dependencies": {
-  },
   "peerDependencies": {
+    "browserslist": "^4.23.3",
     "lightningcss": "^1.26.0",
     "rolldown": "^0.12.2",
-    "sass": "^1.62.1",
-    "browserslist": "^4.23.3"
+    "sass": "^1.62.1"
   },
   "devDependencies": {
     "@quentinadam/zip": "npm:@jsr/quentinadam__zip@^0.1.0",

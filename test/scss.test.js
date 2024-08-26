@@ -9,7 +9,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('Non existing SCSS file', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const inputFile = 'nonExistingSCSS.scss';
     const outputFile = 'nonExistingSCSS.scss';
     let message;
@@ -23,7 +23,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file without import [production]', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'scss_without_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
@@ -40,7 +40,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file without import [development]', async (t) => {
-    process.env.production = 'development';
+    process.env.env = 'development';
     const file = 'scss_without_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
@@ -56,7 +56,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file with import [production]', async (t) => {
-    process.env.production = 'production';
+    process.env.env = 'production';
     const file = 'scss_with_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
@@ -73,7 +73,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file with import [development]', async (t) => {
-    process.env.production = 'development';
+    process.env.env = 'development';
     const file = 'scss_with_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
