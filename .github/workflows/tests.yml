@@ -27,6 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         registry-url: 'https://registry.npmjs.org'
         cache: 'npm'
+    - run: rm -rf node_modules package-lock.json
     - run: git config --global user.email "d.grammatiko@gmail.com"
     - run: git config --global user.name "dgrammatiko"
     - run: npm i
