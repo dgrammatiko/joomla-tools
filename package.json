@@ -1,6 +1,6 @@
 {
   "name": "@dgrammatiko/joomla-tools",
-  "version": "0.0.344",
+  "version": "0.0.355",
   "publishConfig": {
     "access": "public"
   },
@@ -55,7 +55,7 @@
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "7.25.3",
+    "@babel/preset-env": "7.25.4",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^26.0.0",
     "@rollup/plugin-json": "^6.0.0",
@@ -69,10 +69,10 @@
     "cssnano": "^7.0.0",
     "eslint": "^8.41.0",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-vue": "9.27.0",
+    "eslint-plugin-import": "2.30.0",
+    "eslint-plugin-vue": "9.28.0",
     "fs-jetpack": "^5.1.0",
-    "postcss": "8.4.41",
+    "postcss": "8.4.44",
     "postcss-cli": "^11.0.0",
     "postcss-custom-media": "^11.0.0",
     "postcss-custom-selectors": "^8.0.0",
@@ -83,7 +83,7 @@
     "postcss-preset-env": "^10.0.0",
     "postcss-scss": "^4.0.6",
     "recursive-readdir": "^2.2.3",
-    "rollup": "4.21.0",
+    "rollup": "4.21.2",
     "rtlcss": "^4.1.0",
     "sass": "^1.62.1",
     "semver": "^7.5.4",
