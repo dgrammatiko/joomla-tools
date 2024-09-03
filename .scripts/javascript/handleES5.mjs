@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.es5.mjs';
 
@@ -25,17 +25,10 @@ async function handleES5File(inputFile, outputFile = '') {
   const currentOpts = {
     ...config.outputOptions,
     dir: dirname(outputFile),
-    file: outputFile,
     minify: true,
     sourcemap: isProd() ? true : 'inline',
-    // after https://github.com/rolldown/rolldown/pull/1834 is merged
-    // entryFileNames: (chunk) => {
-    //   if (chunk.facadeModuleId.endsWith('.es5.js')) {
-    //     return chunk.facadeModuleId.replace('.es5.js', '.min.js');
-    //   }
-    //   return chunk.facadeModuleId;
-    // }
-    entryFileNames: '[name].min.js',
+    entryFileNames: chunk => chunk.facadeModuleId.endsWith('.es5.js') ? basename(outputFile) : basename(chunk.facadeModuleId),
+    // entryFileNames: '[name].min.js',
     // chunkFileNames: '[name].min.js',
   };
 
