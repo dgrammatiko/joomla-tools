@@ -6,7 +6,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=21.0.0"
   },
   "bin": {
     "joomla-tools": "dist/joomla-tools.mjs"
@@ -33,16 +33,10 @@
   },
   "keywords": [
     "Joomla",
-    "scaffolding",
-    "components",
-    "modules",
-    "plugins",
-    "libraries",
-    "templates",
+    "Joomla tools",
     "esm",
     "transpilling",
-    "scss",
-    "postcss"
+    "scss"
   ],
   "author": "Dimitris Grammatikogiannis",
   "license": "MIT",
@@ -62,9 +56,9 @@
   },
   "devDependencies": {
     "@quentinadam/zip": "npm:@jsr/quentinadam__zip@^0.1.0",
-    "chokidar": "^3.5.3",
-    "commander": "^12.0.0",
-    "semver": "^7.5.4",
-    "symlink-dir": "^6.0.1"
+    "chokidar": "^3.6.0",
+    "commander": "^12.1.0",
+    "semver": "^7.6.3",
+    "symlink-dir": "^6.0.2"
   }
 }
