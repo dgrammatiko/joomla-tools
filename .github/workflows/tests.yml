@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 'v22.8.0' ] # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [ 'v21.7.3' ] # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - name: Checkout
