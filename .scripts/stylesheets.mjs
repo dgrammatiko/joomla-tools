@@ -1,14 +1,7 @@
-import { existsSync } from 'node:fs';
-import { stat } from 'node:fs/promises';
-import { cwd, exit } from 'node:process';
-import { join, sep } from 'node:path';
-import pkgFsJetpack from 'fs-jetpack';
-
-import { logger } from './utils/logger.mjs';
-import { handleScssFile } from './stylesheets/handle-scss.mjs';
-import { handleCssFile } from './stylesheets/handle-css.mjs';
-
-const { find } = pkgFsJetpack;
+import fs from 'node:fs';
+import Path from 'node:path';
+import { handleScssFile } from './stylesheets/handleSCSSFile.mjs';
+import { handleCssFile } from './stylesheets/handleCSSFile.mjs';
 
 /**
  * Method that will crawl the media_source folder
@@ -16,57 +9,55 @@ const { find } = pkgFsJetpack;
  * copy any css files to the appropriate destination and
  * minify them in place
  *
- * Expects scss files to have ext: .scss
- *         css files to have ext: .css
+ * Expects scss files to have ext: .scss and css files to have ext: .css
  * Ignores scss files that their filename starts with `_`
  *
  * @param { string } path  The folder that needs to be compiled, optional
  */
 async function handleStylesheets(path) {
-  if (!existsSync(join(cwd(), 'media_source'))) {
-    logger('The folder media_source does not exist. Exiting');
-    exit(1);
+  if (!fs.existsSync(Path.join(process.cwd(), 'media_source'))) {
+    throw new Error('The folder media_source does not exist. Exiting');
   }
 
   const files = [];
   const folders = [];
 
   if (path) {
-    const stats = await stat(`${cwd()}/${path}`);
+    const stats = fs.statSync(`${process.cwd()}/${path}`);
 
     if (stats.isDirectory()) {
-      folders.push(`${cwd()}/${path}`);
+      folders.push(`${process.cwd()}/${path}`);
     } else if (stats.isFile()) {
-      files.push(`${cwd()}/${path}`);
+      files.push(`${process.cwd()}/${path}`);
     } else {
-      logger(`Unknown path ${path}`);
-      exit(1);
+      throw new Error(`Unknown path ${path}`);
     }
   } else {
     folders.push('media_source');
   }
 
-  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(scss|css)'] })));
-  // Loop to get the files that should be compiled via parameter
-  const computedFiles = [ ...files, ...fromFolder.flat() ];
+    for (const folder of folders) {
+    for (const file of fs.readdirSync(folder, { recursive: true, encoding: 'utf8' })) {
+      if (file.endsWith('.scss') || file.endsWith('.css')) {
+        files.push(file);
+      }
+    }
+  }
 
-  return Promise.all(computedFiles.map((file) => handleStylesheet(file)));
-};
+  Promise.all(files.map((file) => handleStylesheet(file));
+}
 
 /**
  * @param { string } inputFile
  * @returns { Promise<unknown> }
  */
 async function handleStylesheet(inputFile) {
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
   if (inputFile.endsWith('.css') && !inputFile.endsWith('.min.css')) {
-    return handleCssFile(inputFile);
+    return handleCssFile(inputFile, inputFile.replace(/\.css$/, '.min.css').replace(/^media_source(\/|\\)/, 'media/'));
   }
 
   if (inputFile.endsWith('.scss') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    const outputFile = inputFile.replace(`${sep}scss${sep}`, `${sep}css${sep}`).replace(globalThis.searchPath, globalThis.replacePath).replace('.scss', '.css');
+    const outputFile = inputFile.replace(`${Path.sep}scss${Path.sep}`, `${Path.sep}css${Path.sep}`).replace('.scss', '.css').replace(/^media_source(\/|\\)/, 'media/');
     return handleScssFile(inputFile, outputFile);
   }
 }

@@ -1,36 +1,42 @@
-import { basename, dirname, sep } from 'node:path';
-import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { minify } from 'terser';
-import { logger } from '../utils/logger.mjs';
+import { basename, dirname } from 'node:path';
+import { rolldown } from 'rolldown';
+import { config } from './configs/rollup.es5.mjs';
+
+function isProd() {
+  return !process.env.env || process.env.env === 'production' ? true : false;
+}
 
 /**
- * @param { string } file
+ * @param { string } inputFile
+ * @param { string } outputFile
  */
-async function handleES5File(file) {
-  if (!existsSync(file)) {
-    throw new Error(`File ${file} doesn't exist`);
+async function handleES5File(inputFile, outputFile = '') {
+  if (!inputFile.endsWith('.es5.js')) {
+    return;
+  }
+  if (!existsSync(inputFile)) {
+    throw new Error(`File ${inputFile} doesn't exist`);
   }
 
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
+  // biome-ignore lint/style/noParameterAssign:
+  outputFile = !outputFile ? inputFile.replace('.es5.js', '.es5.min.js').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
 
-  if (file.endsWith('.es5.js')) {
-    // ES5 file, we will copy the file and then minify it in place
-    logger(`Processing Legacy js file: ${basename(file)}...`);
-    if (!existsSync(dirname(file).replace(`${sep}${globalThis.searchPath}`, globalThis.replacePath))) {
-      await mkdir(dirname(file).replace(`${sep}${globalThis.searchPath}`, globalThis.replacePath), { recursive: true, mode: 0o755 });
-    }
+  const currentOpts = {
+    ...config.outputOptions,
+    dir: dirname(outputFile),
+    minify: true,
+    sourcemap: isProd() ? true : 'inline',
+    entryFileNames: chunk => chunk.facadeModuleId.endsWith('.es5.js') ? basename(outputFile) : basename(chunk.facadeModuleId),
+    // chunkFileNames: '[name].min.js',
+  };
 
-    await cp(file, file.replace(`${sep}${globalThis.searchPath}${sep}`, globalThis.replacePath).replace('.es5.js', '.js'), { preserveTimestamps: true, force: true, mode: 0o755 });
-    logger(`Legacy js file: ${basename(file)}: ✅ copied`);
+  const bundle = await rolldown({ ...config.inputOptions, input: inputFile });
+  await bundle.write(currentOpts);
+  process.stdout.write(`✅ ESM: ${inputFile} === ${outputFile}\n`);
+  await bundle.destroy();
 
-    const fileContent = await readFile(file, { encoding: 'utf8' });
-    const content = await minify(fileContent, { sourceMap: false, format: { comments: false } });
-    await writeFile(file.replace('.js', '.min.js'), content.code, { encoding: 'utf8', mode: '0644' });
-    logger(`✅ Legacy js file: ${basename(file)}: minified`);
-  }
-};
+  process.stdout.write(`✅ js: ${inputFile} === ${outputFile}\n`);
+}
 
 export { handleES5File };
