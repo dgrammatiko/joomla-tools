@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { basename, dirname, resolve } from 'node:path';
+import { basename, dirname } from 'node:path';
 import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.es5.mjs';
 
@@ -28,7 +28,6 @@ async function handleES5File(inputFile, outputFile = '') {
     minify: true,
     sourcemap: isProd() ? true : 'inline',
     entryFileNames: chunk => chunk.facadeModuleId.endsWith('.es5.js') ? basename(outputFile) : basename(chunk.facadeModuleId),
-    // entryFileNames: '[name].min.js',
     // chunkFileNames: '[name].min.js',
   };
 
