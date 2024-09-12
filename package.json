@@ -1,6 +1,6 @@
 {
   "name": "@dgrammatiko/joomla-tools",
-  "version": "0.0.355",
+  "version": "0.0.360",
   "publishConfig": {
     "access": "public"
   },
@@ -72,7 +72,7 @@
     "eslint-plugin-import": "2.30.0",
     "eslint-plugin-vue": "9.28.0",
     "fs-jetpack": "^5.1.0",
-    "postcss": "8.4.44",
+    "postcss": "8.4.45",
     "postcss-cli": "^11.0.0",
     "postcss-custom-media": "^11.0.0",
     "postcss-custom-selectors": "^8.0.0",
@@ -93,7 +93,7 @@
     "stylelint-order": "^6.0.3",
     "stylelint-scss": "^5.0.0",
     "symlink-dir": "^6.0.0",
-    "terser": "5.31.6"
+    "terser": "5.32.0"
   },
   "devDependencies": {
     "ava": "^6.0.0",
