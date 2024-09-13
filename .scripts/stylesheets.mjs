@@ -48,10 +48,10 @@ async function handleStylesheets(path) {
 
   const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(scss|css)'] })));
   // Loop to get the files that should be compiled via parameter
-  const computedFiles = [ ...files, ...fromFolder.flat() ];
+  const computedFiles = [...files, ...fromFolder.flat()];
 
   return Promise.all(computedFiles.map((file) => handleStylesheet(file)));
-};
+}
 
 /**
  * @param { string } inputFile
