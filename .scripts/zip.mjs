@@ -7,6 +7,7 @@ import {
 import { extname } from 'node:path';
 import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
+import path from 'path';
 
 /**
  * @type {[]} //{ name: string, zip: admZip }
@@ -20,6 +21,7 @@ function applyReplacements(file, replacables) {
 }
 
 async function addFilesRecursively(folder, replace, replacables, zipper) {
+  folder = folder.replaceAll(`/`, path.sep);
   jetpack.find(folder).forEach((file) => {
     let fileContent;
     if (['.php', '.xml', '.ini', '.js', '.css'].includes(extname(file))) {
@@ -54,7 +56,7 @@ async function packageExtensions() {
             addFilesRecursively(`src/${extensionType}/${extensionName}/administrator`, 'administrator', replacables, zip);
             const xml = zip.getEntry(`administrator/${extensionName}.xml`);
             zip.deleteFile(`administrator/${extensionName}.xml`);
-            zip.addFile(`${extensionName}.xml`, xml.getData())
+            zip.addFile(`${extensionName}.xml`, xml?.getData())
           }
           if (existsSync(`src/${extensionType}/${extensionName}/site`)) {
             addFilesRecursively(`src/${extensionType}/${extensionName}/site`, 'site', replacables, zip);
