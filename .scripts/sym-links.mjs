@@ -41,9 +41,9 @@ async function symLink(path) {
   }
 
   for (const extensionType of readdirSync('./src')) {
-    if (extensionType === '.DS_Store') return;
+    if (extensionType === '.DS_Store') continue;
     for (const extensionName of readdirSync(`./src/${extensionType}`)) {
-      if (extensionName === '.DS_Store') return;
+      if (extensionName === '.DS_Store') continue;
       switch (extensionType) {
         case "components":
           if (
@@ -127,7 +127,7 @@ async function symLink(path) {
           for (const actualTplName of readdirSync(
             `./src/${extensionType}/${extensionName}`,
           )) {
-            if (actualTplName === '.DS_Store') return;
+            if (actualTplName === '.DS_Store') continue;
             symlinkDir(
               `./src/${extensionType}/${extensionName}/${actualTplName}`,
               `./www/${
@@ -151,7 +151,7 @@ async function symLink(path) {
         if (existsSync("./media/templates/administrator")) {
           const adminTmpl = readdirSync("./media/templates/administrator");
           for (const exta of adminTmpl) {
-            if (exta === ".DS_Store") return;
+            if (exta === ".DS_Store") continue;
             if (
               !existsSync(
                 `${process.cwd()}/media/templates/administrator/${exta}`,
@@ -170,7 +170,7 @@ async function symLink(path) {
         if (existsSync("./media/templates/site")) {
           const siteTmpl = readdirSync("./media/templates/site");
           for (const exta of siteTmpl) {
-            if (exta === ".DS_Store") return;
+            if (exta === ".DS_Store") continue;
             if (
               !existsSync(`${process.cwd()}/media/templates/site/${exta}`)
             )
