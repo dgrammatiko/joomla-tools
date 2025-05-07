@@ -1,8 +1,3 @@
-// import { nodeResolve } from '@rollup/plugin-node-resolve';
-// import jsonFn from '@rollup/plugin-json';
-// import replace from '@rollup/plugin-replace';
-// import { babel } from '@rollup/plugin-babel';
-
 const plugins = [
   // nodeResolve({ preferBuiltins: false }),
   // jsonFn(),
