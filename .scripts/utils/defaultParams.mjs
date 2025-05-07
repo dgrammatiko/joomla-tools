@@ -1,5 +1,5 @@
 const defaultParams = {
-  joomlaVersion: '4.3.1',
+  joomlaVersion: '5.3.0',
 };
 
 export { defaultParams };

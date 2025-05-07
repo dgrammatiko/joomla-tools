@@ -4,22 +4,24 @@ import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.2022.mjs';
 
 function isProd() {
-  return !process.env.env || process.env.env === 'production' ? true : false;
+  if (!process.env.ENV) {
+    return true;
+  }
+  return process.env.ENV === 'production';
 }
 
 /**
  * Compiles es6
  *
  * @param { string } inputFile the full path to the file + filename + extension
- * @param { string } outputFile the full path to the file + filename + extension
  */
-async function handleESMFile(inputFile, outputFile = '') {
+async function handleESMFile(inputFile) {
   if (!inputFile.endsWith('js')) {
     return;
   }
 
   // biome-ignore lint/style/noParameterAssign:
-  outputFile = !outputFile ? inputFile.replace('.mjs', '.min.js').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
+  const outputFile = inputFile.replace('.mjs', '.min.js').replace(/^media_source(\/|\\)/, 'media/');
 
   if (!existsSync(inputFile)) {
     throw new Error(`File ${inputFile} doesn't exist`);

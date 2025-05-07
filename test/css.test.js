@@ -9,21 +9,20 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('Non existing CSS file', (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const inputFile = 'nonExistingCSS.css';
-    const outputFile = 'nonExistingCSS.css';
     let message;
 
     try {
-      handleCssFile(inputFile, outputFile);
+      handleCssFile(inputFile);
     } catch (e) {
       message = e.message;
     }
-    assert.equal(message, `File ${inputFile} doesn't exist`);
+    assert.equal(message, `No such file or directory (os error 2)`);
   });
 
   test('CSS file no outputFile argument [production]', (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -34,7 +33,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file without import [production]', (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -48,7 +47,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file without import [development]', (t) => {
-    process.env.env = 'nope';
+    process.env.ENV = 'nope';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -62,7 +61,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file with import [production]', (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
@@ -73,7 +72,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('CSS file with import [development]', (t) => {
-    process.env.env = 'development';
+    process.env.ENV = 'development';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;

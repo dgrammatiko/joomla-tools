@@ -1,8 +1,3 @@
-// import { nodeResolve } from '@rollup/plugin-node-resolve';
-// // import jsonFn from '@rollup/plugin-json';
-// // import replace from '@rollup/plugin-replace';
-// import { babel } from '@rollup/plugin-babel';
-// import commonjs from '@rollup/plugin-commonjs';
 
 // const plugins = [
 //   nodeResolve(),

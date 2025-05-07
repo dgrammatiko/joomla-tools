@@ -50,7 +50,7 @@
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "dependencies": {
     "browserslist": "^4.23.3",
-    "lightningcss": "^1.26.0",
+    "lightningcss": "^1.29.3",
     "rolldown": "^0.13.0",
     "sass": "^1.62.1"
   },

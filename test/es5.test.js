@@ -11,7 +11,7 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('Non existing file', async (t) => {
-    process.env.env = 'production';
+    process.env.ENV ='production';
     const file = 'nonexisting-legacy-es5.js';
 
     try {
@@ -23,13 +23,13 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('ES5 file [production]', async (t) => {
-    process.env.env = 'production';
-    const file = 'legacy.es5.js';
+    process.env.ENV = 'production';
+    const file = 'legacy.js';
     const inputFile = `media_source/stubs/js/${file}`;
-    const outputFile = `media/stubs/js/${file.replace('.es5.js', '.min.js')}`;
-    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.es5.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a)\\n});\\n"],"mappings":"yBAAA,MAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC,IAAA"}`;
+    const outputFile = `media/stubs/js/${file.replace('.js', '.min.js')}`;
+    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a)\\n});\\n"],"mappings":"yBAAA,MAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC,IAAA"}`;
 
-    await handleES5File(inputFile, outputFile);
+    await handleES5File(inputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),
@@ -40,13 +40,13 @@ describe('CSS handling tests', { concurrency: false }, () => {
   });
 
   test('ES5 file [development]', async (t) => {
-    process.env.env = 'development';
-    const file = 'legacy.es5.js';
+    process.env.ENV = 'development';
+    const file = 'legacy.js';
     const inputFile = `media_source/stubs/js/${file}`;
-    const outputFile = `media/stubs/js/${file.replace('.es5.js', '.min.js')}`;
-    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.es5.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a)\\n});\\n"],"mappings":"yBAAA,MAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC,IAAA"}`;
+    const outputFile = `media/stubs/js/${file.replace('.js', '.min.js')}`;
+    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a)\\n});\\n"],"mappings":"yBAAA,MAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC,IAAA"}`;
 
-    await handleES5File(inputFile, outputFile);
+    await handleES5File(inputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),

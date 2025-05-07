@@ -4,15 +4,17 @@ import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.es5.mjs';
 
 function isProd() {
-  return !process.env.env || process.env.env === 'production' ? true : false;
+  if (!process.env.ENV) {
+    return true;
+  }
+  return process.env.ENV === 'production';
 }
 
 /**
  * @param { string } inputFile
- * @param { string } outputFile
  */
-async function handleES5File(inputFile, outputFile = '') {
-  if (!inputFile.endsWith('.es5.js')) {
+async function handleES5File(inputFile) {
+  if (!inputFile.endsWith('.js')) {
     return;
   }
   if (!existsSync(inputFile)) {
@@ -20,23 +22,23 @@ async function handleES5File(inputFile, outputFile = '') {
   }
 
   // biome-ignore lint/style/noParameterAssign:
-  outputFile = !outputFile ? inputFile.replace('.es5.js', '.es5.min.js').replace(/^media_source(\/|\\)/, 'media/') : outputFile;
+  const outputFile = inputFile.replace('.js', '.min.js').replace(/^media_source(\/|\\)/, 'media/');
 
   const currentOpts = {
     ...config.outputOptions,
     dir: dirname(outputFile),
     minify: true,
     sourcemap: isProd() ? true : 'inline',
-    entryFileNames: chunk => chunk.facadeModuleId.endsWith('.es5.js') ? basename(outputFile) : basename(chunk.facadeModuleId),
+    // entryFileNames: chunk => chunk.facadeModuleId.endsWith('.es5.js') ? basename(outputFile) : basename(chunk.facadeModuleId),
     // chunkFileNames: '[name].min.js',
+    entryFileNames: '[name].min.js',
+    chunkFileNames: '[name].min.js',
   };
 
   const bundle = await rolldown({ ...config.inputOptions, input: inputFile });
   await bundle.write(currentOpts);
   process.stdout.write(`✅ ESM: ${inputFile} === ${outputFile}\n`);
   await bundle.destroy();
-
-  process.stdout.write(`✅ js: ${inputFile} === ${outputFile}\n`);
 }
 
 export { handleES5File };

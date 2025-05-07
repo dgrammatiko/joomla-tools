@@ -9,21 +9,20 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('Non existing SCSS file', async (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const inputFile = 'nonExistingSCSS.scss';
-    const outputFile = 'nonExistingSCSS.scss';
     let message;
 
     try {
-      await handleScssFile(inputFile, outputFile);
+      await handleScssFile(inputFile);
     } catch (e) {
       message = e.message;
-      assert.equal(message, `File ${inputFile} doesn't exist`);
+      assert.equal(message, `${inputFile}: no such file or directory`);
     }
   });
 
   test('SCSS file without import [production]', async (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const file = 'scss_without_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
@@ -40,7 +39,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file without import [development]', async (t) => {
-    process.env.env = 'development';
+    process.env.ENV = 'development';
     const file = 'scss_without_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
@@ -56,7 +55,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file with import [production]', async (t) => {
-    process.env.env = 'production';
+    process.env.ENV = 'production';
     const file = 'scss_with_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;
@@ -73,7 +72,7 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   });
 
   test('SCSS file with import [development]', async (t) => {
-    process.env.env = 'development';
+    process.env.ENV = 'development';
     const file = 'scss_with_import.scss';
     const inputFile = `media_source/stubs/scss/${file}`;
     const outputFile = `media/stubs/scss/${file.replace('.scss', '.min.css')}`;

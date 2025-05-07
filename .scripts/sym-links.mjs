@@ -1,7 +1,6 @@
-import { existsSync, lstatSync, mkdirSync, readdirSync} from 'node:fs';
+import { existsSync, lstatSync, mkdirSync, readdirSync, symlinkSync} from 'node:fs';
 import {sep, resolve, basename, dirname} from 'node:path';
 import { platform } from 'node:os';
-import jetpack from 'fs-jetpack';
 import symlinkDir from 'symlink-dir';
 
 /**
@@ -63,9 +62,9 @@ async function symLink(path = './src') {
           }
           break;
         case 'libraries': {
-          const xmls = jetpack.find(`./src/${extensionType}`, {
-            matching: `${extensionName}/**/*.xml`,
-          });
+          const xmls = readdirSync(`./src/${extensionType}`, { recursive:true, encoding: 'utf8' })
+            .filter((file) => file.endsWith('.xml') && file.includes(extensionName));
+
           for (const xml of xmls) {
             const newPath = xml.replace(`src${sep}libraries`, `www${sep}administrator${sep}manifests${sep}libraries`);
             const skippedName = dirname(dirname(newPath));
