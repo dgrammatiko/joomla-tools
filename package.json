@@ -94,6 +94,7 @@
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
+    "@stylistic/stylelint-plugin": "^4.0.0",
     "@vue/compiler-sfc": "^3.5.18",
     "chokidar": "^4.0.3",
     "cli-progress": "^3.12.0",
