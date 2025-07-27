@@ -51,7 +51,7 @@ const minifyJS = async (file) => {
     return;
   }
 
-  // eslint-disable-next-line no-console
+   
   console.log(`Processing Vendor file: ${file}`);
 
   let minified;

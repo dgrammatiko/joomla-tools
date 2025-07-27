@@ -61,7 +61,7 @@ export const recreateMediaFolder = async (options) => {
     }
   });
 
-  // eslint-disable-next-line no-console
+   
   console.log('Recreating the media folder...');
 
   const filterFunc = async (src) => {

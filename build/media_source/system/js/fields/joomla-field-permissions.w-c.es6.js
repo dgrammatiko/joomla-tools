@@ -124,7 +124,7 @@ window.customElements.define('joomla-field-permissions', class extends HTMLEleme
         try {
           response = JSON.parse(data);
         } catch (e) {
-          // eslint-disable-next-line no-console
+           
           console.error(e);
         }
 

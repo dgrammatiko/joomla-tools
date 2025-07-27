@@ -22,7 +22,7 @@ const xmlVersionStr = /(<version>)(.+)(<\/version>)/;
  */
 const copyArrayFiles = async (dirName, files, name, type) => {
   const promises = [];
-  // eslint-disable-next-line guard-for-in,no-restricted-syntax
+   
   for (const file of files) {
     const folderName = dirName === '/' ? '/' : `/${dirName}/`;
 

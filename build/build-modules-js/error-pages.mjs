@@ -111,7 +111,7 @@ export const createErrorPages = async (options) => {
   });
 
   await Promise.all(iniFilesProcess).catch((err) => {
-    // eslint-disable-next-line no-console
+     
     console.error(err);
     process.exitCode = -1;
   });
@@ -152,7 +152,7 @@ export const createErrorPages = async (options) => {
 
       await writeFile(`${RootPath}${folder}`, template, { encoding: 'utf8', mode: 0o644 });
 
-      // eslint-disable-next-line no-console
+       
       console.error(`✅ Created the file: ${folder}`);
     });
   };
@@ -160,7 +160,7 @@ export const createErrorPages = async (options) => {
   Object.keys(options.settings.errorPages).forEach((name) => processPages.push(processPage(name)));
 
   return Promise.all(processPages).catch((err) => {
-    // eslint-disable-next-line no-console
+     
     console.error(err);
     process.exitCode = -1;
   });

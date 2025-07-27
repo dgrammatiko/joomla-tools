@@ -55,7 +55,7 @@
           try {
             response = JSON.parse(resp);
           } catch (e) {
-            // eslint-disable-next-line no-console
+             
             console.error(e);
           }
 

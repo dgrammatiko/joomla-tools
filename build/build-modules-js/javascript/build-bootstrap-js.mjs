@@ -35,7 +35,7 @@ const createMinified = async (file) => {
 };
 
 const build = async () => {
-  // eslint-disable-next-line no-console
+   
   console.log('Building ES6 Components...');
 
   const domImports = await readdir(resolve('node_modules/bootstrap', 'js/src/dom'));
@@ -104,7 +104,7 @@ export const bootstrapJs = async () => {
     await build(resolve(inputFolder, 'index.es6.js'));
     await unlink(resolve(outputFolder, 'index.es6.js'));
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error(error);
     process.exitCode = 1;
   }
@@ -114,7 +114,7 @@ export const bootstrapJs = async () => {
   });
 
   return Promise.all(tasks).catch((er) => {
-    // eslint-disable-next-line no-console
+     
     console.log(er);
     process.exitCode = 1;
   });

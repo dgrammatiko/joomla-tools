@@ -34,7 +34,7 @@ export const compressFiles = async (enableBrotli = false) => {
   [].concat(...files).map((file) => compressTasks.push(compressFile(file, enableBrotli)));
 
   await Promise.all(compressTasks);
-  // eslint-disable-next-line no-console
+   
   console.log('✅ Done 👍');
   bench.stop();
 };

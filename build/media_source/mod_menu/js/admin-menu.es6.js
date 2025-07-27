@@ -4,7 +4,7 @@
  */
 
 document.querySelectorAll('ul.main-nav').forEach((menu) => {
-  // eslint-disable-next-line no-new, no-undef
+   
   new MetisMenu(menu);
 });
 

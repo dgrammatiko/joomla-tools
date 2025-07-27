@@ -464,7 +464,7 @@ Joomla.isChecked = (isitchecked, form) => {
   let e;
   let n;
 
-  // eslint-disable-next-line no-plusplus
+   
   for (i = 0, n = newForm.elements.length; i < n; i++) {
     e = newForm.elements[i];
 
@@ -526,7 +526,7 @@ Joomla.listItemTask = (id, task, form = null) => {
     return false;
   }
 
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     cbx = newForm[`cb${i}`];
 
@@ -641,7 +641,7 @@ Joomla.request = (options) => {
     if (newOptions.headers) {
       Object.keys(newOptions.headers).forEach((key) => {
         // Allow request without Content-Type
-        // eslint-disable-next-line no-empty
+         
         if (key === 'Content-Type' && newOptions.headers['Content-Type'] === 'false') {
 
         } else {
@@ -701,7 +701,7 @@ Joomla.request = (options) => {
   try {
     return createRequest(newOptions.onSuccess || (() => {}), newOptions.onError || (() => {}));
   } catch (error) {
-    // eslint-disable-next-line no-unused-expressions,no-console
+     
     console.error(error);
     return false;
   }
@@ -766,7 +766,7 @@ Joomla.ajaxErrorsMessages = (xhr, textStatus) => {
     // Html entity encode.
     let encodedJson = xhr.responseText.trim();
 
-    // eslint-disable-next-line no-plusplus
+     
     for (let i = encodedJson.length - 1; i >= 0; i--) {
       buf.unshift(['&#', encodedJson[i].charCodeAt(), ';'].join(''));
     }
