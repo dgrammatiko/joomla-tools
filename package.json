@@ -97,7 +97,7 @@
     "@vue/compiler-sfc": "^3.5.18",
     "chokidar": "^4.0.3",
     "cli-progress": "^3.12.0",
-    "commander": "^13.1.0",
+    "commander": "^14.0.0",
     "core-js": "^3.44.0",
     "cypress": "^14.5.3",
     "esbuild": "^0.25.8",
