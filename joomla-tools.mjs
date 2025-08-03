@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
-import { dirname, sep, join } from 'node:path';
-import { createCommand } from 'commander';
+import { dirname, join } from 'node:path';
+import { cwd, argv, env, stdout } from 'node:process';
+import { Command } from 'commander';
 import { defaultParams } from './.scripts/utils/defaultParams.mjs';
 import { getPackage } from './.scripts/utils/getPackage.mjs';
 
@@ -42,43 +43,43 @@ async function resolveFn(path, resolvedFunction, ...args) {
 
 async function main() {
   globalThis.options = { ...pkg, ...defaultParams };
-  const program = createCommand();
+  const program = new Command();
   const opts = program
     .option('-i, --init', 'Initialise')
     .option('-l, --link [type]', 'Link')
     .option('-b, --build [type]', 'Build')
     .option('-r, --release', 'Release')
     .option('-w, --watch [type]', 'Watch')
-    .parse(process.argv)
+    .parse(argv)
     .opts();
 
   if (opts.link) {
-    if (!existsSync(join(process.cwd(), 'www'))) {
-      process.stdout.write('Initializing...');
+    if (!existsSync(join(cwd(), 'www'))) {
+      stdout.write('Initializing...');
       await resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
     }
 
-    process.stdout.write('linking...');
+    stdout.write('linking...');
     await resolveFn('.scripts/sym-links.mjs', 'symLink');
   }
 
   if (opts.build) {
-    process.stdout.write('Start building...');
-    process.env.env = process.env.env ? process.env.env : 'development';
+    stdout.write('Start building...');
+    env.env = env.env ? env.env : 'development';
     await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
     await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
     await resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
   }
 
   if (opts.watch) {
-    process.stdout.write(`Start watching... Args: ${program.args.join(' ')}`);
-    process.env.env = process.env.env ? process.env.env : 'development';
+    stdout.write(`Start watching... Args: ${program.args.join(' ')}`);
+    env.env = env.env ? env.env : 'development';
     await resolveFn('.scripts/watch.mjs', 'watching', ...program.args);
   }
 
   if (opts.release) {
-    process.stdout.write(`Release... Args: ${program.args.join(' ')}`);
-    process.env.env = process.env.env ? process.env.env : 'production';
+    stdout.write(`Release... Args: ${program.args.join(' ')}`);
+    env.env = env.env ? env.env : 'production';
     await resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args);
     await resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args);
     await resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args);
@@ -86,7 +87,7 @@ async function main() {
   }
 
   if (opts.init) {
-    process.stdout.write('Fetching a joomla instance...');
+    stdout.write('Fetching a joomla instance...');
     await resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
   }
 }
