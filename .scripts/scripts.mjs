@@ -1,12 +1,6 @@
-import { stat } from 'node:fs/promises';
-import pkgFsJetpack from 'fs-jetpack';
-import { cwd } from 'node:process';
-
-import { logger } from './utils/logger.mjs';
+import fs from 'node:fs';
 import { handleES5File } from './javascript/handleES5.mjs';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
-
-const { find } = pkgFsJetpack;
 
 /**
  * Method that will crawl the media_source folder and
@@ -23,43 +17,41 @@ async function handleScripts(path) {
   const folders = [];
 
   if (path) {
-    const stats = await stat(`${cwd()}/${path}`);
+    const stats = fs.statSync(path);
 
     if (stats.isDirectory()) {
-      folders.push(`${cwd()}/${path}`);
+      folders.push(path);
     } else if (stats.isFile()) {
-      files.push(`${cwd()}/${path}`);
+      files.push(path);
     } else {
-      logger(`Unknown path ${path}`);
-      process.exit(1);
+      throw new Error(`Unknown path ${path}`);
     }
-  } else {
+  }
+
+  if (!files.length && !folders.length) {
     folders.push('media_source');
   }
 
-  const fromFolder = await Promise.all(folders.map((folder) => find(folder, { matching: ['*.+(mjs|es5\.js)'] })));
-  // Loop to get the files that should be compiled via parameter
-  const computedFiles = [ ...files, ...fromFolder.flat() ];
+  for (const folder of folders) {
+    for (const file of fs.readdirSync(folder, {recursive: true, encoding: 'utf8'})) {
+      if (file.endsWith('.mjs') || file.endsWith('.es5.js')) {
+        files.push(`${folder}/${file}`);
+      }
+    }
+  }
 
-  Promise.all(computedFiles.map((file) => handleScript(file)));
-};
+  Promise.all(files.map((file) => handleScript(file)));
+}
 
 /**
  * @param { string } inputFile
  * @returns { Promise<unknown> }
  */
 async function handleScript(inputFile) {
-  if (!globalThis.searchPath || !globalThis.replacePath) {
-    throw new Error(`Global searchPath and replacePath are not defined`);
-  }
+  if (inputFile.endsWith('.es5.js')) return handleES5File(inputFile, inputFile.replace(/\.es5\.js$/, '.min.js').replace(/^media_source(\/|\\)/, 'media/'));
 
-  if (inputFile.endsWith('.es5.js')) {
-    return handleES5File(inputFile);
-  }
-
-  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.js').replace(globalThis.searchPath, globalThis.replacePath));
-  }
+  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/))
+    return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.min.js').replace(/^media_source(\/|\\)/, 'media/'));
 }
 
 export { handleScripts };

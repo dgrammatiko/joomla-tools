@@ -1,5 +1,3 @@
-import { logger } from './logger.mjs';
-
 /**
  * Simple timer
  *
@@ -16,8 +14,8 @@ class Timer {
   }
 
   stop() {
-    logger(`Timer: ${this.name} finished in ${(new Date()).getTime() - this.start.getTime()}ms`);
+    console.log(`Timer: ${this.name} finished in ${new Date().getTime() - this.start.getTime()}ms\n`);
   }
 }
 
-export { Timer }
+export { Timer };

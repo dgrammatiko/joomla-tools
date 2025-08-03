@@ -1,6 +1,6 @@
 ignore
 media
-media_src
+media_source
 www
 .vscode
 .git
@@ -9,3 +9,10 @@ www
 coverage
 test/stubs
 node_modules
+codecov.yml
+.gitignore
+biome.json
+build.mjs
+jsconfig.json
+pub.mjs
+renovate.json

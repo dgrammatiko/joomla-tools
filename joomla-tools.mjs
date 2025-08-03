@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
-import { argv, cwd, exit } from 'node:process';
-import { dirname, join, sep } from 'node:path';
+import { argv, cwd } from 'node:process';
+import { dirname, join, sep, resolve } from 'node:path';
 import { createCommand } from 'commander';
 
-import { logger } from './.scripts/utils/logger.mjs';
 import { defaultParams } from './.scripts/utils/defaultParams.mjs';
 import { getPackage } from './.scripts/utils/getPackage.mjs';
 
@@ -24,18 +23,7 @@ if (existsSync(join(cwd(), 'package.json'))) {
     globalThis.replacePath = `media${sep}`;
   }
 } else {
-  logger('No package.json file. Exiting');
-  exit(1);
-}
-
-/**
- * @param {{}} error
- */
-function errorCatcher(error) {
-  logger('Something blow up. Exiting');
-  /* eslint-disable-next-line */
-  console.error(error);
-  exit(1);
+  throw new Error('No package.json file. Exiting');
 }
 
 /**
@@ -44,11 +32,10 @@ function errorCatcher(error) {
  * @param {[]} args
  */
 function resolveFn(path, resolvedFunction, ...args) {
-  if (existsSync(join(cwd(), path))) {
-    import(join(cwd(), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
-  } else {
-    import(join(dirname(import.meta.url), path)).then((mod) => mod[resolvedFunction](...args)).catch(errorCatcher);
-  }
+  const local = resolve(join(cwd(), path));
+  const nodeModule = resolve(import.meta.dirname, path);
+
+  import(existsSync(local) ? local : nodeModule).then((mod) => mod[resolvedFunction](...args)).catch(_=> { throw new Error(`Error importing ${resolvedFunction} from ${path}`); });
 }
 
 async function main() {
@@ -67,19 +54,19 @@ async function main() {
     if (globalThis.isJoomla) return;
 
     if (!existsSync(join(cwd(), 'www'))) {
-      logger('Initializing...');
+      console.log('Initializing...');
       resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
     }
 
-    logger('linking...');
+    console.log('linking...');
     resolveFn('.scripts/sym-links.mjs', 'symLink');
   }
 
   if (opts.build) {
     if (globalThis.isJoomla) return;
 
-    logger('Start building...');
-    resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
+    console.log('Start building...');
+    // resolveFn('.scripts/stylesheets.mjs', 'handleStylesheets', ...program.args); // Compile css files
     resolveFn('.scripts/scripts.mjs', 'handleScripts', ...program.args); // Compile script files
     resolveFn('.scripts/copythru.mjs', 'copyThru', ...program.args); // Copy files through
   }
@@ -87,14 +74,14 @@ async function main() {
   if (opts.watch) {
     if (globalThis.isJoomla) return;
 
-    logger(`Start watching... Args: ${program.args.join(' ')}`);
+    console.log(`Start watching... Args: ${program.args.join(' ')}`);
     resolveFn('.scripts/watch.mjs', 'watching', ...program.args);
   }
 
   if (opts.release) {
     if (globalThis.isJoomla) return;
 
-    logger(`Release... Args: ${program.args.join(' ')}`);
+    console.log(`Release... Args: ${program.args.join(' ')}`);
     resolveFn('.scripts/zip.mjs', 'packageExtensions', ...program.args);
   }
 
@@ -102,7 +89,7 @@ async function main() {
     if (globalThis.isJoomla) return;
     if (pkg.joomlaVersion) globalThis.joomlaVersion = pkg.joomlaVersion;
 
-    logger(`Fetching a joomla instance... Version: ${pkg.joomlaVersion}`);
+    console.log(`Fetching a joomla instance... Version: ${pkg.joomlaVersion}`);
     resolveFn('.scripts/fetch-joomla.mjs', 'fetchJoomla', ...program.args);
   }
 }

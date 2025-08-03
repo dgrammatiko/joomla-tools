@@ -1,35 +1,44 @@
-import { basename, dirname, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { rollup } from 'rollup';
-import { minify } from 'terser';
-import { config } from './configs/rollup.2018.mjs';
-import { logger } from '../utils/logger.mjs';
+import { dirname } from 'node:path';
+import { rolldown } from 'rolldown';
+import { config } from './configs/rollup.2022.mjs';
+
+function isProd() {
+  if (!process.env.ENV) {
+    return true;
+  }
+  return process.env.ENV === 'production';
+}
 
 /**
  * Compiles es6
  *
  * @param { string } inputFile the full path to the file + filename + extension
- * @param { string } outputFile the full path to the file + filename + extension
  */
-async function handleESMFile(inputFile, outputFile) {
+async function handleESMFile(inputFile) {
+  if (!inputFile.endsWith('.mjs')) {
+    return;
+  }
+
+  // biome-ignore lint/style/noParameterAssign:
+  const outputFile = inputFile.replace('.mjs', '.min.js').replace(/^media_source(\/|\\)/, 'media/');
+
   if (!existsSync(inputFile)) {
     throw new Error(`File ${inputFile} doesn't exist`);
   }
 
-  if (!existsSync(dirname(outputFile))) {
-    await mkdir(dirname(outputFile), { recursive: true, mode: 0o755 });
-  }
+  const currentOpts = {
+    ...config.outputOptions,
+    dir: dirname(outputFile),
+    minify: true,
+    sourcemap: isProd() ? true : 'inline',
+    entryFileNames: '[name].min.js',
+    chunkFileNames: '[name].min.js',
+  };
 
-  logger(`Transpiling ES2018 file: ${basename(inputFile).replace('.mjs', '.js')}...`);
-  const bundle = await rollup({ ...config.inputOptions, input: resolve(inputFile) });
-  const output = await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
-  const minified = await minify(output.output[0].code, { sourceMap: false, format: { comments: false } });
-  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, {encoding: 'utf8', mode: '0644'});
-  logger(`✅ ES2018 file: ${basename(outputFile)}: transpiled`);
-  await bundle.close();
-
-  return output.output[0].code;
-};
+  const bundle = await rolldown({ ...config.inputOptions, input: inputFile });
+  await bundle.write(currentOpts);
+  console.log(`✅ ESM: ${inputFile} === ${outputFile}\n`);
+}
 
 export { handleESMFile };

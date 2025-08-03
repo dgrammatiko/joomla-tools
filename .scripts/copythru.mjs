@@ -1,16 +1,5 @@
-import { cwd, exit } from 'node:process';
-import { join, sep } from 'node:path';
-import {
-  cp,
-  stat,
-  existsSync,
-  copyFileSync,
-  readdirSync,
-  mkdirSync
-} from 'node:fs';
-import jetpack from 'fs-jetpack';
-
-import { logger } from './utils/logger.mjs';
+import { join } from 'node:path';
+import { existsSync, statSync, mkdirSync, readdirSync} from 'node:fs';
 
 /** text
  * Method that will crawl the media_source folder
@@ -25,42 +14,51 @@ import { logger } from './utils/logger.mjs';
  * @param { string } path  The folder that needs to be compiled, optional
  */
 async function copyThru(path) {
-  if (!existsSync(join(cwd(), globalThis.searchPath))) {
-    logger(`The tools aren't initialized properly. Exiting`);
-    exit(1);
+  if (!existsSync(join('media_source'))) {
+    throw new Error(`The tools aren't initialized properly. Exiting`);
   }
 
-  if (!existsSync("./media")) {
-    mkdirSync("./media");
+  if (!existsSync('media')) {
+    mkdirSync('media');
   }
 
   const files = [];
   const folders = [];
 
   if (path) {
-    const stats = await stat(`${path}`);
+    const stats = statSync(`${path}`);
 
     if (stats.isDirectory()) {
       folders.push(`${path}`);
     } else if (stats.isFile()) {
       files.push(`${path}`);
     } else {
-      logger(`Unknown path ${path}`);
-      process.exit(1);
+      throw new Error(`Unknown path ${path}`);
     }
-  } else {
-    folders.push(globalThis.searchPath);
   }
 
-  // Copy any images folders
-  jetpack
-    .find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
-    .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
+  if (!files.length && !folders.length) {
+    folders.push('media_source');
+  }
 
-  // Copy the joomla.asset.json files
-  jetpack
-  .find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false })
-  .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
-};
+  for (const folderName of folders) {
+    for (const folder of readdirSync(folderName, {recursive: true, withFileTypes: true})) {
+      // push the right files
+    }
+  }
+
+  for (const file of files) {
+    // copy the file over
+  }
+  // Copy any images folders
+  // jetpack.find(globalThis.searchPath, { matching: 'images', files: false, directories: true }).forEach((file) =>
+  //   cpSync(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }),
+  // );
+
+  // // Copy the joomla.asset.json files
+  // jetpack.find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false }).forEach((file) =>
+  //   cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }),
+  // );
+}
 
 export { copyThru };

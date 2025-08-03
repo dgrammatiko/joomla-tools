@@ -1,12 +1,15 @@
 {
   "name": "@dgrammatiko/joomla-tools",
-  "version": "0.0.568",
+  "version": "0.1.0-alpha.1",
+  "description": "Tools for developing J4/5 extensions",
   "publishConfig": {
     "access": "public"
   },
-  "description": "Tools for developing J4 extensions",
+  "engines": {
+    "node": ">=21.0.0"
+  },
   "bin": {
-    "joomla-tools": "joomla-tools.mjs"
+    "joomla-tools": "dist/joomla-tools.mjs"
   },
   "type": "module",
   "exports": "./joomla-tools.mjs",
@@ -17,86 +20,44 @@
     "r": "node joomla-tools.mjs -r",
     "w": "node joomla-tools.mjs -w",
     "init": "npm run i && npm run l && npm run b",
-    "lint-css": "stylelint media_src/css/.",
-    "lint-js": "eslint **/*.mjs",
     "lint": "npm run lint-css && npm run lint-js",
     "update:browserlist": "npx browserslist@latest --update-db",
     "prepub": "npx np --no-cleanup --yolo --no-publish",
     "update": "npm install $(npm outdated | cut -d' ' -f 1 | sed '1d' | xargs -I '$' echo '$@latest' | xargs echo)  --save-exact",
-    "test": "ava",
-    "coverage": "c8 --reporter=lcov npm test",
+    "test": "node --test \"**/*.test.js\"",
+    "coverage": "node --test --experimental-test-coverage --test-reporter spec \"**/*.test.js\"",
+    "coverage:ci": "node --test --experimental-test-coverage --test-reporter lcov --test-reporter-destination=coverage.txt \"**/*.test.js\"",
     "release:major": "npm version $(semver $npm_package_version -i major) && npm publish --tag latest",
     "release:minor": "npm version $(semver $npm_package_version -i minor) && npm publish --tag latest",
     "release:patch": "npm version $(semver $npm_package_version -i patch) && npm publish --tag latest"
   },
+  "keywords": [
+    "Joomla",
+    "Joomla tools",
+    "esm",
+    "transpilling",
+    "scss"
+  ],
+  "author": "Dimitris Grammatikogiannis",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dgrammatiko/joomla-tools.git"
   },
-  "keywords": [
-    "Joomla",
-    "scaffolding",
-    "components",
-    "modules",
-    "plugins",
-    "libraries",
-    "templates",
-    "esm",
-    "es5",
-    "transpilling",
-    "scss",
-    "postcss"
-  ],
-  "author": "Dimitris Grammatikogiannis",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/dgrammatiko/joomla-tools/issues"
   },
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "dependencies": {
-    "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "7.28.0",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^28.0.0",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "16.0.1",
-    "@rollup/plugin-replace": "^6.0.0",
-    "@rollup/plugin-terser": "0.4.4",
-    "adm-zip": "^0.5.10",
-    "autoprefixer": "^10.4.14",
-    "chokidar": "^4.0.0",
-    "commander": "^14.0.0",
-    "cssnano": "^7.0.0",
-    "eslint": "^8.41.0",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-vue": "10.4.0",
-    "fs-jetpack": "^5.1.0",
-    "postcss": "8.5.6",
-    "postcss-cli": "^11.0.0",
-    "postcss-custom-media": "^11.0.0",
-    "postcss-custom-selectors": "^8.0.0",
-    "postcss-discard-comments": "^7.0.0",
-    "postcss-easy-import": "^4.0.0",
-    "postcss-mixins": "^12.0.0",
-    "postcss-nested": "^7.0.0",
-    "postcss-preset-env": "^10.0.0",
-    "postcss-scss": "^4.0.6",
-    "recursive-readdir": "^2.2.3",
-    "rollup": "4.46.2",
-    "rtlcss": "^4.1.0",
-    "sass": "^1.62.1",
-    "semver": "^7.5.4",
-    "stylelint": "^15.6.2",
-    "stylelint-config-recommended": "^13.0.0",
-    "stylelint-config-standard": "^34.0.0",
-    "stylelint-order": "^6.0.3",
-    "stylelint-scss": "^5.0.0",
-    "symlink-dir": "^6.0.0",
-    "terser": "5.43.1"
+    "browserslist": "^4.25.1",
+    "lightningcss": "^1.30.1",
+    "rolldown": "^1.0.0-beta.30",
+    "sass": "^1.89.2"
   },
   "devDependencies": {
-    "ava": "^6.0.0",
-    "c8": "^10.0.0"
+    "chokidar": "^4.0.3",
+    "commander": "^14.0.0",
+    "semver": "^7.7.2",
+    "symlink-dir": "^6.0.5"
   }
 }
