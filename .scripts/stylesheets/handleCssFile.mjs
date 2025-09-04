@@ -4,10 +4,7 @@ import browserslist from 'browserslist';
 import { bundle, browserslistToTargets } from 'lightningcss';
 
 function isProd() {
-  if (!process.env.ENV) {
-    return true;
-  }
-  return process.env.ENV === 'production';
+  return !process.env.ENV || process.env.ENV === 'production';
 }
 
 /**
@@ -15,8 +12,13 @@ function isProd() {
  */
 function handleCssFile(inputFile) {
   if (!inputFile) {
-    throw new Error(`File ${inputFile} doesn't exist`);
+    throw new Error(`File doesn't exist`);
   }
+
+  if (!inputFile.endsWith('.css')) {
+    return true;
+  }
+
 
   // biome-ignore lint/style/noParameterAssign:
   const outputFile = inputFile.replace('.css', '.min.css').replace(/^media_source(\/|\\)/, 'media/');

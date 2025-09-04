@@ -4,10 +4,7 @@ import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.2022.mjs';
 
 function isProd() {
-  if (!process.env.ENV) {
-    return true;
-  }
-  return process.env.ENV === 'production';
+  return !process.env.ENV || process.env.ENV === 'production';
 }
 
 /**
@@ -17,7 +14,7 @@ function isProd() {
  */
 async function handleESMFile(inputFile) {
   if (!inputFile.endsWith('.mjs')) {
-    return;
+    return true;
   }
 
   // biome-ignore lint/style/noParameterAssign:

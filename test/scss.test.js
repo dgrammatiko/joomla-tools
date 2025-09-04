@@ -7,6 +7,24 @@ describe('SCSS handling tests', { concurrency: false }, () => {
   test.afterEach(() => {
     if (existsSync('media/stubs/scss')) rmSync('media/stubs/scss', { force: true, recursive: true });
   });
+  test('Non file passed', async (t) => {
+    process.env.ENV = 'production';
+    let message;
+
+    try {
+      await handleScssFile(null);
+    } catch (e) {
+      message = e.message;
+    }
+    assert.equal(message, `File doesn't exist`);
+  });
+
+  test('Non .css file', async (t) => {
+    process.env.ENV = 'production';
+    const file = 'nonExisting.go';
+    const out = await handleScssFile(file);
+    assert.equal(out, true);
+  });
 
   test('Non existing SCSS file', async (t) => {
     process.env.ENV = 'production';

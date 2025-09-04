@@ -4,10 +4,7 @@ import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.es5.mjs';
 
 function isProd() {
-  if (!process.env.ENV) {
-    return true;
-  }
-  return process.env.ENV === 'production';
+  return !process.env.ENV || process.env.ENV === 'production';
 }
 
 /**
@@ -15,7 +12,9 @@ function isProd() {
  */
 async function handleES5File(inputFile) {
   if (!inputFile.endsWith('.js')) {
-    return;
+
+    // fullfil promise
+    return true;
   }
   if (!existsSync(inputFile)) {
     throw new Error(`File ${inputFile} doesn't exist`);

@@ -3,10 +3,7 @@ import { dirname, basename } from 'node:path';
 import { initCompiler } from 'sass';
 
 function isProd() {
-  if (!process.env.ENV) {
-    return true;
-  }
-  return process.env.ENV === 'production';
+  return !process.env.ENV || process.env.ENV === 'production';
 }
 
 const ScssCompiler = new initCompiler();
@@ -16,7 +13,11 @@ const ScssCompiler = new initCompiler();
  */
 async function handleScssFile(inputFile) {
   if (!inputFile) {
-    throw new Error(`File ${inputFile} doesn't exist`);
+    throw new Error(`File doesn't exist`);
+  }
+
+  if (!inputFile.endsWith('.scss')) {
+    return true;
   }
 
   // biome-ignore lint/style/noParameterAssign:

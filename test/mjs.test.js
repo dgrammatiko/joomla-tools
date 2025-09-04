@@ -11,6 +11,14 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     if (existsSync('test/stubs/js')) rmSync('media/stubs/js', { force: true, recursive: true });
   });
 
+  test('Non .mjs file', async (t) => {
+    process.env.ENV = 'production';
+    const file = 'nonExisting.go';
+
+    const out = await handleESMFile(file);
+    assert.equal(out, true);
+  });
+
   test('Non existing file', async (t) => {
     process.env.ENV = 'production';
     const file = 'nonExisting.mjs';

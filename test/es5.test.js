@@ -10,6 +10,15 @@ describe('CSS handling tests', { concurrency: false }, () => {
     }
   });
 
+  test('Non .js file', async (t) => {
+    process.env.ENV = 'production';
+    const file = 'nonexisting-legacy-es5.go';
+
+    const out = await handleES5File(file);
+
+    assert.equal(true, out);
+  });
+
   test('Non existing file', async (t) => {
     process.env.ENV ='production';
     const file = 'nonexisting-legacy-es5.js';

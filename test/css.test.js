@@ -9,37 +9,56 @@ describe('CSS handling tests', { concurrency: false }, () => {
     if (existsSync('test/stubs/css')) rmSync('media/stubs/css', { force: true, recursive: true });
   });
 
-  test('Non existing CSS file', (t) => {
+  test('Non file passed', async (t) => {
+    process.env.ENV = 'production';
+    let message;
+
+    try {
+      await handleCssFile(null);
+    } catch (e) {
+      message = e.message;
+    }
+    assert.equal(message, `File doesn't exist`);
+  });
+
+  test('Non .css file', async (t) => {
+    process.env.ENV = 'production';
+    const file = 'nonExisting.go';
+    const out = await handleCssFile(file);
+    assert.equal(out, true);
+  });
+
+  test('Non existing CSS file', async (t) => {
     env.ENV = 'production';
     const inputFile = 'nonExistingCSS.css';
     let message;
 
     try {
-      handleCssFile(inputFile);
+      await handleCssFile(inputFile);
     } catch (e) {
       message = e.message;
     }
     assert.equal(message, `No such file or directory (os error 2)`);
   });
 
-  test('CSS file no outputFile argument [production]', (t) => {
+  test('CSS file no outputFile argument [production]', async (t) => {
     env.ENV = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
 
-    handleCssFile(inputFile);
+    await handleCssFile(inputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(readFileSync(outputFile, { encoding: 'utf8' }), 'body{color:red}\n/*# sourceMappingURL=css_without_import.min.css.map */');
   });
 
-  test('CSS file without import [production]', (t) => {
+  test('CSS file without import [production]', async (t) => {
     env.ENV = 'production';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
 
-    handleCssFile(inputFile, outputFile);
+    await handleCssFile(inputFile, outputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),
@@ -47,13 +66,13 @@ describe('CSS handling tests', { concurrency: false }, () => {
     );
   });
 
-  test('CSS file without import [development]', (t) => {
+  test('CSS file without import [development]', async (t) => {
     env.ENV = 'nope';
     const file = 'css_without_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
 
-    handleCssFile(inputFile, outputFile);
+    await handleCssFile(inputFile, outputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),
@@ -61,24 +80,24 @@ describe('CSS handling tests', { concurrency: false }, () => {
     );
   });
 
-  test('CSS file with import [production]', (t) => {
+  test('CSS file with import [production]', async (t) => {
     env.ENV = 'production';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
 
-    handleCssFile(inputFile, outputFile);
+    await handleCssFile(inputFile, outputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(readFileSync(outputFile, { encoding: 'utf8' }), 'body{color:red}\n/*# sourceMappingURL=css_with_import.min.css.map */');
   });
 
-  test('CSS file with import [development]', (t) => {
+  test('CSS file with import [development]', async (t) => {
     env.ENV = 'development';
     const file = 'css_with_import.css';
     const inputFile = `media_source/stubs/css/${file}`;
     const outputFile = `media/stubs/css/${file.replace('.css', '.min.css')}`;
 
-    handleCssFile(inputFile, outputFile);
+    await handleCssFile(inputFile, outputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),
