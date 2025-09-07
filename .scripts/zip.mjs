@@ -1,36 +1,32 @@
-import {
-  readdirSync,
-  existsSync,
-  mkdirSync,
-  readFileSync
-} from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import { extname } from 'node:path';
-import jetpack from 'fs-jetpack';
+import path from 'node:path';
 import admZip from 'adm-zip';
-import path from 'path';
 
 /**
  * @type {[]} //{ name: string, zip: admZip }
  */
 const zips = [];
-let zip, replacables;
+let zip;
+let replacables;
 
 function applyReplacements(file, replacables) {
-  const content = readFileSync(file, { encoding: 'utf8'});
+  const content = readFileSync(file, { encoding: 'utf8' });
   return !replacables.version ? content : content.replace('{{version}}', replacables.version);
 }
 
 async function addFilesRecursively(folder, replace, replacables, zipper) {
-  folder = folder.replaceAll(`/`, path.sep);
-  jetpack.find(folder).forEach((file) => {
+  const nFolder = folder.replaceAll('/', path.sep);
+
+  for (const file of readdirSync(nFolder, {recursive: true})) {
     let fileContent;
     if (['.php', '.xml', '.ini', '.js', '.css'].includes(extname(file))) {
       fileContent = applyReplacements(file, replacables);
     } else {
       fileContent = readFileSync(file);
     }
-    zipper.addFile(file.replace(folder, replace), fileContent);
-  });
+    zipper.addFile(file.replace(nFolder, replace), fileContent);
+  }
 }
 
 async function packageExtensions() {
@@ -41,14 +37,14 @@ async function packageExtensions() {
   const options = globalThis.options;
 
   for (const extensionType of readdirSync('src')) {
-    if ([".", "..", ".DS_Store"].includes(extensionType)) {
+    if (['.', '..', '.DS_Store'].includes(extensionType)) {
       continue;
     }
     for (const extensionName of readdirSync(`src/${extensionType}`)) {
-      if ([".", "..", ".DS_Store"].includes(extensionName)) {
+      if (['.', '..', '.DS_Store'].includes(extensionName)) {
         continue;
       }
-      switch(extensionType) {
+      switch (extensionType) {
         case 'components':
           replacables = options['joomla-extensions'].components.filter((x) => x.name === extensionName)[0];
           zip = new admZip();
@@ -56,7 +52,7 @@ async function packageExtensions() {
             addFilesRecursively(`src/${extensionType}/${extensionName}/administrator`, 'administrator', replacables, zip);
             const xml = zip.getEntry(`administrator/${extensionName}.xml`);
             zip.deleteFile(`administrator/${extensionName}.xml`);
-            zip.addFile(`${extensionName}.xml`, xml?.getData())
+            zip.addFile(`${extensionName}.xml`, xml?.getData());
           }
           if (existsSync(`src/${extensionType}/${extensionName}/site`)) {
             addFilesRecursively(`src/${extensionType}/${extensionName}/site`, 'site', replacables, zip);
@@ -64,11 +60,11 @@ async function packageExtensions() {
           if (existsSync(`media/com_${extensionName}`)) {
             addFilesRecursively(`media/com_${extensionName}`, 'media', replacables, zip);
           }
-          zips.push({name: `com_${extensionName}_v${replacables.version}.zip`, zip: zip });
+          zips.push({ name: `com_${extensionName}_v${replacables.version}.zip`, zip: zip });
           break;
         case 'modules':
           for (const actualModName of readdirSync(`src/${extensionType}/${extensionName}`)) {
-            if ([".", "..", ".DS_Store"].includes(actualModName)) {
+            if (['.', '..', '.DS_Store'].includes(actualModName)) {
               continue;
             }
             if (options['joomla-extensions'].modules[extensionName]) {
@@ -79,14 +75,14 @@ async function packageExtensions() {
                 if (existsSync(`media/mod_${actualModName}`)) {
                   addFilesRecursively(`media/mod_${actualModName}`, 'media', replacables[0], zip);
                 }
-                zips.push({name: `mod_${extensionName}_${actualModName}_v${replacables[0].version}.zip`, zip: zip });
+                zips.push({ name: `mod_${extensionName}_${actualModName}_v${replacables[0].version}.zip`, zip: zip });
               }
             }
           }
           break;
         case 'plugins':
           for (const plgName of readdirSync(`src/${extensionType}/${extensionName}`)) {
-            if ([".", "..", ".DS_Store"].includes(plgName)) {
+            if (['.', '..', '.DS_Store'].includes(plgName)) {
               continue;
             }
             if (options['joomla-extensions'].plugins[extensionName]) {
@@ -97,7 +93,7 @@ async function packageExtensions() {
                 if (existsSync(`media/plg_${extensionName}_${plgName}`)) {
                   addFilesRecursively(`media/plg_${extensionName}_${plgName}`, 'media', replacables[0], zip);
                 }
-                zips.push({name: `plg_${extensionName}_${plgName}_v${replacables[0].version}.zip`, zip: zip });
+                zips.push({ name: `plg_${extensionName}_${plgName}_v${replacables[0].version}.zip`, zip: zip });
               }
             }
           }
@@ -109,11 +105,11 @@ async function packageExtensions() {
           if (existsSync(`media/lib_${extensionName}`)) {
             addFilesRecursively(`media/lib_${extensionName}`, 'media', replacables, zip);
           }
-          zips.push({name: `lib_${extensionType}_${extensionName}_v${replacables.version}.zip`, zip: zip });
+          zips.push({ name: `lib_${extensionType}_${extensionName}_v${replacables.version}.zip`, zip: zip });
           break;
         case 'templates':
           for (const actualTplName of readdirSync(`src/${extensionType}/${extensionName}`)) {
-            if ([".", "..", ".DS_Store"].includes(actualTplName)) {
+            if (['.', '..', '.DS_Store'].includes(actualTplName)) {
               continue;
             }
             replacables = options['joomla-extensions'].templates[extensionName].filter((x) => x.name === actualTplName)[0];
@@ -122,7 +118,7 @@ async function packageExtensions() {
             if (existsSync(`media/${extensionType}/${extensionName}/${actualTplName}`)) {
               addFilesRecursively(`media/${extensionType}/${extensionName}/${actualTplName}`, 'media', replacables, zip);
             }
-            zips.push({name: `tpl_${extensionName}_${actualTplName}_v${replacables.version}.zip`, zip: zip });
+            zips.push({ name: `tpl_${extensionName}_${actualTplName}_v${replacables.version}.zip`, zip: zip });
           }
           break;
         default:
@@ -135,6 +131,6 @@ async function packageExtensions() {
   for (const zipEntry of zips) {
     zipEntry.zip.writeZip(`./packages/${zipEntry.name}`, zipEntry.zip.data);
   }
-};
+}
 
 export { packageExtensions };

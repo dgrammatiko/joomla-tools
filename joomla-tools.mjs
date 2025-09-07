@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
+import { dirname, join, resolve, sep } from 'node:path';
 import { argv, cwd } from 'node:process';
-import { dirname, join, sep, resolve } from 'node:path';
 import { createCommand } from 'commander';
 
 import { defaultParams } from './.scripts/utils/defaultParams.mjs';
@@ -35,7 +35,11 @@ function resolveFn(path, resolvedFunction, ...args) {
   const local = resolve(join(cwd(), path));
   const nodeModule = resolve(import.meta.dirname, path);
 
-  import(existsSync(local) ? local : nodeModule).then((mod) => mod[resolvedFunction](...args)).catch(_=> { throw new Error(`Error importing ${resolvedFunction} from ${path}`); });
+  import(existsSync(local) ? local : nodeModule)
+    .then((mod) => mod[resolvedFunction](...args))
+    .catch((_) => {
+      throw new Error(`Error importing ${resolvedFunction} from ${path}`);
+    });
 }
 
 async function main() {

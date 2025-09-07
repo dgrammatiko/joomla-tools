@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { dirname, basename } from 'node:path';
+import { basename, dirname } from 'node:path';
+import path from 'node:path';
 import { initCompiler } from 'sass';
 
 function isProd() {
@@ -11,7 +12,7 @@ const ScssCompiler = new initCompiler();
 /**
  * @param { string } inputFile
  */
-async function handleScssFile(inputFile) {
+async function handleScss(inputFile) {
   if (!inputFile) {
     throw new Error(`File doesn't exist`);
   }
@@ -20,7 +21,6 @@ async function handleScssFile(inputFile) {
     return true;
   }
 
-  // biome-ignore lint/style/noParameterAssign:
   const outputFile = inputFile.replace('.scss', '.min.css').replace(/^media_source(\/|\\)/, 'media/');
 
   if (!existsSync(dirname(outputFile))) {
@@ -37,9 +37,7 @@ async function handleScssFile(inputFile) {
 
   const mapJSON = JSON.stringify(sourceMap);
   const content = `${css}\n/*# sourceMappingURL=${
-    isProd()
-      ? basename(outputFile.replace('.css', '.css.map'))
-      : `data:application/json;charset=utf-8;base64,${Buffer.from(mapJSON).toString('base64')}`
+    isProd() ? basename(outputFile.replace('.css', '.css.map')) : `data:application/json;charset=utf-8;base64,${Buffer.from(mapJSON).toString('base64')}`
   } */`;
 
   // @todo make all the paths in the sourcemap relative to the output css file
@@ -52,4 +50,4 @@ async function handleScssFile(inputFile) {
   console.log(`✅ SCSS: ${inputFile} === ${outputFile}\n`);
 }
 
-export { handleScssFile };
+export { handleScss };

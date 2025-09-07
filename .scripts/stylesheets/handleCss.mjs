@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname } from 'node:path';
 import browserslist from 'browserslist';
-import { bundle, browserslistToTargets } from 'lightningcss';
+import { browserslistToTargets, bundle } from 'lightningcss';
 
 function isProd() {
   return !process.env.ENV || process.env.ENV === 'production';
@@ -10,7 +10,7 @@ function isProd() {
 /**
  * @param { string } inputFile
  */
-function handleCssFile(inputFile) {
+function handleCss(inputFile) {
   if (!inputFile) {
     throw new Error(`File doesn't exist`);
   }
@@ -19,8 +19,6 @@ function handleCssFile(inputFile) {
     return true;
   }
 
-
-  // biome-ignore lint/style/noParameterAssign:
   const outputFile = inputFile.replace('.css', '.min.css').replace(/^media_source(\/|\\)/, 'media/');
 
   if (!existsSync(dirname(outputFile))) {
@@ -38,9 +36,7 @@ function handleCssFile(inputFile) {
   writeFileSync(
     outputFile,
     `${new TextDecoder().decode(code)}\n/*# sourceMappingURL=${
-      isProd()
-        ? basename(outputFile.replace('.css', '.css.map'))
-        : `data:application/json;charset=utf-8;base64,${Buffer.from(map).toString('base64')}`
+      isProd() ? basename(outputFile.replace('.css', '.css.map')) : `data:application/json;charset=utf-8;base64,${Buffer.from(map).toString('base64')}`
     } */`,
     { encoding: 'utf8' },
   );
@@ -52,4 +48,4 @@ function handleCssFile(inputFile) {
   process.stdout.write(`✅ CSS: ${inputFile} === ${outputFile}\n`);
 }
 
-export { handleCssFile };
+export { handleCss };

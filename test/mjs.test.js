@@ -1,12 +1,12 @@
-import { existsSync, rmSync, readFileSync } from 'node:fs';
 import assert from 'node:assert';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { describe, test } from 'node:test';
-import { handleESMFile } from '../.scripts/javascript/handleESMFile.mjs';
+import { handleESM } from '../.scripts/javascript/handleESM.mjs';
 
 const noImportMap = `{"version":3,"file":"module_without_import.min.js","names":[],"sources":["../../../media_source/stubs/js/module_without_import.mjs"],"sourcesContent":["const a = 'hello';\\n\\nexport { a };\\n"],"mappings":"AAAA,MAAM,EAAI"}`;
 const importMap = `{"version":3,"file":"module_with_import.min.js","names":[],"sources":["../../../media_source/stubs/js/module_without_import.mjs"],"sourcesContent":["const a = 'hello';\\n\\nexport { a };\\n"],"mappings":"AAAA,MAAM,EAAI"}`;
 
-describe('ESM js handling tests', {concurrency: false}, async () => {
+describe('ESM js handling tests', { concurrency: false }, async () => {
   test.afterEach(() => {
     if (existsSync('test/stubs/js')) rmSync('media/stubs/js', { force: true, recursive: true });
   });
@@ -15,7 +15,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     process.env.ENV = 'production';
     const file = 'nonExisting.go';
 
-    const out = await handleESMFile(file);
+    const out = await handleESM(file);
     assert.equal(out, true);
   });
 
@@ -24,7 +24,7 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     const file = 'nonExisting.mjs';
 
     try {
-      await handleESMFile(file);
+      await handleESM(file);
     } catch (e) {
       assert.equal(e.message, `File ${file} doesn't exist`);
     }
@@ -36,9 +36,12 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
-    await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
+    await handleESM(inputFile, outputFile.replace('.js', '.min.js'));
     assert.equal(existsSync(outputFile.replace('.js', '.min.js')), true);
-    assert.equal(readFileSync(outputFile.replace('.js', '.min.js'), {encoding: 'utf8'}), 'const e=\`hello\`;export{e as a};\n//# sourceMappingURL=module_without_import.min.js.map');
+    assert.equal(
+      readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }),
+      'const e=`hello`;export{e as a};\n//# sourceMappingURL=module_without_import.min.js.map',
+    );
     assert.equal(existsSync(outputFile.replace('.js', '.min.js.map')), true);
     assert.equal(readFileSync(outputFile.replace('.js', '.min.js.map'), { encoding: 'utf8' }), noImportMap);
   });
@@ -49,9 +52,12 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
-    await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
+    await handleESM(inputFile, outputFile.replace('.js', '.min.js'));
     assert.equal(existsSync(outputFile.replace('.js', '.min.js')), true);
-    assert.equal(readFileSync(outputFile.replace('.js', '.min.js'), {encoding: 'utf8'}), `const e=\`hello\`;export{e as a};\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Buffer.from(noImportMap).toString('base64')}`);
+    assert.equal(
+      readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }),
+      `const e=\`hello\`;export{e as a};\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Buffer.from(noImportMap).toString('base64')}`,
+    );
   });
 
   test('Module file with import [production]', async (t) => {
@@ -60,10 +66,13 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
-    await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
+    await handleESM(inputFile, outputFile.replace('.js', '.min.js'));
 
     assert.equal(existsSync(outputFile.replace('.js', '.min.js')), true);
-    assert.equal(readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }), 'const e=\`hello\`;export{e as a};\n//# sourceMappingURL=module_with_import.min.js.map');
+    assert.equal(
+      readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }),
+      'const e=`hello`;export{e as a};\n//# sourceMappingURL=module_with_import.min.js.map',
+    );
     assert.equal(existsSync(outputFile.replace('.js', '.min.js.map')), true);
     assert.equal(readFileSync(outputFile.replace('.js', '.min.js.map'), { encoding: 'utf8' }), importMap);
   });
@@ -74,9 +83,12 @@ describe('ESM js handling tests', {concurrency: false}, async () => {
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.mjs', '.js')}`;
 
-    await handleESMFile(inputFile, outputFile.replace('.js', '.min.js'));
+    await handleESM(inputFile, outputFile.replace('.js', '.min.js'));
 
     assert.equal(existsSync(outputFile.replace('.js', '.min.js')), true);
-    assert.equal(readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }), `const e=\`hello\`;export{e as a};\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Buffer.from(importMap).toString('base64')}`,);
+    assert.equal(
+      readFileSync(outputFile.replace('.js', '.min.js'), { encoding: 'utf8' }),
+      `const e=\`hello\`;export{e as a};\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Buffer.from(importMap).toString('base64')}`,
+    );
   });
 });

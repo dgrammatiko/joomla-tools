@@ -27,7 +27,7 @@ const plugins = [
 ];
 
 const config = {
-  inputOptions: { plugins: []},
+  inputOptions: { plugins: [] },
   externalImportAttributes: false,
   outputOptions: {
     format: 'es',

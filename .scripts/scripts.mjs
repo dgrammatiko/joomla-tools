@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import { handleES5File } from './javascript/handleES5.mjs';
-import { handleESMFile } from './javascript/handleESMFile.mjs';
+import { handleESM } from './javascript/handleESM.mjs';
+import { handleIIFE } from './javascript/handleIIFE.mjs';
 
 /**
  * Method that will crawl the media_source folder and
@@ -33,8 +33,8 @@ async function handleScripts(path) {
   }
 
   for (const folder of folders) {
-    for (const file of fs.readdirSync(folder, {recursive: true, encoding: 'utf8'})) {
-      if (file.endsWith('.mjs') || file.endsWith('.es5.js')) {
+    for (const file of fs.readdirSync(folder, { recursive: true, encoding: 'utf8' })) {
+      if (file.endsWith('.mjs') || file.endsWith('.js')) {
         files.push(`${folder}/${file}`);
       }
     }
@@ -48,10 +48,9 @@ async function handleScripts(path) {
  * @returns { Promise<unknown> }
  */
 async function handleScript(inputFile) {
-  if (inputFile.endsWith('.es5.js')) return handleES5File(inputFile, inputFile.replace(/\.es5\.js$/, '.min.js').replace(/^media_source(\/|\\)/, 'media/'));
+  if (inputFile.endsWith('.js')) return handleIIFE(inputFile);
 
-  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/))
-    return handleESMFile(inputFile, inputFile.replace(/\.mjs$/, '.min.js').replace(/^media_source(\/|\\)/, 'media/'));
+  if (inputFile.endsWith('.mjs') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) return handleESM(inputFile);
 }
 
 export { handleScripts };

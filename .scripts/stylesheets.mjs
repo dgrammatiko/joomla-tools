@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import Path from 'node:path';
-import { handleScssFile } from './stylesheets/handleScssFile.mjs';
-import { handleCssFile } from './stylesheets/handleCssFile.mjs';
+import { handleCss } from './stylesheets/handleCss.mjs';
+import { handleScss } from './stylesheets/handleScss.mjs';
 
 /**
  * Method that will crawl the media_source folder
@@ -44,7 +44,7 @@ export async function handleStylesheets(path) {
     }
   }
 
-  Promise.all(files.map((file) => handleStylesheet(file));
+  Promise.all(files.map((file) => handleStylesheet(file)));
 }
 
 /**
@@ -53,11 +53,10 @@ export async function handleStylesheets(path) {
  */
 async function handleStylesheet(inputFile) {
   if (inputFile.endsWith('.css') && !inputFile.endsWith('.min.css')) {
-    return handleCssFile(inputFile, inputFile.replace(/\.css$/, '.min.css').replace(/^media_source(\/|\\)/, 'media/'));
+    return handleCss(inputFile);
   }
 
   if (inputFile.endsWith('.scss') && !inputFile.match(/(\/|\\)_[^/\\]+$/)) {
-    const outputFile = inputFile.replace(`${Path.sep}scss${Path.sep}`, `${Path.sep}css${Path.sep}`).replace('.scss', '.css').replace(/^media_source(\/|\\)/, 'media/');
-    return handleScssFile(inputFile, outputFile);
+    return handleScss(inputFile);
   }
 }

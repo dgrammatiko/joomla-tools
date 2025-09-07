@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, symlinkSync } from 'node:fs';
-import { sep, resolve, basename, dirname } from 'node:path';
 import { platform } from 'node:os';
+import { basename, dirname, resolve, sep } from 'node:path';
 import symlinkDir from 'symlink-dir';
 
 /**
@@ -47,7 +47,10 @@ async function symLink(path = './src') {
         case 'modules':
           for (const actualModName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
             if (actualModName === '.DS_Store') continue;
-            symlinkDir(`./src/${extensionType}/${extensionName}/${actualModName}`, `./www/${extensionName === 'site' ? '' : 'administrator/'}modules/mod_${actualModName}`);
+            symlinkDir(
+              `./src/${extensionType}/${extensionName}/${actualModName}`,
+              `./www/${extensionName === 'site' ? '' : 'administrator/'}modules/mod_${actualModName}`,
+            );
           }
           break;
         case 'plugins':
@@ -60,7 +63,9 @@ async function symLink(path = './src') {
           }
           break;
         case 'libraries': {
-          const xmls = readdirSync(`./src/${extensionType}`, { recursive: true, encoding: 'utf8' }).filter((file) => file.endsWith('.xml') && file.includes(extensionName));
+          const xmls = readdirSync(`./src/${extensionType}`, { recursive: true, encoding: 'utf8' }).filter(
+            (file) => file.endsWith('.xml') && file.includes(extensionName),
+          );
 
           for (const xml of xmls) {
             const newPath = xml.replace(`src${sep}libraries`, `www${sep}administrator${sep}manifests${sep}libraries`);
@@ -79,7 +84,10 @@ async function symLink(path = './src') {
         case 'templates':
           for (const actualTplName of readdirSync(`./src/${extensionType}/${extensionName}`)) {
             if (actualTplName === '.DS_Store') continue;
-            symlinkDir(`./src/${extensionType}/${extensionName}/${actualTplName}`, `./www/${extensionName === 'site' ? '' : 'administrator/'}templates/${actualTplName}`);
+            symlinkDir(
+              `./src/${extensionType}/${extensionName}/${actualTplName}`,
+              `./www/${extensionName === 'site' ? '' : 'administrator/'}templates/${actualTplName}`,
+            );
           }
           break;
         default:
@@ -108,8 +116,7 @@ async function symLink(path = './src') {
           const siteTmpl = readdirSync('./media/templates/site');
           for (const exta of siteTmpl) {
             if (exta === '.DS_Store') continue;
-            if (!existsSync(`${process.cwd()}/media/templates/site/${exta}`))
-              mkdirSync(`${process.cwd()}/media/templates/site/${exta}`, { recursive: true });
+            if (!existsSync(`${process.cwd()}/media/templates/site/${exta}`)) mkdirSync(`${process.cwd()}/media/templates/site/${exta}`, { recursive: true });
 
             symlinkDir(`${process.cwd()}/media/templates/site/${exta}`, `./www/media/templates/site/${exta}`);
           }

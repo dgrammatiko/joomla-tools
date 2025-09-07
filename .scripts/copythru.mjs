@@ -1,5 +1,5 @@
+import { existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { existsSync, statSync, mkdirSync, readdirSync} from 'node:fs';
 
 /** text
  * Method that will crawl the media_source folder
@@ -42,7 +42,7 @@ async function copyThru(path) {
   }
 
   for (const folderName of folders) {
-    for (const folder of readdirSync(folderName, {recursive: true, withFileTypes: true})) {
+    for (const folder of readdirSync(folderName, { recursive: true, withFileTypes: true })) {
       // push the right files
     }
   }

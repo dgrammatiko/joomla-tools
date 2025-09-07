@@ -1,7 +1,7 @@
-import { existsSync, rmSync, readFileSync } from 'node:fs';
 import assert from 'node:assert';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { describe, test } from 'node:test';
-import { handleES5File } from '../.scripts/javascript/handleES5.mjs';
+import { handleIIFE } from '../.scripts/javascript/handleIIFE.mjs';
 
 describe('CSS handling tests', { concurrency: false }, () => {
   test.afterEach(async () => {
@@ -14,17 +14,17 @@ describe('CSS handling tests', { concurrency: false }, () => {
     process.env.ENV = 'production';
     const file = 'nonexisting-legacy-es5.go';
 
-    const out = await handleES5File(file);
+    const out = await handleIIFE(file);
 
     assert.equal(true, out);
   });
 
   test('Non existing file', async (t) => {
-    process.env.ENV ='production';
+    process.env.ENV = 'production';
     const file = 'nonexisting-legacy-es5.js';
 
     try {
-      await handleES5File(file);
+      await handleIIFE(file);
     } catch (e) {
       assert.equal(e.message, `File ${file} doesn't exist`);
     }
@@ -36,13 +36,13 @@ describe('CSS handling tests', { concurrency: false }, () => {
     const file = 'legacy.js';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.js', '.min.js')}`;
-    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a)\\n});\\n"],"mappings":"YAAA,IAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC"}`;
+    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a);\\n});\\n"],"mappings":"YAAA,IAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC"}`;
 
-    await handleES5File(inputFile);
+    await handleIIFE(inputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),
-      '(function(){let e=\`hello\`;document.addEventListener(\`DOMContentLoaded\`,()=>{console.log(e)})})();\n//# sourceMappingURL=legacy.min.js.map',
+      '(function(){let e=`hello`;document.addEventListener(`DOMContentLoaded`,()=>{console.log(e)})})();\n//# sourceMappingURL=legacy.min.js.map',
     );
     assert.equal(existsSync(outputFile.replace('.js', '.js.map')), true);
     assert.equal(readFileSync(outputFile.replace('.js', '.js.map'), { encoding: 'utf8' }), map);
@@ -53,9 +53,9 @@ describe('CSS handling tests', { concurrency: false }, () => {
     const file = 'legacy.js';
     const inputFile = `media_source/stubs/js/${file}`;
     const outputFile = `media/stubs/js/${file.replace('.js', '.min.js')}`;
-    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a)\\n});\\n"],"mappings":"YAAA,IAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC"}`;
+    const map = `{"version":3,"file":"legacy.min.js","names":[],"sources":["../../../media_source/stubs/js/legacy.js"],"sourcesContent":["const a = 'hello';\\n\\ndocument.addEventListener('DOMContentLoaded', () => {\\n  console.log(a);\\n});\\n"],"mappings":"YAAA,IAAM,EAAI,QAEV,SAAS,iBAAiB,mBAAoB,IAAM,CAClD,QAAQ,IAAI,EAAE,AACf,EAAC"}`;
 
-    await handleES5File(inputFile);
+    await handleIIFE(inputFile);
     assert.equal(existsSync(outputFile), true);
     assert.equal(
       readFileSync(outputFile, { encoding: 'utf8' }),

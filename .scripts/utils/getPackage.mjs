@@ -1,6 +1,6 @@
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
-import { existsSync } from 'node:fs';
 import { cwd } from 'node:process';
 
 const require = createRequire(import.meta.url);

@@ -1,10 +1,10 @@
 import Path from 'node:path';
 
 import { watch } from 'chokidar';
-import { handleESMFile } from './javascript/handleESMFile.mjs';
-import { handleES5File } from './javascript/handleES5.mjs';
-import { handleScssFile } from './stylesheets/handleSCSSFile.mjs';
-import { handleCssFile } from './stylesheets/handleCSSFile.mjs';
+import { handleESM } from './javascript/handleESM.mjs';
+import { handleIIFE } from './javascript/handleIIFE.mjs';
+import { handleCss } from './stylesheets/handleCss.mjs';
+import { handleScss } from './stylesheets/handleScss.mjs';
 import { debounce } from './utils/debounce.mjs';
 
 /**
@@ -16,18 +16,18 @@ const processFile = (file) => {
     !Path.dirname(file).startsWith(Path.join('media_source', 'vendor', 'bootstrap', 'js'))
   ) {
     if (file.match(/\.mjs$/) && !Path.basename(file).startsWith('_')) {
-      return debounce(handleESMFile(file), 300, 0);
+      return debounce(handleESM(file), 300, 0);
     }
     if (file.match(/\.js/)) {
-      return debounce(handleES5File(file), 250, 300);
+      return debounce(handleIIFE(file), 250, 300);
     }
   }
 
   if (Path.extname(file) === '.scss' && !Path.basename(file).startsWith('_')) {
-    return debounce(handleScssFile(file), 250, 300);
+    return debounce(handleScss(file), 250, 300);
   }
   if (Path.extname(file) === '.css') {
-    return debounce(handleCssFile(file), 250, 300);
+    return debounce(handleCss(file), 250, 300);
   }
 };
 
@@ -35,7 +35,6 @@ const processFile = (file) => {
  * @param { string } path
  */
 const watching = (path) => {
-
   process.env.ENV = 'development';
   const watcher = watch(path ? Path.join(process.cwd(), path) : Path.join(process.cwd(), 'media_source'), { ignored: /(^|[/\\])\../, persistent: true });
 
@@ -46,7 +45,7 @@ const watching = (path) => {
     .on('add', (file) => processFile(file))
     .on('change', (file) => processFile(file))
     // @todo Handle properly the removal
-    .on('unlink', path => console.log(`File ${path} has been removed`));
+    .on('unlink', (path) => console.log(`File ${path} has been removed`));
 };
 
 export { watching };

@@ -1,9 +1,9 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "noEmit": true,
-    "checkJs": true,
-    "strict": true
-  },
-  "include": [".scripts/**/*.mjs", "joomla-tools.mjs"]
+	"compilerOptions": {
+		"allowJs": true,
+		"noEmit": true,
+		"checkJs": true,
+		"strict": true
+	},
+	"include": [".scripts/**/*.mjs", "joomla-tools.mjs"]
 }

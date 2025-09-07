@@ -1,6 +1,5 @@
-
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { dirname, resolve, basename } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { cwd } from 'node:process';
 import AdmZip from 'adm-zip';
 
@@ -27,8 +26,8 @@ async function fetchJoomla() {
 
     const data = await response.arrayBuffer();
 
-    (new AdmZip(Buffer.from(data))).extractAllTo(resolve(cwd(), 'www'), true);
-  } catch(err) {
+    new AdmZip(Buffer.from(data)).extractAllTo(resolve(cwd(), 'www'), true);
+  } catch (err) {
     throw new Error('An error occured, Joomla was not downloaded!');
   }
 }
