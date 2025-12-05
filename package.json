@@ -1,6 +1,6 @@
 {
   "name": "@dgrammatiko/joomla-tools",
-  "version": "0.0.624",
+  "version": "0.0.625",
   "publishConfig": {
     "access": "public"
   },
