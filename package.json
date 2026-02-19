@@ -91,7 +91,7 @@
     "stylelint-config-recommended": "^13.0.0",
     "stylelint-config-standard": "^34.0.0",
     "stylelint-order": "^6.0.3",
-    "stylelint-scss": "^5.0.0",
+    "stylelint-scss": "^7.0.0",
     "symlink-dir": "^9.0.0",
     "terser": "5.46.0"
   },
