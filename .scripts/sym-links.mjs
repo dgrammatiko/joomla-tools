@@ -7,7 +7,6 @@ import {
 } from 'node:fs';
 import { basename, dirname, sep, resolve } from 'path';
 import os from 'node:os';
-import jetpack from 'fs-jetpack';
 import symlinkDir from 'symlink-dir';
 
 /**
@@ -22,6 +21,74 @@ function existsAlterSync(path) {
     // if (err.code !== 'EEXIST') throw err
     return false
   }
+}
+
+/**
+ * @param {String} path
+ * @param {Object} [options]
+ * @param {String|String[]} [options.matching]
+ * @param {Boolean} [options.files]
+ * @param {Boolean} [options.directories]
+ * @returns {String[]}
+ */
+function find(path, options = {}) {
+  const { matching, files = true, directories = false } = options;
+  const results = [];
+
+  function globToRegex(pattern) {
+    let regex = '';
+    let i = 0;
+    while (i < pattern.length) {
+      const ch = pattern[i];
+      if (ch === '*' && pattern[i + 1] === '*') {
+        regex += '.*';
+        i += 2;
+      } else if (ch === '*') {
+        regex += '[^/]*';
+        i++;
+      } else if (ch === '?') {
+        regex += '[^/]';
+        i++;
+      } else if (ch === '+' && pattern[i + 1] === '(') {
+        const close = pattern.indexOf(')', i);
+        const inner = pattern.slice(i + 2, close);
+        regex += '(?:' + inner + ')';
+        i = close + 1;
+      } else if ('.+^${}()|[]\\'.includes(ch)) {
+        regex += '\\' + ch;
+        i++;
+      } else {
+        regex += ch;
+        i++;
+      }
+    }
+    return new RegExp(`^${regex}$`);
+  }
+
+  function matches(name, patterns) {
+    const list = Array.isArray(patterns) ? patterns : [patterns];
+    return list.some((p) => globToRegex(p).test(name));
+  }
+
+  function walk(currentDir) {
+    const entries = readdirSync(currentDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = resolve(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        if (directories && (!matching || matches(entry.name, matching))) {
+          results.push(fullPath);
+        }
+        walk(fullPath);
+      } else if (entry.isFile()) {
+        if (files && (!matching || matches(entry.name, matching))) {
+          results.push(fullPath);
+        }
+      }
+    }
+  }
+
+  walk(path);
+  return results;
 }
 
 function isWin() {
@@ -92,8 +159,8 @@ async function symLink(path) {
           }
           break;
         case "libraries": {
-          const xmls = jetpack.find(`./src/${extensionType}`, {
-            matching: `${extensionName}/**/*.xml`,
+          const xmls = find(`./src/${extensionType}/${extensionName}`, {
+            matching: '*.xml',
           });
           for (const xml of xmls) {
             const newPath = xml.replace(

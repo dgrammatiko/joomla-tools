@@ -1,3 +1,3 @@
-import { rollup, watch } from 'rollup';
+import { rolldown } from 'rolldown';
 
-export { rollup, watch };
+export { rolldown };

@@ -1,12 +1,10 @@
 import { stat } from 'node:fs/promises';
-import pkgFsJetpack from 'fs-jetpack';
 import { cwd } from 'node:process';
 
+import { find } from './utils/fs.mjs';
 import { logger } from './utils/logger.mjs';
 import { handleES5File } from './javascript/handleES5.mjs';
 import { handleESMFile } from './javascript/handleESMFile.mjs';
-
-const { find } = pkgFsJetpack;
 
 /**
  * Method that will crawl the media_source folder and
