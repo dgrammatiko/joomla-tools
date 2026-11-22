@@ -1,8 +1,7 @@
 import { basename, dirname, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { rollup } from 'rollup';
-import { minify } from 'terser';
+import { mkdir } from 'node:fs/promises';
+import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.2018.mjs';
 import { logger } from '../utils/logger.mjs';
 
@@ -22,14 +21,17 @@ async function handleESMFile(inputFile, outputFile) {
   }
 
   logger(`Transpiling ES2018 file: ${basename(inputFile).replace('.mjs', '.js')}...`);
-  const bundle = await rollup({ ...config.inputOptions, input: resolve(inputFile) });
-  const output = await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
-  const minified = await minify(output.output[0].code, { sourceMap: false, format: { comments: false } });
-  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, {encoding: 'utf8', mode: '0644'});
-  logger(`✅ ES2018 file: ${basename(outputFile)}: transpiled`);
-  await bundle.close();
+  const bundler = await rolldown({ ...config, input: resolve(inputFile) });
+  const result = await bundler.write({ file: resolve(outputFile) });
+  await bundler.close();
 
-  return output.output[0].code;
+  const minifiedBundler = await rolldown({ ...config, input: resolve(inputFile), output: { ...config.output, minify: true } });
+  await minifiedBundler.write({ file: resolve(outputFile.replace('.js', '.min.js')) });
+  await minifiedBundler.close();
+
+  logger(`✅ ES2018 file: ${basename(outputFile)}: transpiled`);
+
+  return result.output[0].code;
 };
 
 export { handleESMFile };

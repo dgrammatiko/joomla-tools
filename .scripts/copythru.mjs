@@ -1,15 +1,13 @@
 import { cwd, exit } from 'node:process';
-import { join, sep } from 'node:path';
+import { join } from 'node:path';
 import {
   cp,
   stat,
   existsSync,
-  copyFileSync,
-  readdirSync,
   mkdirSync
 } from 'node:fs';
-import jetpack from 'fs-jetpack';
 
+import { find } from './utils/fs.mjs';
 import { logger } from './utils/logger.mjs';
 
 /** text
@@ -53,13 +51,11 @@ async function copyThru(path) {
   }
 
   // Copy any images folders
-  jetpack
-    .find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
+  find(globalThis.searchPath, { matching: 'images', files: false, directories: true })
     .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
 
   // Copy the joomla.asset.json files
-  jetpack
-  .find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false })
+  find(globalThis.searchPath, { matching: 'joomla.asset.json', files: true, directories: false })
   .forEach((file) => cp(`./${file}`, `./${file.replace(`${globalThis.searchPath}`, `${globalThis.replacePath}`)}`, { recursive: true }, (err) => { if (err) console.error(err); }));
 };
 

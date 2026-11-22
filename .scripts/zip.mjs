@@ -5,9 +5,76 @@ import {
   readFileSync
 } from 'node:fs';
 import { extname } from 'node:path';
-import jetpack from 'fs-jetpack';
 import admZip from 'adm-zip';
 import path from 'path';
+
+/**
+ * @param {String} path
+ * @param {Object} [options]
+ * @param {String|String[]} [options.matching]
+ * @param {Boolean} [options.files]
+ * @param {Boolean} [options.directories]
+ * @returns {String[]}
+ */
+function find(path, options = {}) {
+  const { matching, files = true, directories = false } = options;
+  const results = [];
+
+  function globToRegex(pattern) {
+    let regex = '';
+    let i = 0;
+    while (i < pattern.length) {
+      const ch = pattern[i];
+      if (ch === '*' && pattern[i + 1] === '*') {
+        regex += '.*';
+        i += 2;
+      } else if (ch === '*') {
+        regex += '[^/]*';
+        i++;
+      } else if (ch === '?') {
+        regex += '[^/]';
+        i++;
+      } else if (ch === '+' && pattern[i + 1] === '(') {
+        const close = pattern.indexOf(')', i);
+        const inner = pattern.slice(i + 2, close);
+        regex += '(?:' + inner + ')';
+        i = close + 1;
+      } else if ('.+^${}()|[]\\'.includes(ch)) {
+        regex += '\\' + ch;
+        i++;
+      } else {
+        regex += ch;
+        i++;
+      }
+    }
+    return new RegExp(`^${regex}$`);
+  }
+
+  function matches(name, patterns) {
+    const list = Array.isArray(patterns) ? patterns : [patterns];
+    return list.some((p) => globToRegex(p).test(name));
+  }
+
+  function walk(currentDir) {
+    const entries = readdirSync(currentDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        if (directories && (!matching || matches(entry.name, matching))) {
+          results.push(fullPath);
+        }
+        walk(fullPath);
+      } else if (entry.isFile()) {
+        if (files && (!matching || matches(entry.name, matching))) {
+          results.push(fullPath);
+        }
+      }
+    }
+  }
+
+  walk(path);
+  return results;
+}
 
 /**
  * @type {[]} //{ name: string, zip: admZip }
@@ -22,7 +89,7 @@ function applyReplacements(file, replacables) {
 
 async function addFilesRecursively(folder, replace, replacables, zipper) {
   folder = folder.replaceAll(`/`, path.sep);
-  jetpack.find(folder).forEach((file) => {
+  find(folder).forEach((file) => {
     let fileContent;
     if (['.php', '.xml', '.ini', '.js', '.css'].includes(extname(file))) {
       fileContent = applyReplacements(file, replacables);

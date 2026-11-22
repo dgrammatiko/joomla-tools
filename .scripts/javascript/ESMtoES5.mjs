@@ -1,8 +1,7 @@
 import { basename, dirname, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { rollup } from 'rollup';
-import { minify } from 'terser';
+import { mkdir } from 'node:fs/promises';
+import { rolldown } from 'rolldown';
 import { config } from './configs/rollup.es5.mjs';
 import { logger } from '../utils/logger.mjs';
 
@@ -22,11 +21,13 @@ async function handleESMToLegacy(inputFile, outputFile) {
 
   logger(`Transpiling ES5 file: ${basename(outputFile)}...`);
 
-  const bundle = await rollup({ ...config.inputOptions, input: inputFile });
-  const output = await bundle.write({ ...config.outputOptions, file: resolve(outputFile) });
-  const minified = await minify(output.output[0].code, { sourceMap: false, format: { comments: false } });
-  await writeFile(resolve(outputFile.replace('.js', '.min.js')), minified.code, {encoding: 'utf8', mode: 0o644});
-  await bundle.close();
+  const bundler = await rolldown({ ...config, input: inputFile });
+  await bundler.write({ file: resolve(outputFile) });
+  await bundler.close();
+
+  const minifiedBundler = await rolldown({ ...config, input: inputFile, output: { ...config.output, minify: true } });
+  await minifiedBundler.write({ file: resolve(outputFile.replace('.js', '.min.js')) });
+  await minifiedBundler.close();
 };
 
 export { handleESMToLegacy };
