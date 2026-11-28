@@ -55,7 +55,7 @@
   "homepage": "https://github.com/dgrammatiko/joomla-tools#readme",
   "dependencies": {
     "adm-zip": "0.6.1",
-    "autoprefixer": "10.7.0",
+    "autoprefixer": "10.7.1",
     "chokidar": "6.0.0",
     "commander": "15.1.0",
     "cssnano": "9.9.0",
